@@ -25,7 +25,7 @@ The rules tighten during the semester. Every response from the simulation tells 
 | 1 March | P2 | Every trade costs 10 bps of its value |
 | 5 April | P3 | Short selling allowed: gross exposure up to 160 %, net up to 100 %, borrow fee 50 bps a year |
 
-Throughout: at most 50 positions, no limit on a single weight, and gross exposure up to 100 % until shorting opens.
+Throughout: no limit on the number of positions or on a single weight, and gross exposure up to 100 % until shorting opens. Large, diversified portfolios are welcome.
 
 ## What you can trade
 
