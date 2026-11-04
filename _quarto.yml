@@ -32,10 +32,10 @@ website:
             file: simulation/getting-started.qmd
           - text: team dashboard
             file: simulation/dashboard.qmd
-      - text: more ressources
+      - text: more resources
         file: additional-material/index.qmd
       - icon: github
-        url:  https://github.com/advanced-empirical-finance/AEF-2026-course-homepage
+        url:  https://github.com/advanced-empirical-finance/course-homepage
   sidebar:
      - title: exercises
        style: docked
@@ -68,7 +68,7 @@ website:
          - simulation/index.qmd
          - simulation/getting-started.qmd
          - simulation/dashboard.qmd
-     - title: more ressources
+     - title: more resources
        style: docked
        contents:
          - additional-material/index.qmd
