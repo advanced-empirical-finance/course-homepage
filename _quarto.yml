@@ -30,8 +30,6 @@ website:
             file: simulation/index.qmd
           - text: getting started
             file: simulation/getting-started.qmd
-          - text: API
-            file: simulation/api.qmd
           - text: leaderboard
             file: simulation/leaderboard.qmd
           - text: team dashboard
@@ -71,7 +69,6 @@ website:
        contents:
          - simulation/index.qmd
          - simulation/getting-started.qmd
-         - simulation/api.qmd
          - simulation/leaderboard.qmd
          - simulation/dashboard.qmd
      - title: more ressources

@@ -121,10 +121,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">getting started</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/api.html">
- <span class="dropdown-text">API</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../simulation/leaderboard.html">
  <span class="dropdown-text">leaderboard</span></a>
   </li>  
@@ -180,12 +176,6 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../simulation/api.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">The API</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../simulation/leaderboard.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Leaderboard</span></a>
   </div>
@@ -208,7 +198,7 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#teams-and-timeline" id="toc-teams-and-timeline" class="nav-link active" data-scroll-target="#teams-and-timeline">Teams and timeline</a></li>
   <li><a href="#what-you-can-trade" id="toc-what-you-can-trade" class="nav-link" data-scroll-target="#what-you-can-trade">What you can trade</a></li>
-  <li><a href="#how-a-day-works" id="toc-how-a-day-works" class="nav-link" data-scroll-target="#how-a-day-works">How a day works</a></li>
+  <li><a href="#how-trading-works" id="toc-how-trading-works" class="nav-link" data-scroll-target="#how-trading-works">How trading works</a></li>
   <li><a href="#money-costs-and-corporate-actions" id="toc-money-costs-and-corporate-actions" class="nav-link" data-scroll-target="#money-costs-and-corporate-actions">Money, costs and corporate actions</a></li>
   <li><a href="#benchmarks" id="toc-benchmarks" class="nav-link" data-scroll-target="#benchmarks">Benchmarks</a></li>
   </ul>
@@ -237,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new <strong>target weights</strong> from R or Python. The simulation trades them at the next US market open, charges transaction costs, and values the portfolio at every close. Your team’s <a href="../simulation/dashboard.html">dashboard</a> shows how you are doing against simple benchmarks and the cohort; the public <a href="../simulation/leaderboard.html">leaderboard</a> shows everyone under pseudonyms.</p>
+<p>Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new <strong>target weights</strong> from R or Python. <strong>You only decide and submit; everything else happens automatically:</strong> the simulation trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team’s <a href="../simulation/dashboard.html">dashboard</a> shows how you are doing against simple benchmarks and the cohort; the public <a href="../simulation/leaderboard.html">leaderboard</a> shows everyone under pseudonyms.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -290,29 +280,29 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p>Throughout: at most 50 positions, no limit on a single weight, and gross exposure up to 100 % until shorting opens.</p>
+<p>Throughout: no limit on the number of positions or on a single weight, and gross exposure up to 100 % until shorting opens. Large, diversified portfolios are welcome.</p>
 </section>
 <section id="what-you-can-trade" class="level2">
 <h2 class="anchored" data-anchor-id="what-you-can-trade">What you can trade</h2>
 <p>The universe is CRSP’s common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; <code>get_universe()</code> lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.</p>
-<p>Prices are not part of the simulation’s API. Download them yourself, for example with <a href="https://www.tidy-finance.org">tidyfinance</a>: it reads the same Yahoo Finance data the simulation trades at.</p>
 </section>
-<section id="how-a-day-works" class="level2">
-<h2 class="anchored" data-anchor-id="how-a-day-works">How a day works</h2>
+<section id="how-trading-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-trading-works">How trading works</h2>
+<p><strong>You only decide and submit. The trades, the costs, dividends and the daily valuation happen automatically.</strong></p>
 <ol type="1">
-<li><strong>Decide</strong> after a US close, with data up to that close. That day is your <code>close_date</code>.</li>
-<li><strong>Submit</strong> whenever you like. Your weights trade at the next market open whose deadline has not passed: <strong>09:00 New York time on the trading day</strong>. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. You may submit as often as you like; the last accepted submission before a deadline is the one that trades. <code>cancel()</code> withdraws a submission until then.</li>
-<li><strong>Trade</strong> at that day’s opening price. If you submit nothing, your portfolio is left as it is: no trades and no costs.</li>
-<li><strong>Mark to market</strong> at the close. Results appear the next morning, Copenhagen time.</li>
+<li><strong>Decide and submit</strong>, whenever you like: target weights and a rationale. <code>close_date</code> is the date of the latest market close in the data your decision is based on.</li>
+<li><strong>The trade happens automatically</strong> at the next market open whose deadline has not passed: <strong>09:00 New York time on the trading day</strong>. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. Submitting again before the deadline simply replaces your previous submission: only the last one trades. <code>cancel()</code> withdraws a submission until the deadline. If you submit nothing, your portfolio stays as it is: no trades and no costs.</li>
+<li><strong>Your portfolio is valued every evening</strong> at that day’s closing prices: each position at its closing price, plus your cash. This is called <em>marking to market</em>. Results appear the next morning, Copenhagen time.</li>
 </ol>
 <p>A submission is a set of target weights: fractions of your portfolio’s value, by ticker. Tickers you leave out are sold, and whatever the weights don’t use stays in cash. The simulation trades fractional shares so that after costs your weights are exactly the targets. If a submission breaks a rule, it is rejected as a whole with error codes saying why, and it still appears in your log. <code>validate()</code> runs the same checks without submitting.</p>
 </section>
 <section id="money-costs-and-corporate-actions" class="level2">
 <h2 class="anchored" data-anchor-id="money-costs-and-corporate-actions">Money, costs and corporate actions</h2>
 <ul>
-<li><strong>Cash</strong> earns SOFR, the US overnight rate, day by day (act/360). Negative cash, which can arise once shorting opens, pays the same rate.</li>
+<li><strong>Cash</strong> earns interest at SOFR, the US overnight rate, for every calendar day, weekends and holidays included. Each day’s interest is the yearly rate divided by 360, the US money-market convention (<em>act/360</em>: actual days over a 360-day year). Over a weekend, Monday’s interest covers three days.</li>
+<li><strong>No borrowing to buy stock:</strong> your weights add up to at most 100 %, so you never hold less than zero cash after a trade. Once shorting opens, the proceeds of short sales can pay for extra long positions, up to 160 % gross. Cash can then turn slightly negative between trades, from borrow fees and dividends owed on short positions; negative cash pays the same SOFR rate.</li>
 <li><strong>Transaction costs</strong> are a fixed fraction of the value traded, in both directions.</li>
-<li><strong>Short positions</strong> pay the borrow fee on their market value.</li>
+<li><strong>Short positions</strong> pay the borrow fee, 50 bps a year on their market value, accrued per calendar day like interest.</li>
 <li><strong>Dividends</strong> are paid into cash on the ex-date. Short positions pay them.</li>
 <li><strong>Stock splits</strong> change your share count, not your value.</li>
 <li><strong>Delisted stocks</strong> are sold at their last price.</li>

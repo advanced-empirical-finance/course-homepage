@@ -3,88 +3,227 @@ css: simulation.css
 title: "Getting started"
 ---
 
-## 1. Install the client
+This page goes through one decision from start to finish: install the client, save your token, see what you may trade, download prices, build a portfolio, check it and submit it. The client packages are the same in R and Python: same functions, same column names. Pick your language in any tab; every tab on the page follows.
 
-The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on [GitHub](https://github.com/advanced-empirical-finance/aefsim).
+## 1. Install
 
-::: {.panel-tabset}
+In a terminal, in your project folder:
+
+::: {.panel-tabset group="language"}
 ## R
-```r
-install.packages("pak")
-pak::pak("advanced-empirical-finance/aefsim/r")
-```
-## Python
+
+With [uvr](https://github.com/nbafrank/uvr), version 0.4.8 or later:
+
 ```sh
-uv add "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"
-# or: pip install "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"
+uvr add advanced-empirical-finance/aefsim/r tidyfinance dplyr tidyr
 ```
+
+## Python
+
+With [uv](https://docs.astral.sh/uv/):
+
+```sh
+uv add "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python" tidyfinance
+```
+
 :::
 
-## 2. Store your token
+## 2. Save your token
 
-Your team receives one token, starting with `aef_`. Treat it like a password: it lets anyone trade for your team. Keep it out of your code and your Git repository by storing it in the environment variable `AEF_TOKEN`.
+Your team receives one token, starting with `aef_`. Treat it like a password: it lets anyone trade for your team. Run `set_token()` once and paste the token when asked:
 
-- **R:** add `AEF_TOKEN=aef_...` to `~/.Renviron` (`usethis::edit_r_environ()` opens the file), then restart R.
-- **Python:** `export AEF_TOKEN=aef_...` in your shell, or put it in a `.env` file that you never commit.
-
-## 3. Make a first submission
-
-::: {.panel-tabset}
+::: {.panel-tabset group="language"}
 ## R
+
 ```r
 library(aefsim)
-universe <- get_universe()                   # the stocks you can buy after the latest close
-close_date <- max(universe$close_date)       # the close your decision is based on
-get_parameters()                             # the rules; applies_next marks the current ones
+library(tidyfinance)
+library(dplyr)
 
-weights <- tibble::tibble(ticker = c("AAPL", "MSFT", "JNJ"), weight = c(0.2, 0.2, 0.1))
-validate(weights, close_date = close_date)   # every check, nothing stored
-submit(weights, close_date = close_date,
-       rationale = "Three large caps, half the book in cash while we learn the ropes.")
+set_token()   # once per project
 ```
+
 ## Python
+
 ```python
+import datetime as dt
+
 import aefsim
 import polars as pl
-universe = aefsim.get_universe()             # a polars DataFrame
-close_date = universe["close_date"].max()
-aefsim.get_parameters()
+import tidyfinance as tf
 
-weights = pl.DataFrame({"ticker": ["AAPL", "MSFT", "JNJ"], "weight": [0.2, 0.2, 0.1]})
-aefsim.validate(weights, close_date=close_date)
-aefsim.submit(weights, close_date=close_date,
-              rationale="Three large caps, half the book in cash while we learn the ropes.")
+aefsim.set_token()  # once per project
 ```
+
 :::
 
-The check and the submission show the trade date: the next market open whose 09:00 New York deadline has not passed.
+It asks where to save the token: `project` for your project's folder or `home` for your home folder. For a project folder, it offers to add the file to `.gitignore`, so the token never ends up in Git. From then on the client finds the token by itself, in every new session too. Don't put the token in your code.
 
-The [starter notebooks](https://github.com/advanced-empirical-finance/aefsim/tree/main/notebooks) take a full example from prices to submission: they download a year of prices with tidyfinance, pick the 20 least volatile S&P 500 stocks, then validate and submit.
+## 3. What can you trade, and under which rules?
 
-## 4. The next morning
+::: {.panel-tabset group="language"}
+## R
 
 ```r
-get_submissions()     # status, trade date, rationale, weights
-get_portfolio()       # one row: portfolio value, cash and the positions
-get_performance()     # your daily portfolio value and statistics, next to the benchmarks
-get_leaderboard()     # every team under its pseudonym
+universe <- get_universe()
+close_date <- max(universe$close_date)   # the latest close
+count(universe, sp500)
+
+get_parameters()                    # costs, shorting, leverage; applies_next marks the current rules
+get_calendar() |> filter(is_next)   # the next trading day and its deadline
 ```
+
+## Python
+
+```python
+universe = aefsim.get_universe()
+close_date = universe["close_date"].max()  # the latest close
+universe.group_by("sp500").len()
+
+aefsim.get_parameters()                            # costs, shorting, leverage; applies_next marks the current rules
+aefsim.get_calendar().filter(pl.col("is_next"))  # the next trading day and its deadline
+```
+
+:::
+
+`get_universe()` lists the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.
+
+## 4. Download prices
+
+For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the simulation trades at.
+
+::: {.panel-tabset group="language"}
+## R
+
+```r
+candidates <- universe |> filter(sp500) |> pull(ticker)
+prices <- download_data("stock_prices", symbols = candidates,
+                        start_date = close_date - 365, end_date = close_date)
+```
+
+## Python
+
+```python
+candidates = universe.filter(pl.col("sp500"))["ticker"].to_list()
+prices = tf.download_data(
+    domain="stock_prices",
+    symbols=candidates,
+    start_date=str(close_date - dt.timedelta(days=365)),
+    end_date=str(close_date),
+)
+```
+
+:::
+
+## 5. Build a portfolio
+
+As an example, not a recommendation: the 20 S&P 500 stocks with the lowest volatility over the past year, equal weight.
+
+::: {.panel-tabset group="language"}
+## R
+
+```r
+weights <- prices |>
+  arrange(symbol, date) |>
+  group_by(symbol) |>
+  mutate(ret = adjusted_close / lag(adjusted_close) - 1) |>
+  summarise(vol = sd(ret, na.rm = TRUE) * sqrt(252), days = n()) |>
+  filter(days >= 200) |>
+  slice_min(vol, n = 20) |>
+  transmute(ticker = symbol, weight = 1 / n())
+weights
+```
+
+## Python
+
+```python
+volatility = (
+    prices.sort("symbol", "date")
+    .with_columns(ret=pl.col("adjusted_close").pct_change().over("symbol"))
+    .group_by("symbol")
+    .agg(vol=pl.col("ret").std() * 252 ** 0.5, days=pl.len())
+    .filter(pl.col("days") >= 200)
+    .sort("vol")
+    .head(20)
+)
+weights = volatility.select(ticker="symbol", weight=pl.lit(1 / volatility.height))
+weights
+```
+
+:::
+
+Weights are fractions of your portfolio's value, in a data frame with the columns `ticker` and `weight`. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.
+
+## 6. Check, then submit
+
+::: {.panel-tabset group="language"}
+## R
+
+```r
+validate(weights, close_date = close_date)   # every check, nothing stored
+
+result <- submit(
+  weights, close_date = close_date,
+  rationale = "Low-volatility tilt: equal weight in the 20 least volatile S&P 500 stocks over the past year."
+)
+result
+```
+
+## Python
+
+```python
+aefsim.validate(weights, close_date=close_date)  # every check, nothing stored
+
+result = aefsim.submit(
+    weights,
+    close_date=close_date,
+    rationale="Low-volatility tilt: equal weight in the 20 least volatile S&P 500 stocks over the past year.",
+)
+result
+```
+
+:::
+
+`validate()` runs every check the simulation runs and stores nothing. That's all you do: **the trade happens automatically** at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.
+
+Changed your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with `cancel(result$submission_id)` in R, `aefsim.cancel(result.submission_id)` in Python.
+
+## 7. The next morning
+
+Trades happen at the US open; results appear after the nightly update.
+
+::: {.panel-tabset group="language"}
+## R
+
+```r
+get_submissions()                             # status, trade date, rationale, weights
+get_portfolio() |> tidyr::unnest(positions)   # one row per position, with portfolio value and cash
+get_performance()                             # your daily portfolio value and statistics, next to the benchmarks
+get_leaderboard()                             # every team under its pseudonym
+```
+
+## Python
+
+```python
+aefsim.get_submissions()                                          # status, trade date, rationale, weights
+aefsim.get_portfolio().explode("positions").unnest("positions")   # one row per position
+aefsim.get_performance()                                          # your daily portfolio value and statistics, next to the benchmarks
+aefsim.get_leaderboard()                                          # every team under its pseudonym
+```
+
+:::
 
 Your team's [dashboard](dashboard.qmd) shows the same in charts.
 
 ## When something goes wrong
 
-Every message says what went wrong and what to do, and ends with a code in brackets. A rejected submission lists every problem at once. The most common ones:
+Every message says what went wrong and what to do, and ends with a code in brackets. A check or a rejected submission lists every problem at once, for example:
 
-| Code | Meaning |
-|---|---|
-| `close_date_in_future` | `close_date` is later than the close before your trade. The message names the date to use. |
-| `unknown_ticker` | Not a stock in the simulation. It uses Yahoo tickers, for example `BRK-B`. |
-| `ineligible_ticker` | Closed below $5. You may hold or reduce such a position, but not add to it. |
-| `short_not_allowed` | A negative weight before shorting opens on 5 April. |
-| `leverage_exceeded`, `net_exposure_exceeded` | The sum of absolute weights, or of weights, is above the limit. |
-| `too_many_positions` | More than 50 non-zero weights. |
-| `rationale_missing` | Every submission needs a rationale. |
-| `missing_token`, `unknown_token` | No token was found, or the server does not know it: check `AEF_TOKEN`. |
-
-The [API page](api.qmd) has the complete list.
+```
+Check: problems found
+Trades at the open on 2027-02-10 (rules P1-baseline)
+Positions 21, gross 1.050, net 1.050, cash -0.050
+Errors:
+  unknown_ticker BRKB: Not a stock in the simulation on 2027-02-09. Check the spelling: the simulation uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.
+  net_exposure_exceeded: The weights add up to 1.05 (net exposure); the limit is 1.00. They may add up to less: the rest of the book stays in cash.
+```

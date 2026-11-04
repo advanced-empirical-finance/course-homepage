@@ -156,10 +156,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">getting started</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/api.html">
- <span class="dropdown-text">API</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../simulation/leaderboard.html">
  <span class="dropdown-text">leaderboard</span></a>
   </li>  
@@ -215,12 +211,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../simulation/api.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">The API</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../simulation/leaderboard.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Leaderboard</span></a>
   </div>
@@ -241,10 +231,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#install-the-client" id="toc-install-the-client" class="nav-link active" data-scroll-target="#install-the-client">1. Install the client</a></li>
-  <li><a href="#store-your-token" id="toc-store-your-token" class="nav-link" data-scroll-target="#store-your-token">2. Store your token</a></li>
-  <li><a href="#make-a-first-submission" id="toc-make-a-first-submission" class="nav-link" data-scroll-target="#make-a-first-submission">3. Make a first submission</a></li>
-  <li><a href="#the-next-morning" id="toc-the-next-morning" class="nav-link" data-scroll-target="#the-next-morning">4. The next morning</a></li>
+  <li><a href="#install" id="toc-install" class="nav-link active" data-scroll-target="#install">1. Install</a></li>
+  <li><a href="#save-your-token" id="toc-save-your-token" class="nav-link" data-scroll-target="#save-your-token">2. Save your token</a></li>
+  <li><a href="#what-can-you-trade-and-under-which-rules" id="toc-what-can-you-trade-and-under-which-rules" class="nav-link" data-scroll-target="#what-can-you-trade-and-under-which-rules">3. What can you trade, and under which rules?</a></li>
+  <li><a href="#download-prices" id="toc-download-prices" class="nav-link" data-scroll-target="#download-prices">4. Download prices</a></li>
+  <li><a href="#build-a-portfolio" id="toc-build-a-portfolio" class="nav-link" data-scroll-target="#build-a-portfolio">5. Build a portfolio</a></li>
+  <li><a href="#check-then-submit" id="toc-check-then-submit" class="nav-link" data-scroll-target="#check-then-submit">6. Check, then submit</a></li>
+  <li><a href="#the-next-morning" id="toc-the-next-morning" class="nav-link" data-scroll-target="#the-next-morning">7. The next morning</a></li>
   <li><a href="#when-something-goes-wrong" id="toc-when-something-goes-wrong" class="nav-link" data-scroll-target="#when-something-goes-wrong">When something goes wrong</a></li>
   </ul>
 </nav>
@@ -271,122 +264,192 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="install-the-client" class="level2">
-<h2 class="anchored" data-anchor-id="install-the-client">1. Install the client</h2>
-<p>The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on <a href="https://github.com/advanced-empirical-finance/aefsim">GitHub</a>.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<p>This page goes through one decision from start to finish: install the client, save your token, see what you may trade, download prices, build a portfolio, check it and submit it. The client packages are the same in R and Python: same functions, same column names. Pick your language in any tab; every tab on the page follows.</p>
+<section id="install" class="level2">
+<h2 class="anchored" data-anchor-id="install">1. Install</h2>
+<p>In a terminal, in your project folder:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pak"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"advanced-empirical-finance/aefsim/r"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With <a href="https://github.com/nbafrank/uvr">uvr</a>, version 0.4.8 or later:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uvr</span> add advanced-empirical-finance/aefsim/r tidyfinance dplyr tidyr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="st">"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># or: pip install "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With <a href="https://docs.astral.sh/uv/">uv</a>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="st">"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"</span> tidyfinance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </section>
-<section id="store-your-token" class="level2">
-<h2 class="anchored" data-anchor-id="store-your-token">2. Store your token</h2>
-<p>Your team receives one token, starting with <code>aef_</code>. Treat it like a password: it lets anyone trade for your team. Keep it out of your code and your Git repository by storing it in the environment variable <code>AEF_TOKEN</code>.</p>
-<ul>
-<li><strong>R:</strong> add <code>AEF_TOKEN=aef_...</code> to <code>~/.Renviron</code> (<code>usethis::edit_r_environ()</code> opens the file), then restart R.</li>
-<li><strong>Python:</strong> <code>export AEF_TOKEN=aef_...</code> in your shell, or put it in a <code>.env</code> file that you never commit.</li>
-</ul>
-</section>
-<section id="make-a-first-submission" class="level2">
-<h2 class="anchored" data-anchor-id="make-a-first-submission">3. Make a first submission</h2>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
+<section id="save-your-token" class="level2">
+<h2 class="anchored" data-anchor-id="save-your-token">2. Save your token</h2>
+<p>Your team receives one token, starting with <code>aef_</code>. Treat it like a password: it lets anyone trade for your team. Run <code>set_token()</code> once and paste the token when asked:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Python</a></li></ul>
-<div class="tab-content">
+<div class="tab-content" data-group="language">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aefsim)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>universe <span class="ot">&lt;-</span> <span class="fu">get_universe</span>()                   <span class="co"># the stocks you can buy after the latest close</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>close_date <span class="ot">&lt;-</span> <span class="fu">max</span>(universe<span class="sc">$</span>close_date)       <span class="co"># the close your decision is based on</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">get_parameters</span>()                             <span class="co"># the rules; applies_next marks the current ones</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>weights <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">ticker =</span> <span class="fu">c</span>(<span class="st">"AAPL"</span>, <span class="st">"MSFT"</span>, <span class="st">"JNJ"</span>), <span class="at">weight =</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>))</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">validate</span>(weights, <span class="at">close_date =</span> close_date)   <span class="co"># every check, nothing stored</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">submit</span>(weights, <span class="at">close_date =</span> close_date,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">rationale =</span> <span class="st">"Three large caps, half the book in cash while we learn the ropes."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyfinance)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set_token</span>()   <span class="co"># once per project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> aefsim</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>universe <span class="op">=</span> aefsim.get_universe()             <span class="co"># a polars DataFrame</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>close_date <span class="op">=</span> universe[<span class="st">"close_date"</span>].<span class="bu">max</span>()</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>aefsim.get_parameters()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> aefsim</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tidyfinance <span class="im">as</span> tf</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> pl.DataFrame({<span class="st">"ticker"</span>: [<span class="st">"AAPL"</span>, <span class="st">"MSFT"</span>, <span class="st">"JNJ"</span>], <span class="st">"weight"</span>: [<span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.1</span>]})</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>aefsim.validate(weights, close_date<span class="op">=</span>close_date)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>aefsim.submit(weights, close_date<span class="op">=</span>close_date,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>              rationale<span class="op">=</span><span class="st">"Three large caps, half the book in cash while we learn the ropes."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>aefsim.set_token()  <span class="co"># once per project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
-<p>The check and the submission show the trade date: the next market open whose 09:00 New York deadline has not passed.</p>
-<p>The <a href="https://github.com/advanced-empirical-finance/aefsim/tree/main/notebooks">starter notebooks</a> take a full example from prices to submission: they download a year of prices with tidyfinance, pick the 20 least volatile S&amp;P 500 stocks, then validate and submit.</p>
+<p>It asks where to save the token: <code>project</code> for your project’s folder or <code>home</code> for your home folder. For a project folder, it offers to add the file to <code>.gitignore</code>, so the token never ends up in Git. From then on the client finds the token by itself, in every new session too. Don’t put the token in your code.</p>
+</section>
+<section id="what-can-you-trade-and-under-which-rules" class="level2">
+<h2 class="anchored" data-anchor-id="what-can-you-trade-and-under-which-rules">3. What can you trade, and under which rules?</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>universe <span class="ot">&lt;-</span> <span class="fu">get_universe</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>close_date <span class="ot">&lt;-</span> <span class="fu">max</span>(universe<span class="sc">$</span>close_date)   <span class="co"># the latest close</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(universe, sp500)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">get_parameters</span>()                    <span class="co"># costs, shorting, leverage; applies_next marks the current rules</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">get_calendar</span>() <span class="sc">|&gt;</span> <span class="fu">filter</span>(is_next)   <span class="co"># the next trading day and its deadline</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>universe <span class="op">=</span> aefsim.get_universe()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>close_date <span class="op">=</span> universe[<span class="st">"close_date"</span>].<span class="bu">max</span>()  <span class="co"># the latest close</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>universe.group_by(<span class="st">"sp500"</span>).<span class="bu">len</span>()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>aefsim.get_parameters()                            <span class="co"># costs, shorting, leverage; applies_next marks the current rules</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>aefsim.get_calendar().<span class="bu">filter</span>(pl.col(<span class="st">"is_next"</span>))  <span class="co"># the next trading day and its deadline</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p><code>get_universe()</code> lists the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.</p>
+</section>
+<section id="download-prices" class="level2">
+<h2 class="anchored" data-anchor-id="download-prices">4. Download prices</h2>
+<p>For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the simulation trades at.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>candidates <span class="ot">&lt;-</span> universe <span class="sc">|&gt;</span> <span class="fu">filter</span>(sp500) <span class="sc">|&gt;</span> <span class="fu">pull</span>(ticker)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>prices <span class="ot">&lt;-</span> <span class="fu">download_data</span>(<span class="st">"stock_prices"</span>, <span class="at">symbols =</span> candidates,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">start_date =</span> close_date <span class="sc">-</span> <span class="dv">365</span>, <span class="at">end_date =</span> close_date)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>candidates <span class="op">=</span> universe.<span class="bu">filter</span>(pl.col(<span class="st">"sp500"</span>))[<span class="st">"ticker"</span>].to_list()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> tf.download_data(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span><span class="st">"stock_prices"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    symbols<span class="op">=</span>candidates,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="bu">str</span>(close_date <span class="op">-</span> dt.timedelta(days<span class="op">=</span><span class="dv">365</span>)),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    end_date<span class="op">=</span><span class="bu">str</span>(close_date),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</section>
+<section id="build-a-portfolio" class="level2">
+<h2 class="anchored" data-anchor-id="build-a-portfolio">5. Build a portfolio</h2>
+<p>As an example, not a recommendation: the 20 S&amp;P 500 stocks with the lowest volatility over the past year, equal weight.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>weights <span class="ot">&lt;-</span> prices <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(symbol, date) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(symbol) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ret =</span> adjusted_close <span class="sc">/</span> <span class="fu">lag</span>(adjusted_close) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">vol =</span> <span class="fu">sd</span>(ret, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">252</span>), <span class="at">days =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(days <span class="sc">&gt;=</span> <span class="dv">200</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(vol, <span class="at">n =</span> <span class="dv">20</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">ticker =</span> symbol, <span class="at">weight =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">n</span>())</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>weights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>volatility <span class="op">=</span> (</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    prices.sort(<span class="st">"symbol"</span>, <span class="st">"date"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    .with_columns(ret<span class="op">=</span>pl.col(<span class="st">"adjusted_close"</span>).pct_change().over(<span class="st">"symbol"</span>))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">"symbol"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    .agg(vol<span class="op">=</span>pl.col(<span class="st">"ret"</span>).std() <span class="op">*</span> <span class="dv">252</span> <span class="op">**</span> <span class="fl">0.5</span>, days<span class="op">=</span>pl.<span class="bu">len</span>())</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(pl.col(<span class="st">"days"</span>) <span class="op">&gt;=</span> <span class="dv">200</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"vol"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    .head(<span class="dv">20</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> volatility.select(ticker<span class="op">=</span><span class="st">"symbol"</span>, weight<span class="op">=</span>pl.lit(<span class="dv">1</span> <span class="op">/</span> volatility.height))</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>weights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p>Weights are fractions of your portfolio’s value, in a data frame with the columns <code>ticker</code> and <code>weight</code>. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.</p>
+</section>
+<section id="check-then-submit" class="level2">
+<h2 class="anchored" data-anchor-id="check-then-submit">6. Check, then submit</h2>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">validate</span>(weights, <span class="at">close_date =</span> close_date)   <span class="co"># every check, nothing stored</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">submit</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  weights, <span class="at">close_date =</span> close_date,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">rationale =</span> <span class="st">"Low-volatility tilt: equal weight in the 20 least volatile S&amp;P 500 stocks over the past year."</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>aefsim.validate(weights, close_date<span class="op">=</span>close_date)  <span class="co"># every check, nothing stored</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> aefsim.submit(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    weights,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    close_date<span class="op">=</span>close_date,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    rationale<span class="op">=</span><span class="st">"Low-volatility tilt: equal weight in the 20 least volatile S&amp;P 500 stocks over the past year."</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<p><code>validate()</code> runs every check the simulation runs and stores nothing. That’s all you do: <strong>the trade happens automatically</strong> at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.</p>
+<p>Changed your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with <code>cancel(result$submission_id)</code> in R, <code>aefsim.cancel(result.submission_id)</code> in Python.</p>
 </section>
 <section id="the-next-morning" class="level2">
-<h2 class="anchored" data-anchor-id="the-next-morning">4. The next morning</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_submissions</span>()     <span class="co"># status, trade date, rationale, weights</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_portfolio</span>()       <span class="co"># one row: portfolio value, cash and the positions</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">get_performance</span>()     <span class="co"># your daily portfolio value and statistics, next to the benchmarks</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">get_leaderboard</span>()     <span class="co"># every team under its pseudonym</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h2 class="anchored" data-anchor-id="the-next-morning">7. The next morning</h2>
+<p>Trades happen at the US open; results appear after the nightly update.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">Python</a></li></ul>
+<div class="tab-content" data-group="language">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_submissions</span>()                             <span class="co"># status, trade date, rationale, weights</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">get_portfolio</span>() <span class="sc">|&gt;</span> tidyr<span class="sc">::</span><span class="fu">unnest</span>(positions)   <span class="co"># one row per position, with portfolio value and cash</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">get_performance</span>()                             <span class="co"># your daily portfolio value and statistics, next to the benchmarks</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">get_leaderboard</span>()                             <span class="co"># every team under its pseudonym</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>aefsim.get_submissions()                                          <span class="co"># status, trade date, rationale, weights</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>aefsim.get_portfolio().explode(<span class="st">"positions"</span>).unnest(<span class="st">"positions"</span>)   <span class="co"># one row per position</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>aefsim.get_performance()                                          <span class="co"># your daily portfolio value and statistics, next to the benchmarks</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>aefsim.get_leaderboard()                                          <span class="co"># every team under its pseudonym</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
 <p>Your team’s <a href="../simulation/dashboard.html">dashboard</a> shows the same in charts.</p>
 </section>
 <section id="when-something-goes-wrong" class="level2">
 <h2 class="anchored" data-anchor-id="when-something-goes-wrong">When something goes wrong</h2>
-<p>Every message says what went wrong and what to do, and ends with a code in brackets. A rejected submission lists every problem at once. The most common ones:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Code</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>close_date_in_future</code></td>
-<td><code>close_date</code> is later than the close before your trade. The message names the date to use.</td>
-</tr>
-<tr class="even">
-<td><code>unknown_ticker</code></td>
-<td>Not a stock in the simulation. It uses Yahoo tickers, for example <code>BRK-B</code>.</td>
-</tr>
-<tr class="odd">
-<td><code>ineligible_ticker</code></td>
-<td>Closed below $5. You may hold or reduce such a position, but not add to it.</td>
-</tr>
-<tr class="even">
-<td><code>short_not_allowed</code></td>
-<td>A negative weight before shorting opens on 5 April.</td>
-</tr>
-<tr class="odd">
-<td><code>leverage_exceeded</code>, <code>net_exposure_exceeded</code></td>
-<td>The sum of absolute weights, or of weights, is above the limit.</td>
-</tr>
-<tr class="even">
-<td><code>too_many_positions</code></td>
-<td>More than 50 non-zero weights.</td>
-</tr>
-<tr class="odd">
-<td><code>rationale_missing</code></td>
-<td>Every submission needs a rationale.</td>
-</tr>
-<tr class="even">
-<td><code>missing_token</code>, <code>unknown_token</code></td>
-<td>No token was found, or the server does not know it: check <code>AEF_TOKEN</code>.</td>
-</tr>
-</tbody>
-</table>
-<p>The <a href="../simulation/api.html">API page</a> has the complete list.</p>
+<p>Every message says what went wrong and what to do, and ends with a code in brackets. A check or a rejected submission lists every problem at once, for example:</p>
+<pre><code>Check: problems found
+Trades at the open on 2027-02-10 (rules P1-baseline)
+Positions 21, gross 1.050, net 1.050, cash -0.050
+Errors:
+  unknown_ticker BRKB: Not a stock in the simulation on 2027-02-09. Check the spelling: the simulation uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.
+  net_exposure_exceeded: The weights add up to 1.05 (net exposure); the limit is 1.00. They may add up to less: the rest of the book stays in cash.</code></pre>
 
 
 </section>

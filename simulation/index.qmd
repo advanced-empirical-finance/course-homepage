@@ -4,7 +4,7 @@ title: "The trading simulation"
 subtitle: "Advanced Empirical Finance, spring 2027"
 ---
 
-Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new **target weights** from R or Python. The simulation trades them at the next US market open, charges transaction costs, and values the portfolio at every close. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort; the public [leaderboard](leaderboard.qmd) shows everyone under pseudonyms.
+Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new **target weights** from R or Python. **You only decide and submit; everything else happens automatically:** the simulation trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort; the public [leaderboard](leaderboard.qmd) shows everyone under pseudonyms.
 
 ::: {.callout-note}
 ## What counts is how you decide, not what you earn
@@ -25,28 +25,28 @@ The rules tighten during the semester. Every response from the simulation tells 
 | 1 March | P2 | Every trade costs 10 bps of its value |
 | 5 April | P3 | Short selling allowed: gross exposure up to 160 %, net up to 100 %, borrow fee 50 bps a year |
 
-Throughout: at most 50 positions, no limit on a single weight, and gross exposure up to 100 % until shorting opens.
+Throughout: no limit on the number of positions or on a single weight, and gross exposure up to 100 % until shorting opens. Large, diversified portfolios are welcome.
 
 ## What you can trade
 
 The universe is CRSP's common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; `get_universe()` lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.
 
-Prices are not part of the simulation's API. Download them yourself, for example with [tidyfinance](https://www.tidy-finance.org): it reads the same Yahoo Finance data the simulation trades at.
+## How trading works
 
-## How a day works
+**You only decide and submit. The trades, the costs, dividends and the daily valuation happen automatically.**
 
-1. **Decide** after a US close, with data up to that close. That day is your `close_date`.
-2. **Submit** whenever you like. Your weights trade at the next market open whose deadline has not passed: **09:00 New York time on the trading day**. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. You may submit as often as you like; the last accepted submission before a deadline is the one that trades. `cancel()` withdraws a submission until then.
-3. **Trade** at that day's opening price. If you submit nothing, your portfolio is left as it is: no trades and no costs.
-4. **Mark to market** at the close. Results appear the next morning, Copenhagen time.
+1. **Decide and submit**, whenever you like: target weights and a rationale. `close_date` is the date of the latest market close in the data your decision is based on.
+2. **The trade happens automatically** at the next market open whose deadline has not passed: **09:00 New York time on the trading day**. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. Submitting again before the deadline simply replaces your previous submission: only the last one trades. `cancel()` withdraws a submission until the deadline. If you submit nothing, your portfolio stays as it is: no trades and no costs.
+3. **Your portfolio is valued every evening** at that day's closing prices: each position at its closing price, plus your cash. This is called *marking to market*. Results appear the next morning, Copenhagen time.
 
 A submission is a set of target weights: fractions of your portfolio's value, by ticker. Tickers you leave out are sold, and whatever the weights don't use stays in cash. The simulation trades fractional shares so that after costs your weights are exactly the targets. If a submission breaks a rule, it is rejected as a whole with error codes saying why, and it still appears in your log. `validate()` runs the same checks without submitting.
 
 ## Money, costs and corporate actions
 
-- **Cash** earns SOFR, the US overnight rate, day by day (act/360). Negative cash, which can arise once shorting opens, pays the same rate.
+- **Cash** earns interest at SOFR, the US overnight rate, for every calendar day, weekends and holidays included. Each day's interest is the yearly rate divided by 360, the US money-market convention (*act/360*: actual days over a 360-day year). Over a weekend, Monday's interest covers three days.
+- **No borrowing to buy stock:** your weights add up to at most 100 %, so you never hold less than zero cash after a trade. Once shorting opens, the proceeds of short sales can pay for extra long positions, up to 160 % gross. Cash can then turn slightly negative between trades, from borrow fees and dividends owed on short positions; negative cash pays the same SOFR rate.
 - **Transaction costs** are a fixed fraction of the value traded, in both directions.
-- **Short positions** pay the borrow fee on their market value.
+- **Short positions** pay the borrow fee, 50 bps a year on their market value, accrued per calendar day like interest.
 - **Dividends** are paid into cash on the ex-date. Short positions pay them.
 - **Stock splits** change your share count, not your value.
 - **Delisted stocks** are sold at their last price.
