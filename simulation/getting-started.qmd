@@ -87,4 +87,4 @@ Every message says what went wrong and what to do, and ends with a code in brack
 | `rationale_missing` | Every submission needs a rationale. |
 | `missing_token`, `unknown_token` | No token was found, or the server does not know it: check `AEF_TOKEN`. |
 
-The [API page](api.qmd) has the complete list.
+The [aefsim README](https://github.com/advanced-empirical-finance/aefsim#when-something-goes-wrong) explains every code.
