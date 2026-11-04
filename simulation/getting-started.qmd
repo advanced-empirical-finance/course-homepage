@@ -90,7 +90,7 @@ aefsim.get_calendar().filter(pl.col("is_next"))  # the next trading day and its 
 
 ## 4. Download prices
 
-The simulation does not serve prices. tidyfinance downloads them from Yahoo Finance, the same source the simulation trades at.
+For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the simulation trades at.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -184,9 +184,9 @@ result
 
 :::
 
-`validate()` runs every check the simulation runs and stores nothing. The weights trade at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.
+`validate()` runs every check the simulation runs and stores nothing. That's all you do: **the trade happens automatically** at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.
 
-Changed your mind? Submit again: the last accepted submission before the deadline is the one that trades. Or withdraw it with `cancel(result$submission_id)` in R, `aefsim.cancel(result.submission_id)` in Python.
+Changed your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with `cancel(result$submission_id)` in R, `aefsim.cancel(result.submission_id)` in Python.
 
 ## 7. The next morning
 

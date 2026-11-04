@@ -335,7 +335,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="download-prices" class="level2">
 <h2 class="anchored" data-anchor-id="download-prices">4. Download prices</h2>
-<p>The simulation does not serve prices. tidyfinance downloads them from Yahoo Finance, the same source the simulation trades at.</p>
+<p>For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the simulation trades at.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -416,8 +416,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><code>validate()</code> runs every check the simulation runs and stores nothing. The weights trade at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.</p>
-<p>Changed your mind? Submit again: the last accepted submission before the deadline is the one that trades. Or withdraw it with <code>cancel(result$submission_id)</code> in R, <code>aefsim.cancel(result.submission_id)</code> in Python.</p>
+<p><code>validate()</code> runs every check the simulation runs and stores nothing. That’s all you do: <strong>the trade happens automatically</strong> at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.</p>
+<p>Changed your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with <code>cancel(result$submission_id)</code> in R, <code>aefsim.cancel(result.submission_id)</code> in Python.</p>
 </section>
 <section id="the-next-morning" class="level2">
 <h2 class="anchored" data-anchor-id="the-next-morning">7. The next morning</h2>
