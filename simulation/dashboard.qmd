@@ -3,7 +3,7 @@ title: "Team dashboard"
 css: simulation.css
 ---
 
-Your team's dashboard shows your portfolio next to the benchmarks and the cohort: how your value has developed, what you hold, and every submission with its rationale. Sign in with your team's token; only your team sees it.
+Your team's dashboard shows your portfolio next to the benchmarks and the cohort: how your value has developed, what you hold, every submission with its rationale, and a leaderboard of all teams under pseudonyms. Sign in with your team's token; only your team sees its own portfolio and log.
 
 ```{=html}
 <iframe class="dash-frame" id="dash-frame" src="https://eumel.tail81c88a.ts.net/aef-shadow-dashboard/" title="Team dashboard"></iframe>
