@@ -1,7 +1,7 @@
 ---
 title: Storing and sharing ML models in Python
 description: "Persist and share trained ML models in Python so results stay reproducible across machines and sessions."
-jupyter: aef-2026
+jupyter: python3
 ---
 ## ML Example
 The following example is taken from the "Pre-process data", "Build a model", and "Fit a model" sections of the chapter Factor Selection via Machine Learning. 

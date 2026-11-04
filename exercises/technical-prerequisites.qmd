@@ -10,53 +10,63 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
 
 ### Install the required software
 
-1.  Install [R (Version \> 4.5.0)](https://cran.r-project.org/). *R is one of the two programming languages we use in this course. Choose the installer for your operating system (Windows, macOS, Linux) and follow the default installation settings.*
-2.  Install [Python (Version \> 3.11.0)](https://www.python.org/downloads/). *Python is the second programming language we use. During installation on Windows, make sure to check “Add Python to PATH” if prompted.*
-3.  Install [Positron (latest Version)](https://positron.posit.co/start.html). *Positron is the integrated development environment (IDE) we use. It supports R, Python, Git, and Quarto in one place. Install Positron using the default settings.*
-4.  Register a [free GitHub account](https://happygitwithr.com/github-acct) *GitHub allows us to share course materials and collaborate. You can register on (https://github.com/).*
-5.  Install [Git](https://git-scm.com/install/). *Git is the version control system we use to connect to GitHub.*
+1.  Install [Positron (latest Version)](https://positron.posit.co/start.html). *Positron is the integrated development environment (IDE) we use. It supports R, Python, Git, and Quarto in one place. Install Positron using the default settings.*
+2.  Register a [free GitHub account](https://happygitwithr.com/github-acct). *GitHub allows us to share course materials and collaborate. You can register on (https://github.com/).*
+3.  Install [Git](https://git-scm.com/install/). *Git is the version control system we use to connect to GitHub.*
+4.  Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and [uvr](https://github.com/nbafrank/uvr). *uv installs Python and the Python packages of the course; uvr does the same for R. You don't install R or Python yourself.* Open a terminal (on Windows: PowerShell) and run
+
+    macOS and Linux:
+
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        curl -fsSL https://raw.githubusercontent.com/nbafrank/uvr/main/install.sh | sh
+
+    Windows:
+
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nbafrank/uvr/main/install.ps1 | iex"
+
+    Then close the terminal and open a new one, so it finds `uv` and `uvr`.
 
 ### Set Up the Course Repository
 
-6.  Configure Git in Positron:
+5.  Configure Git in Positron:
      - Open Positron, open the source control view `(Ctrl+Shift+G)`. *If Git is not yet installed, the Source Control view will show instructions on how to install it*
      - Once Git is detected you can clone the course Github repository by opening the source control view `(Ctrl+Shift+G)` and clicking `Clone Repository`. Then, you provide the course repository url [https://github.com/advanced-empirical-finance/course-repository.git](https://github.com/advanced-empirical-finance/course-repository.git) and choose a local folder where the repository should be stored. Cloning a repository simply means creating your own copy of a shared project so you can work on it on your computer without affecting the original. 
-7. Open the cloned repository in Positron by navigating to `File` -> `Open Project` and selecting the folder where you cloned the repository. The folder contains all course materials, including R and Python scripts, datasets, lecture slides, templates for the mandatory assignment and configuration files for R and Python environments.
+6. Open the cloned repository in Positron by navigating to `File` -> `Open Project` and selecting the folder where you cloned the repository. The folder contains all course materials, including R and Python scripts, datasets, lecture slides, templates for the mandatory assignment and configuration files for R and Python environments.
 
-### Install Required R and Python Packages 
+### Install R, Python and the course packages
 
-8. In R we use renv to ensure all students have the same package versions. To install *all* required R packages for the course, open the Console (not the Terminal) in Positron and install the `renv` package by typing the commands
+7. Open the Terminal (not the Console) in Positron, inside the course repository, and run
 
-        install.packages("renv")
-        renv::restore()
+        uvr r install 4.6.1
+        uvr sync
+        uv sync
 
-    You can install new packages, e.g., by calling `install.packages("tidymodels")`. To collaborate with your peers, just run `renv::snapshot()` to keep track of all the packages you use, and share the `renv.lock` file. Your colleagues only have to run `renv::restore()` to replicate your exact R package environment.
+    `uvr r install` installs R, `uvr sync` installs *all* R packages of the course, and `uv sync` installs Python and *all* Python packages of the course. Everyone gets exactly the same package versions, because they are recorded in the course repository (`uvr.lock` for R, `uv.lock` for Python). If Positron asks which R or Python to use, choose the one in the course repository (`.uvr` for R, `.venv` for Python).
 
-9. To verify that the R installation is working correctly, click on `New/New File` and select `R file` to open a new R script in Positron and type 
+    You can add packages, e.g., with `uvr add tidymodels` for R or `uv add polars` for Python. To collaborate with your peers, commit the files `uvr.toml`, `uvr.lock`, `pyproject.toml` and `uv.lock`; your colleagues only have to run `uvr sync` and `uv sync` to replicate your exact package environment.
+
+8. To verify that R is working correctly, click on `New/New File` and select `R file` to open a new R script in Positron and type 
 
         library(tidyfinance)
         download_data(
-                type="stock_prices", 
-                symbols="AAPL",
-                start_date="2000-01-01", 
-                  end_date="2023-12-31")
+                domain = "stock_prices",
+                symbols = "AAPL",
+                start_date = "2000-01-01",
+                end_date = "2023-12-31")
 
     Mark everything and press `Ctrl + Enter` to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. 
 
-10. For Python we use `uv`, a fast Python package manager. To install *all* required Python packages for the course, open the Terminal (not the Console) in Positron, install [uv](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer), e.g., via `pip install uv` and type the command
-
-        uv sync
-
-11. To verify that everything is working correctly, click on `New/New File` and select `Python file` to open a new Python script in Positron and type 
+9. To verify that Python is working correctly, click on `New/New File` and select `Python file` to open a new Python script in Positron and type 
 
         import tidyfinance as tf
         tf.download_data(
-                domain="stock_prices", 
+                domain="stock_prices",
                 symbols="AAPL",
-                start_date="2000-01-01", 
-                  end_date="2023-12-31")
+                start_date="2000-01-01",
+                end_date="2023-12-31")
 
-    Mark everything and press `Ctrl + Enter` to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error you may have to activate the correct virtual environment first by clicking on the Icon on the top right (next to `course-repository`) and selecting the environment named `aef-2026`.
+    Mark everything and press `Ctrl + Enter` to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error, select the course's Python environment first: click on the interpreter icon on the top right and choose the one in the course repository's `.venv`.
 
 ## Optional: Quarto and PDF support
 
