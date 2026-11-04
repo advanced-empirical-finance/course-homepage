@@ -227,6 +227,20 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Your team’s dashboard shows your portfolio next to the benchmarks and the cohort: how your value has developed, what you hold, and every submission with its rationale. Sign in with your team’s token; only your team sees it.</p>
+<iframe class="dash-frame" id="dash-frame" src="https://eumel.tail81c88a.ts.net/aef-shadow-dashboard/" title="Team dashboard"></iframe>
+<script>
+  // The dashboard's sign-in box takes focus when it opens, which would scroll
+  // the page down to it. Undo scrolling the reader did not do, for a while.
+  (function () {
+    var start = Date.now(), reader = false;
+    ["wheel", "touchstart", "keydown", "mousedown"].forEach(function (e) {
+      window.addEventListener(e, function () { reader = true; }, {passive: true});
+    });
+    window.addEventListener("scroll", function () {
+      if (!reader && Date.now() - start < 15000) window.scrollTo(0, 0);
+    });
+  })();
+</script>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -240,20 +254,6 @@ ul.task-list li input[type="checkbox"] {
 <p>Until the semester starts, the dashboard shows the course team’s test run, and only the course team can sign in. Your team’s token arrives before the dry run on 25 January 2027.</p>
 </div>
 </div>
-<p>
-  <a class="dash-open" href="https://eumel.tail81c88a.ts.net/aef-shadow-dashboard/" target="_blank" rel="noopener">Open the dashboard</a>
-  <button class="dash-show" type="button" id="dash-show">or show it on this page</button>
-</p>
-<iframe class="dash-frame" id="dash-frame" title="Team dashboard" hidden=""></iframe>
-<script>
-  // Loaded on request: the sign-in box would otherwise pull the page down to it.
-  document.getElementById("dash-show").addEventListener("click", function () {
-    var frame = document.getElementById("dash-frame");
-    frame.src = "https://eumel.tail81c88a.ts.net/aef-shadow-dashboard/";
-    frame.hidden = false;
-    this.hidden = true;
-  });
-</script>
 
 
 
