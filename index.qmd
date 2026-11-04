@@ -24,6 +24,10 @@ The guiding question of this course: **(How) can state-of-the-art methods improv
     <span class="home-card-title">✏️ Exercises</span>
     <span class="home-card-text">Hands-on problem sets that build the skills the lectures introduce.</span>
   </a>
+  <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="simulation/index.html">
+    <span class="home-card-title">📈 Trading game</span>
+    <span class="home-card-text">Run a paper portfolio of US stocks from R or Python; leaderboard and team dashboard.</span>
+  </a>
   <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="additional-material/index.html">
     <span class="home-card-title">📚 More resources</span>
     <span class="home-card-text">Guides on Quarto, Git, Positron AI, and machine-learning workflows.</span>

@@ -1,0 +1,125 @@
+---
+title: "Leaderboard"
+page-layout: full
+toc: false
+css: simulation.css
+execute:
+  eval: true
+  echo: false
+---
+
+```{ojs}
+//| output: false
+// The data comes live from the simulation server; ?data=URL reads another
+// file instead, such as demo data.
+source = new URLSearchParams(location.search).get("data") ?? "https://eumel.tail81c88a.ts.net/aef-shadow/public/leaderboard.json"
+raw = fetch(source).then(r => r.ok ? r.json() : null).catch(() => null)
+ready = raw != null && raw.teams.length > 0
+parse = d => new Date(d + "T00:00:00Z")
+series = ready ? raw.series.map(d => ({...d, date: parse(d.date)})) : []
+band = ready ? raw.band.map(d => ({...d, date: parse(d.date)})) : []
+rules = ready ? raw.rules.map(d => ({...d, date: parse(d.date)})) : []
+teams = ready ? raw.teams.filter(d => !d.is_bot) : []
+bots = ready ? raw.teams.filter(d => d.is_bot) : []
+bot = name => (ready && raw.teams.find(d => d.pseudonym === name)) || {}
+pct = (x, d = 1) => x == null ? "–" : (x < 0 ? "−" : "+") + Math.abs(100 * x).toFixed(d) + " %"
+pctu = (x, d = 1) => x == null ? "–" : (x < 0 ? "−" : "") + Math.abs(100 * x).toFixed(d) + " %"
+num = (x, d = 2) => x == null ? "–" : (x < 0 ? "−" : "") + Math.abs(x).toFixed(d)
+day = d => d.toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric", timeZone: "UTC"})
+median = v => { const s = [...v].sort((a, b) => a - b); const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+C = ({red: "#901A1E", ink: "#141416", ash: "#8A8A8E", hair: "#E6E3DF", slate: "#4A6B8C", naive: "#A9A7A3", bar: "#D8D5D0", faint: "#E2DFDA"})
+```
+
+```{ojs}
+{
+  if (raw == null) return html`<div class="demo-banner">The leaderboard cannot be loaded right now. Please try again later.</div>`;
+  const notes = [];
+  if (raw.demo) notes.push(html`<div class="demo-banner"><b>Demo data.</b> 32 hypothetical teams (70 students) in a simulated market. The real leaderboard starts after the first trade on 8 February 2027.</div>`);
+  if (raw.label) notes.push(html`<div class="demo-banner"><b>${raw.label}.</b> These are the course team's test portfolios, trading real prices to check the simulation before the semester. The leaderboard for the course starts after the first trade on 8 February 2027.</div>`);
+  if (!ready) notes.push(html`<div class="demo-banner">The leaderboard starts after the first trading day, ${day(parse(raw.semester.from))}.</div>`);
+  return html`${notes}`;
+}
+```
+
+```{ojs}
+!ready ? html`` : html`<p class="text-muted" style="margin-top:-6px">As of the close on ${day(parse(raw.as_of))} · ${teams.length} teams · net of costs · the semester runs ${day(parse(raw.semester.from))} to ${day(parse(raw.semester.to))}</p>
+<div class="boxes">
+  <div class="box"><div class="label">Cohort median</div><div class="value">${pct(median(teams.map(d => d.return)))}</div><div class="sub">cumulative return</div></div>
+  <div class="box"><div class="label">Naive 1/N</div><div class="value">${pct(bot("Naive 1/N").return)}</div><div class="sub">equal weight, S&amp;P 500</div></div>
+  <div class="box"><div class="label">Market</div><div class="value">${pct(bot("Market").return)}</div><div class="sub">SPY, bought once</div></div>
+  <div class="box"><div class="label">Ahead of 1/N</div><div class="value">${teams.filter(d => d.return > bot("Naive 1/N").return).length} / ${teams.length}</div><div class="sub">teams</div></div>
+</div>`
+```
+
+```{ojs}
+viewof highlight = ready ? Inputs.select(["(none)", ...teams.map(d => d.pseudonym).sort()], {label: "Find your team"}) : Inputs.input("(none)")
+```
+
+```{ojs}
+{
+  if (!ready) return html``;
+  const mine = series.filter(d => d.pseudonym === highlight);
+  const path = name => series.filter(d => d.pseudonym === name);
+  const chart = Plot.plot({
+    width: Math.max(300, width - 40), height: width < 600 ? 300 : 420, marginLeft: 44, marginRight: 8, style: {fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px", color: C.ink},
+    x: {type: "utc", label: null, grid: false},
+    y: {label: "Value of $1 at the start", grid: true, tickFormat: ".2f"},
+    marks: [
+      Plot.lineY(series.filter(d => !d.is_bot), {x: "date", y: "index", z: "pseudonym", stroke: C.faint, strokeWidth: 1}),
+      Plot.areaY(band, {x: "date", y1: "q25", y2: "q75", fill: C.slate, fillOpacity: 0.13}),
+      Plot.lineY(band, {x: "date", y: "median", stroke: C.slate, strokeWidth: 1.6, strokeDasharray: "4 3"}),
+      Plot.lineY(path("Naive 1/N"), {x: "date", y: "index", stroke: C.naive, strokeWidth: 1.6}),
+      Plot.lineY(path("Market"), {x: "date", y: "index", stroke: C.ink, strokeWidth: 1.4}),
+      Plot.lineY(mine, {x: "date", y: "index", stroke: C.red, strokeWidth: 2.6}),
+      Plot.ruleX(rules, {x: "date", stroke: C.ash, strokeDasharray: "2 3"}),
+      Plot.text(rules.filter((d, i) => i % 2 === 0), {x: "date", text: "label", frameAnchor: "top", dx: 4, dy: 4, textAnchor: "start", fill: C.ash, fontSize: 11}),
+      Plot.text(rules.filter((d, i) => i % 2 === 1), {x: "date", text: "label", frameAnchor: "top", dx: 4, dy: 20, textAnchor: "start", fill: C.ash, fontSize: 11}),
+      Plot.tip(series.filter(d => !d.is_bot), Plot.pointer({x: "date", y: "index", title: d => `${d.pseudonym}\n${pct(d.index - 1)}`})),
+      Plot.ruleY([1], {stroke: C.hair})
+    ]
+  });
+  const key = (color, label, dash) => `<span style="margin-right:14px"><i style="display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;background:${dash ? `repeating-linear-gradient(90deg,${color} 0 4px,transparent 4px 7px)` : color}"></i>${label}</span>`;
+  return html`<div class="panel"><h3>Cumulative return</h3>
+    <div class="hint">${key(C.faint, "each team")}${key(C.slate, "cohort median and 25–75 %", true)}${key(C.naive, "naive 1/N")}${key(C.ink, "market")}${highlight !== "(none)" ? key(C.red, highlight) : ""}</div>
+    ${chart}</div>`;
+}
+```
+
+```{ojs}
+viewof sortBy = ready ? Inputs.radio(new Map([["Sharpe ratio", "sharpe"], ["Return", "return"], ["Max drawdown", "max_drawdown"]]), {value: "sharpe", label: "Sort by"}) : Inputs.input("sharpe")
+```
+
+```{ojs}
+{
+  if (!ready) return html``;
+  const rows = [...raw.teams].sort((a, b) => b[sortBy] - a[sortBy]);
+  return html`<div class="panel"><h3>All teams</h3>
+  <div class="hint">Since the first trade · annualised volatility and Sharpe ratio on returns in excess of SOFR, with its standard error · benchmarks in italics</div>
+  <div class="lb-wrap"><table class="lb">
+    <thead><tr><th>#</th><th>Team</th><th>Return</th><th>Volatility</th><th>Sharpe</th><th>SE</th><th>Max drawdown</th></tr></thead>
+    <tbody>${rows.map(d => html`<tr class="${d.is_bot ? "bot" : d.pseudonym === highlight ? "mark" : ""}">
+      <td>${d.rank ?? ""}</td><td>${d.pseudonym}</td><td>${pct(d.return)}</td><td>${pctu(d.vol)}</td>
+      <td>${num(d.sharpe)}</td><td>(${num(d.sharpe_se)})</td><td>${pct(d.max_drawdown)}</td></tr>`)}</tbody>
+  </table></div></div>`;
+}
+```
+
+```{ojs}
+{
+  if (!ready) return html``;
+  const mark = teams.find(d => d.pseudonym === highlight);
+  const chart = Plot.plot({
+    width: Math.max(300, width - 40), height: 220, marginLeft: 30, style: {fontFamily: "Inter, system-ui, sans-serif", fontSize: "12px"},
+    x: {label: "Cumulative return", tickFormat: d => Math.abs(d) < 1e-9 ? "0 %" : pct(d, 0), ticks: width < 600 ? 5 : 10}, y: {label: "Teams", grid: true},
+    marks: [
+      Plot.rectY(teams, Plot.binX({y: "count"}, {x: "return", fill: d => d === mark ? C.red : C.bar, thresholds: 12, inset: 2})),
+      Plot.ruleX([bot("Naive 1/N").return], {stroke: C.naive, strokeWidth: 2}),
+      Plot.ruleX([bot("Market").return], {stroke: C.ink, strokeWidth: 2}),
+      Plot.text([bot("Naive 1/N").return], {x: d => d, text: () => "naive", frameAnchor: "top", dy: -4, fill: C.ash, fontSize: 11}),
+      Plot.text([bot("Market").return], {x: d => d, text: () => "market", frameAnchor: "top", dy: 10, fill: C.ink, fontSize: 11}),
+      Plot.ruleY([0], {stroke: C.hair})
+    ]
+  });
+  return html`<div class="panel"><h3>Where the cohort sits</h3><div class="hint">Teams by cumulative return${mark ? `, ${highlight} in red` : ""}</div>${chart}</div>`;
+}
+```

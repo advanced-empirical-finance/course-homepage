@@ -1,0 +1,23 @@
+/* The simulation pages' own components; the course homepage and the
+   standalone site both load this file. */
+:root { --red: #901A1E; --red-soft: #F3E6E6; --ink: #141416; --ash: #8A8A8E; --hair: #E6E3DF; --slate: #4A6B8C; }
+.demo-banner { background: var(--red-soft); color: var(--red); border-radius: 8px; padding: 10px 14px; font-size: 14px; margin-bottom: 16px; }
+.boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 8px 0 20px; }
+.box { background: #fff; border: 1px solid var(--hair); border-radius: 8px; padding: 14px 16px; }
+.box .label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ash); }
+.box .value { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-top: 4px; }
+.box .sub { font-size: 12px; color: var(--ash); }
+.panel { background: #fff; border: 1px solid var(--hair); border-radius: 8px; padding: 16px 18px; margin-bottom: 18px; }
+.panel h3 { font-size: 15px; font-weight: 600; margin: 0 0 2px; }
+.panel .hint { font-size: 12px; color: var(--ash); margin-bottom: 8px; }
+table.lb { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.lb th { color: var(--ash); font-weight: 500; text-align: right; padding: 6px; border-bottom: 1px solid var(--hair); }
+table.lb th:nth-child(-n+2), table.lb td:nth-child(-n+2) { text-align: left; }
+table.lb td { padding: 7px 6px; border-bottom: 1px solid var(--hair); text-align: right; white-space: nowrap; }
+table.lb tr.bot td { color: var(--ash); font-style: italic; }
+table.lb tr.mark td { background: var(--red-soft); color: var(--red); font-weight: 600; }
+.lb-wrap { overflow-x: auto; }
+@media (max-width: 600px) { .box .value { font-size: 22px; } table.lb { font-size: 12px; } }
+.dash-frame { width: 100%; height: 900px; border: 1px solid var(--hair); border-radius: 8px; }
+.dash-open { display: inline-block; background: var(--red); color: #fff !important; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; }
+.dash-show { background: none; border: none; color: var(--red); padding: 8px 4px; margin-left: 8px; cursor: pointer; }
