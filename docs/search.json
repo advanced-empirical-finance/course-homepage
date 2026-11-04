@@ -734,7 +734,7 @@
     "href": "simulation/getting-started.html",
     "title": "Getting started",
     "section": "",
-    "text": "The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on GitHub.\n\nRPython\n\n\ninstall.packages(\"pak\")\npak::pak(\"advanced-empirical-finance/aefsim/r\")\n\n\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"\n# or: pip install \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"",
+    "text": "The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on GitHub. Install in a terminal, in your project folder:\n\nRPython\n\n\nWith uvr, version 0.4.8 or later:\nuvr add advanced-empirical-finance/aefsim/r\n\n\nWith uv:\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"",
     "crumbs": [
       "Getting started"
     ]
@@ -744,7 +744,7 @@
     "href": "simulation/getting-started.html#install-the-client",
     "title": "Getting started",
     "section": "",
-    "text": "The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on GitHub.\n\nRPython\n\n\ninstall.packages(\"pak\")\npak::pak(\"advanced-empirical-finance/aefsim/r\")\n\n\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"\n# or: pip install \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"",
+    "text": "The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on GitHub. Install in a terminal, in your project folder:\n\nRPython\n\n\nWith uvr, version 0.4.8 or later:\nuvr add advanced-empirical-finance/aefsim/r\n\n\nWith uv:\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"",
     "crumbs": [
       "Getting started"
     ]
@@ -867,6 +867,16 @@
     "text": "Benchmarks\nThree automatic portfolios trade under the same rules and pay the same costs:\n\nNaive 1/N: equal weight in the S&P 500 stocks of the universe, rebalanced every day;\nBuy and hold: the same portfolio bought on the first day and never traded;\nMarket: the SPDR S&P 500 ETF (SPY), bought once.\n\nStatistics use daily returns net of costs. The Sharpe ratio is on returns in excess of SOFR, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.",
     "crumbs": [
       "The trading simulation"
+    ]
+  },
+  {
+    "objectID": "simulation/getting-started.html#save-your-token",
+    "href": "simulation/getting-started.html#save-your-token",
+    "title": "Getting started",
+    "section": "2. Save your token",
+    "text": "2. Save your token\nYour team receives one token, starting with aef_. Treat it like a password: it lets anyone trade for your team. Run set_token() once and paste the token when asked:\n\nRPython\n\n\naefsim::set_token()\n\n\nimport aefsim\naefsim.set_token()\n\n\n\nIt asks where to save the token: project for your project’s folder or home for your home folder. For a project folder, it offers to add the file to .gitignore, so the token never ends up in Git. From then on the client finds the token by itself, in every new session too. Don’t put the token in your code.",
+    "crumbs": [
+      "Getting started"
     ]
   }
 ]
