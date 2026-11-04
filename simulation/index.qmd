@@ -4,7 +4,7 @@ title: "The trading simulation"
 subtitle: "Advanced Empirical Finance, spring 2027"
 ---
 
-Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new **target weights** from R or Python. **You only decide and submit; everything else happens automatically:** the simulation trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort; the public [leaderboard](leaderboard.qmd) shows everyone under pseudonyms.
+Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new **target weights** from R or Python. **You only decide and submit; everything else happens automatically:** the simulation trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort, and its leaderboard tab shows every team under a pseudonym.
 
 ::: {.callout-note}
 ## What counts is how you decide, not what you earn

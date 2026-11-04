@@ -30,8 +30,6 @@ website:
             file: simulation/index.qmd
           - text: getting started
             file: simulation/getting-started.qmd
-          - text: leaderboard
-            file: simulation/leaderboard.qmd
           - text: team dashboard
             file: simulation/dashboard.qmd
       - text: more ressources
@@ -69,7 +67,6 @@ website:
        contents:
          - simulation/index.qmd
          - simulation/getting-started.qmd
-         - simulation/leaderboard.qmd
          - simulation/dashboard.qmd
      - title: more ressources
        style: docked
