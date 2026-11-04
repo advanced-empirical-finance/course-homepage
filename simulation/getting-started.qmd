@@ -7,7 +7,7 @@ title: "Getting started"
 
 The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on [GitHub](https://github.com/advanced-empirical-finance/aefsim).
 
-::: {.panel-tabset}
+::: {.panel-tabset group="language"}
 ## R
 ```r
 install.packages("pak")
@@ -24,12 +24,20 @@ uv add "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=py
 
 Your team receives one token, starting with `aef_`. Treat it like a password: it lets anyone trade for your team. Keep it out of your code and your Git repository by storing it in the environment variable `AEF_TOKEN`.
 
-- **R:** add `AEF_TOKEN=aef_...` to `~/.Renviron` (`usethis::edit_r_environ()` opens the file), then restart R.
-- **Python:** `export AEF_TOKEN=aef_...` in your shell, or put it in a `.env` file that you never commit.
+::: {.panel-tabset group="language"}
+## R
+
+Add `AEF_TOKEN=aef_...` to `~/.Renviron` (`usethis::edit_r_environ()` opens the file), then restart R.
+
+## Python
+
+Run `export AEF_TOKEN=aef_...` in your shell, or put the line `AEF_TOKEN=aef_...` in a `.env` file that you never commit.
+
+:::
 
 ## 3. Make a first submission
 
-::: {.panel-tabset}
+::: {.panel-tabset group="language"}
 ## R
 ```r
 library(aefsim)
@@ -63,12 +71,22 @@ The [starter notebooks](https://github.com/advanced-empirical-finance/aefsim/tre
 
 ## 4. The next morning
 
+::: {.panel-tabset group="language"}
+## R
 ```r
-get_submissions()     # status, trade date, rationale, weights
-get_portfolio()       # one row: portfolio value, cash and the positions
-get_performance()     # your daily portfolio value and statistics, next to the benchmarks
-get_leaderboard()     # every team under its pseudonym
+get_submissions()                         # status, trade date, rationale, weights
+get_portfolio() |> tidyr::unnest(positions)   # one row per position, with portfolio value and cash
+get_performance()                         # your daily portfolio value and statistics, next to the benchmarks
+get_leaderboard()                         # every team under its pseudonym
 ```
+## Python
+```python
+aefsim.get_submissions()                  # status, trade date, rationale, weights
+aefsim.get_portfolio().explode("positions").unnest("positions")   # one row per position
+aefsim.get_performance()                  # your daily portfolio value and statistics, next to the benchmarks
+aefsim.get_leaderboard()                  # every team under its pseudonym
+```
+:::
 
 Your team's [dashboard](dashboard.qmd) shows the same in charts.
 

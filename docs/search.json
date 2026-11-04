@@ -754,7 +754,7 @@
     "href": "simulation/getting-started.html#store-your-token",
     "title": "Getting started",
     "section": "2. Store your token",
-    "text": "2. Store your token\nYour team receives one token, starting with aef_. Treat it like a password: it lets anyone trade for your team. Keep it out of your code and your Git repository by storing it in the environment variable AEF_TOKEN.\n\nR: add AEF_TOKEN=aef_... to ~/.Renviron (usethis::edit_r_environ() opens the file), then restart R.\nPython: export AEF_TOKEN=aef_... in your shell, or put it in a .env file that you never commit.",
+    "text": "2. Store your token\nYour team receives one token, starting with aef_. Treat it like a password: it lets anyone trade for your team. Keep it out of your code and your Git repository by storing it in the environment variable AEF_TOKEN.\n\nRPython\n\n\nAdd AEF_TOKEN=aef_... to ~/.Renviron (usethis::edit_r_environ() opens the file), then restart R.\n\n\nRun export AEF_TOKEN=aef_... in your shell, or put the line AEF_TOKEN=aef_... in a .env file that you never commit.",
     "crumbs": [
       "Getting started"
     ]
@@ -774,7 +774,7 @@
     "href": "simulation/getting-started.html#the-next-morning",
     "title": "Getting started",
     "section": "4. The next morning",
-    "text": "4. The next morning\nget_submissions()     # status, trade date, rationale, weights\nget_portfolio()       # one row: portfolio value, cash and the positions\nget_performance()     # your daily portfolio value and statistics, next to the benchmarks\nget_leaderboard()     # every team under its pseudonym\nYour team’s dashboard shows the same in charts.",
+    "text": "4. The next morning\n\nRPython\n\n\nget_submissions()                         # status, trade date, rationale, weights\nget_portfolio() |&gt; tidyr::unnest(positions)   # one row per position, with portfolio value and cash\nget_performance()                         # your daily portfolio value and statistics, next to the benchmarks\nget_leaderboard()                         # every team under its pseudonym\n\n\naefsim.get_submissions()                  # status, trade date, rationale, weights\naefsim.get_portfolio().explode(\"positions\").unnest(\"positions\")   # one row per position\naefsim.get_performance()                  # your daily portfolio value and statistics, next to the benchmarks\naefsim.get_leaderboard()                  # every team under its pseudonym\n\n\n\nYour team’s dashboard shows the same in charts.",
     "crumbs": [
       "Getting started"
     ]
