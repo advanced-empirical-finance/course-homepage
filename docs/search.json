@@ -728,5 +728,185 @@
     "title": "Lecture plan",
     "section": "",
     "text": "Week\nDate\nTopic\nSlide deck\nExercise\nPreparation\n\n\n\n\n7\nMon Feb 9\nKick-off\n\n0\nComplete all technical prerequisites\n\n\n\nThu Feb 12\nAsset prices\n📊\n\n\n\n\n8\nMon Feb 16\nOptimal portfolio choice\n📊\n1\nChapter 3 in R for Data Science (data transformation), Sections 2.1 and 3.1 of Portfolio Choice Problems\n\n\n\nThu Feb 19\nOptimal portfolio choice\n📊\n2\nIntroduction and Section 1 of Risk Reduction in Large Portfolios\n\n\n9\nThu Feb 26\nMultifactor models\n📊\n3, 4\nChapters 7 and 8 of Empirical Asset Pricing: The Cross-Section of Stock Returns\n\n\n\nFri Feb 27\nMA 1 released\n\nQuarto\n\n\n\n10\nMon Mar 2\nReproducibility crisis\n📊\n5\nFT article: “The hidden ‘replication crisis’ of finance”\n\n\n\nThu Mar 5\nReproducibility crisis\n📊\n\n\n\n\n\nSat Mar 7\nMA 1 deadline\n\n\n\n\n\n11\nThu Mar 12\nML in Finance\n📊\n\n\n\n\n12\nMon Mar 16\nML in Finance\n📊\n6\nEmpirical asset pricing via Machine Learning\n\n\n\nThu Mar 19\nML in Finance\n📊\n7\n\n\n\n13\nThu Mar 26\nML in Finance\n📊\n8\n\n\n\n\n\nEaster break (W14)\n\n\n\n\n\n\nFri Apr 3\nMA 2 released\n\n\n\n\n\n15\nTue Apr 7\nML in Finance\n📊\n\n\n\n\n\nThu Apr 9\nVolatility estimation\n📊\n9\n\n\n\n\nSun Apr 12\nMA 2 deadline (8pm)\n\n\n\n\n\n16\nMon Apr 13\nVolatility estimation\n📊\n\n\n\n\n17\nThu Apr 23\nPortfolio optimization\n📊\n10\n\n\n\n18\nMon Apr 27\nParametric Portfolio Choice\n📊\n11\n\n\n\n\nThu Apr 30\nHigh-frequency econometrics\n📊\n\n\n\n\n\nFri May 1\nMA 3 released\n\n\n\n\n\n19\nThu May 7\nGuest lecture: Cilie Feldager Chief GenAI Model Evaluation Expert (Danske Bank)\n\n12\n\n\n\n\nSun May 10\nMA 3 deadline (8pm)\n\n\n\n\n\n20\nMon May 11\nHigh-frequency econometrics\n📊\n\n\n\n\n21\nTue May 19\nHigh-frequency econometrics\n📊\n\n\n\n\n\nThu May 21\nQ&A"
+  },
+  {
+    "objectID": "simulation/getting-started.html",
+    "href": "simulation/getting-started.html",
+    "title": "Getting started",
+    "section": "",
+    "text": "The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on GitHub.\n\nRPython\n\n\ninstall.packages(\"pak\")\npak::pak(\"advanced-empirical-finance/aefsim/r\")\n\n\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"\n# or: pip install \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "simulation/getting-started.html#install-the-client",
+    "href": "simulation/getting-started.html#install-the-client",
+    "title": "Getting started",
+    "section": "",
+    "text": "The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on GitHub.\n\nRPython\n\n\ninstall.packages(\"pak\")\npak::pak(\"advanced-empirical-finance/aefsim/r\")\n\n\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"\n# or: pip install \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\"",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "simulation/getting-started.html#store-your-token",
+    "href": "simulation/getting-started.html#store-your-token",
+    "title": "Getting started",
+    "section": "2. Store your token",
+    "text": "2. Store your token\nYour team receives one token, starting with aef_. Treat it like a password: it lets anyone trade for your team. Keep it out of your code and your Git repository by storing it in the environment variable AEF_TOKEN.\n\nR: add AEF_TOKEN=aef_... to ~/.Renviron (usethis::edit_r_environ() opens the file), then restart R.\nPython: export AEF_TOKEN=aef_... in your shell, or put it in a .env file that you never commit.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "simulation/getting-started.html#make-a-first-submission",
+    "href": "simulation/getting-started.html#make-a-first-submission",
+    "title": "Getting started",
+    "section": "3. Make a first submission",
+    "text": "3. Make a first submission\n\nRPython\n\n\nlibrary(aefsim)\nuniverse &lt;- get_universe()                   # the stocks you can buy after the latest close\nclose_date &lt;- max(universe$close_date)       # the close your decision is based on\nget_parameters()                             # the rules; applies_next marks the current ones\n\nweights &lt;- tibble::tibble(ticker = c(\"AAPL\", \"MSFT\", \"JNJ\"), weight = c(0.2, 0.2, 0.1))\nvalidate(weights, close_date = close_date)   # every check, nothing stored\nsubmit(weights, close_date = close_date,\n       rationale = \"Three large caps, half the book in cash while we learn the ropes.\")\n\n\nimport aefsim\nimport polars as pl\nuniverse = aefsim.get_universe()             # a polars DataFrame\nclose_date = universe[\"close_date\"].max()\naefsim.get_parameters()\n\nweights = pl.DataFrame({\"ticker\": [\"AAPL\", \"MSFT\", \"JNJ\"], \"weight\": [0.2, 0.2, 0.1]})\naefsim.validate(weights, close_date=close_date)\naefsim.submit(weights, close_date=close_date,\n              rationale=\"Three large caps, half the book in cash while we learn the ropes.\")\n\n\n\nThe check and the submission show the trade date: the next market open whose 09:00 New York deadline has not passed.\nThe starter notebooks take a full example from prices to submission: they download a year of prices with tidyfinance, pick the 20 least volatile S&P 500 stocks, then validate and submit.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "simulation/getting-started.html#the-next-morning",
+    "href": "simulation/getting-started.html#the-next-morning",
+    "title": "Getting started",
+    "section": "4. The next morning",
+    "text": "4. The next morning\nget_submissions()     # status, trade date, rationale, weights\nget_portfolio()       # one row: portfolio value, cash and the positions\nget_performance()     # your daily portfolio value and statistics, next to the benchmarks\nget_leaderboard()     # every team under its pseudonym\nYour team’s dashboard shows the same in charts.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "simulation/getting-started.html#when-something-goes-wrong",
+    "href": "simulation/getting-started.html#when-something-goes-wrong",
+    "title": "Getting started",
+    "section": "When something goes wrong",
+    "text": "When something goes wrong\nEvery message says what went wrong and what to do, and ends with a code in brackets. A rejected submission lists every problem at once. The most common ones:\n\n\n\n\n\n\n\nCode\nMeaning\n\n\n\n\nclose_date_in_future\nclose_date is later than the close before your trade. The message names the date to use.\n\n\nunknown_ticker\nNot a stock in the simulation. It uses Yahoo tickers, for example BRK-B.\n\n\nineligible_ticker\nClosed below $5. You may hold or reduce such a position, but not add to it.\n\n\nshort_not_allowed\nA negative weight before shorting opens on 5 April.\n\n\nleverage_exceeded, net_exposure_exceeded\nThe sum of absolute weights, or of weights, is above the limit.\n\n\ntoo_many_positions\nMore than 50 non-zero weights.\n\n\nrationale_missing\nEvery submission needs a rationale.\n\n\nmissing_token, unknown_token\nNo token was found, or the server does not know it: check AEF_TOKEN.\n\n\n\nThe API page has the complete list.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "simulation/leaderboard.html",
+    "href": "simulation/leaderboard.html",
+    "title": "Leaderboard",
+    "section": "",
+    "text": "source = new URLSearchParams(location.search).get(\"data\") ?? \"https://eumel.tail81c88a.ts.net/aef-shadow/public/leaderboard.json\"\nraw = fetch(source).then(r =&gt; r.ok ? r.json() : null).catch(() =&gt; null)\nready = raw != null && raw.teams.length &gt; 0\nparse = d =&gt; new Date(d + \"T00:00:00Z\")\nseries = ready ? raw.series.map(d =&gt; ({...d, date: parse(d.date)})) : []\nband = ready ? raw.band.map(d =&gt; ({...d, date: parse(d.date)})) : []\nrules = ready ? raw.rules.map(d =&gt; ({...d, date: parse(d.date)})) : []\nteams = ready ? raw.teams.filter(d =&gt; !d.is_bot) : []\nbots = ready ? raw.teams.filter(d =&gt; d.is_bot) : []\nbot = name =&gt; (ready && raw.teams.find(d =&gt; d.pseudonym === name)) || {}\npct = (x, d = 1) =&gt; x == null ? \"–\" : (x &lt; 0 ? \"−\" : \"+\") + Math.abs(100 * x).toFixed(d) + \" %\"\npctu = (x, d = 1) =&gt; x == null ? \"–\" : (x &lt; 0 ? \"−\" : \"\") + Math.abs(100 * x).toFixed(d) + \" %\"\nnum = (x, d = 2) =&gt; x == null ? \"–\" : (x &lt; 0 ? \"−\" : \"\") + Math.abs(x).toFixed(d)\nday = d =&gt; d.toLocaleDateString(\"en-GB\", {day: \"numeric\", month: \"long\", year: \"numeric\", timeZone: \"UTC\"})\nmedian = v =&gt; { const s = [...v].sort((a, b) =&gt; a - b); const m = s.length &gt;&gt; 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }\nC = ({red: \"#901A1E\", ink: \"#141416\", ash: \"#8A8A8E\", hair: \"#E6E3DF\", slate: \"#4A6B8C\", naive: \"#A9A7A3\", bar: \"#D8D5D0\", faint: \"#E2DFDA\"})\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n{\n  if (raw == null) return html`&lt;div class=\"demo-banner\"&gt;The leaderboard cannot be loaded right now. Please try again later.&lt;/div&gt;`;\n  const notes = [];\n  if (raw.demo) notes.push(html`&lt;div class=\"demo-banner\"&gt;&lt;b&gt;Demo data.&lt;/b&gt; 32 hypothetical teams (70 students) in a simulated market. The real leaderboard starts after the first trade on 8 February 2027.&lt;/div&gt;`);\n  if (raw.label) notes.push(html`&lt;div class=\"demo-banner\"&gt;&lt;b&gt;${raw.label}.&lt;/b&gt; These are the course team's test portfolios, trading real prices to check the simulation before the semester. The leaderboard for the course starts after the first trade on 8 February 2027.&lt;/div&gt;`);\n  if (!ready) notes.push(html`&lt;div class=\"demo-banner\"&gt;The leaderboard starts after the first trading day, ${day(parse(raw.semester.from))}.&lt;/div&gt;`);\n  return html`${notes}`;\n}\n\n\n\n\n\n\n\n!ready ? html`` : html`&lt;p class=\"text-muted\" style=\"margin-top:-6px\"&gt;As of the close on ${day(parse(raw.as_of))} · ${teams.length} teams · net of costs · the semester runs ${day(parse(raw.semester.from))} to ${day(parse(raw.semester.to))}&lt;/p&gt;\n&lt;div class=\"boxes\"&gt;\n  &lt;div class=\"box\"&gt;&lt;div class=\"label\"&gt;Cohort median&lt;/div&gt;&lt;div class=\"value\"&gt;${pct(median(teams.map(d =&gt; d.return)))}&lt;/div&gt;&lt;div class=\"sub\"&gt;cumulative return&lt;/div&gt;&lt;/div&gt;\n  &lt;div class=\"box\"&gt;&lt;div class=\"label\"&gt;Naive 1/N&lt;/div&gt;&lt;div class=\"value\"&gt;${pct(bot(\"Naive 1/N\").return)}&lt;/div&gt;&lt;div class=\"sub\"&gt;equal weight, S&amp;P 500&lt;/div&gt;&lt;/div&gt;\n  &lt;div class=\"box\"&gt;&lt;div class=\"label\"&gt;Market&lt;/div&gt;&lt;div class=\"value\"&gt;${pct(bot(\"Market\").return)}&lt;/div&gt;&lt;div class=\"sub\"&gt;SPY, bought once&lt;/div&gt;&lt;/div&gt;\n  &lt;div class=\"box\"&gt;&lt;div class=\"label\"&gt;Ahead of 1/N&lt;/div&gt;&lt;div class=\"value\"&gt;${teams.filter(d =&gt; d.return &gt; bot(\"Naive 1/N\").return).length} / ${teams.length}&lt;/div&gt;&lt;div class=\"sub\"&gt;teams&lt;/div&gt;&lt;/div&gt;\n&lt;/div&gt;`\n\n\n\n\n\n\n\nviewof highlight = ready ? Inputs.select([\"(none)\", ...teams.map(d =&gt; d.pseudonym).sort()], {label: \"Find your team\"}) : Inputs.input(\"(none)\")\n\n\n\n\n\n\n\n{\n  if (!ready) return html``;\n  const mine = series.filter(d =&gt; d.pseudonym === highlight);\n  const path = name =&gt; series.filter(d =&gt; d.pseudonym === name);\n  const chart = Plot.plot({\n    width: Math.max(300, width - 40), height: width &lt; 600 ? 300 : 420, marginLeft: 44, marginRight: 8, style: {fontFamily: \"Inter, system-ui, sans-serif\", fontSize: \"12px\", color: C.ink},\n    x: {type: \"utc\", label: null, grid: false},\n    y: {label: \"Value of $1 at the start\", grid: true, tickFormat: \".2f\"},\n    marks: [\n      Plot.lineY(series.filter(d =&gt; !d.is_bot), {x: \"date\", y: \"index\", z: \"pseudonym\", stroke: C.faint, strokeWidth: 1}),\n      Plot.areaY(band, {x: \"date\", y1: \"q25\", y2: \"q75\", fill: C.slate, fillOpacity: 0.13}),\n      Plot.lineY(band, {x: \"date\", y: \"median\", stroke: C.slate, strokeWidth: 1.6, strokeDasharray: \"4 3\"}),\n      Plot.lineY(path(\"Naive 1/N\"), {x: \"date\", y: \"index\", stroke: C.naive, strokeWidth: 1.6}),\n      Plot.lineY(path(\"Market\"), {x: \"date\", y: \"index\", stroke: C.ink, strokeWidth: 1.4}),\n      Plot.lineY(mine, {x: \"date\", y: \"index\", stroke: C.red, strokeWidth: 2.6}),\n      Plot.ruleX(rules, {x: \"date\", stroke: C.ash, strokeDasharray: \"2 3\"}),\n      Plot.text(rules.filter((d, i) =&gt; i % 2 === 0), {x: \"date\", text: \"label\", frameAnchor: \"top\", dx: 4, dy: 4, textAnchor: \"start\", fill: C.ash, fontSize: 11}),\n      Plot.text(rules.filter((d, i) =&gt; i % 2 === 1), {x: \"date\", text: \"label\", frameAnchor: \"top\", dx: 4, dy: 20, textAnchor: \"start\", fill: C.ash, fontSize: 11}),\n      Plot.tip(series.filter(d =&gt; !d.is_bot), Plot.pointer({x: \"date\", y: \"index\", title: d =&gt; `${d.pseudonym}\\n${pct(d.index - 1)}`})),\n      Plot.ruleY([1], {stroke: C.hair})\n    ]\n  });\n  const key = (color, label, dash) =&gt; `&lt;span style=\"margin-right:14px\"&gt;&lt;i style=\"display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;background:${dash ? `repeating-linear-gradient(90deg,${color} 0 4px,transparent 4px 7px)` : color}\"&gt;&lt;/i&gt;${label}&lt;/span&gt;`;\n  return html`&lt;div class=\"panel\"&gt;&lt;h3&gt;Cumulative return&lt;/h3&gt;\n    &lt;div class=\"hint\"&gt;${key(C.faint, \"each team\")}${key(C.slate, \"cohort median and 25–75 %\", true)}${key(C.naive, \"naive 1/N\")}${key(C.ink, \"market\")}${highlight !== \"(none)\" ? key(C.red, highlight) : \"\"}&lt;/div&gt;\n    ${chart}&lt;/div&gt;`;\n}\n\n\n\n\n\n\n\nviewof sortBy = ready ? Inputs.radio(new Map([[\"Sharpe ratio\", \"sharpe\"], [\"Return\", \"return\"], [\"Max drawdown\", \"max_drawdown\"]]), {value: \"sharpe\", label: \"Sort by\"}) : Inputs.input(\"sharpe\")\n\n\n\n\n\n\n\n{\n  if (!ready) return html``;\n  const rows = [...raw.teams].sort((a, b) =&gt; b[sortBy] - a[sortBy]);\n  return html`&lt;div class=\"panel\"&gt;&lt;h3&gt;All teams&lt;/h3&gt;\n  &lt;div class=\"hint\"&gt;Since the first trade · annualised volatility and Sharpe ratio on returns in excess of SOFR, with its standard error · benchmarks in italics&lt;/div&gt;\n  &lt;div class=\"lb-wrap\"&gt;&lt;table class=\"lb\"&gt;\n    &lt;thead&gt;&lt;tr&gt;&lt;th&gt;#&lt;/th&gt;&lt;th&gt;Team&lt;/th&gt;&lt;th&gt;Return&lt;/th&gt;&lt;th&gt;Volatility&lt;/th&gt;&lt;th&gt;Sharpe&lt;/th&gt;&lt;th&gt;SE&lt;/th&gt;&lt;th&gt;Max drawdown&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;\n    &lt;tbody&gt;${rows.map(d =&gt; html`&lt;tr class=\"${d.is_bot ? \"bot\" : d.pseudonym === highlight ? \"mark\" : \"\"}\"&gt;\n      &lt;td&gt;${d.rank ?? \"\"}&lt;/td&gt;&lt;td&gt;${d.pseudonym}&lt;/td&gt;&lt;td&gt;${pct(d.return)}&lt;/td&gt;&lt;td&gt;${pctu(d.vol)}&lt;/td&gt;\n      &lt;td&gt;${num(d.sharpe)}&lt;/td&gt;&lt;td&gt;(${num(d.sharpe_se)})&lt;/td&gt;&lt;td&gt;${pct(d.max_drawdown)}&lt;/td&gt;&lt;/tr&gt;`)}&lt;/tbody&gt;\n  &lt;/table&gt;&lt;/div&gt;&lt;/div&gt;`;\n}\n\n\n\n\n\n\n\n{\n  if (!ready) return html``;\n  const mark = teams.find(d =&gt; d.pseudonym === highlight);\n  const chart = Plot.plot({\n    width: Math.max(300, width - 40), height: 220, marginLeft: 30, style: {fontFamily: \"Inter, system-ui, sans-serif\", fontSize: \"12px\"},\n    x: {label: \"Cumulative return\", tickFormat: d =&gt; Math.abs(d) &lt; 1e-9 ? \"0 %\" : pct(d, 0), ticks: width &lt; 600 ? 5 : 10}, y: {label: \"Teams\", grid: true},\n    marks: [\n      Plot.rectY(teams, Plot.binX({y: \"count\"}, {x: \"return\", fill: d =&gt; d === mark ? C.red : C.bar, thresholds: 12, inset: 2})),\n      Plot.ruleX([bot(\"Naive 1/N\").return], {stroke: C.naive, strokeWidth: 2}),\n      Plot.ruleX([bot(\"Market\").return], {stroke: C.ink, strokeWidth: 2}),\n      Plot.text([bot(\"Naive 1/N\").return], {x: d =&gt; d, text: () =&gt; \"naive\", frameAnchor: \"top\", dy: -4, fill: C.ash, fontSize: 11}),\n      Plot.text([bot(\"Market\").return], {x: d =&gt; d, text: () =&gt; \"market\", frameAnchor: \"top\", dy: 10, fill: C.ink, fontSize: 11}),\n      Plot.ruleY([0], {stroke: C.hair})\n    ]\n  });\n  return html`&lt;div class=\"panel\"&gt;&lt;h3&gt;Where the cohort sits&lt;/h3&gt;&lt;div class=\"hint\"&gt;Teams by cumulative return${mark ? `, ${highlight} in red` : \"\"}&lt;/div&gt;${chart}&lt;/div&gt;`;\n}",
+    "crumbs": [
+      "Leaderboard"
+    ]
+  },
+  {
+    "objectID": "simulation/dashboard.html",
+    "href": "simulation/dashboard.html",
+    "title": "Team dashboard",
+    "section": "",
+    "text": "Your team’s dashboard shows your portfolio next to the benchmarks and the cohort: how your value has developed, what you hold, and every submission with its rationale. Sign in with your team’s token; only your team sees it.\n\n\n\n\n\n\nNoteTest run\n\n\n\nUntil the semester starts, the dashboard shows the course team’s test run, and only the course team can sign in. Your team’s token arrives before the dry run on 25 January 2027.\n\n\n\n  Open the dashboard\n  or show it on this page",
+    "crumbs": [
+      "Team dashboard"
+    ]
+  },
+  {
+    "objectID": "simulation/api.html",
+    "href": "simulation/api.html",
+    "title": "The API",
+    "section": "",
+    "text": "The client packages wrap a small JSON API. You only need it directly if you want to write your own client.\nEvery request except /health and /public/ needs your team token as a header: Authorization: Bearer aef_....",
+    "crumbs": [
+      "The API"
+    ]
+  },
+  {
+    "objectID": "simulation/api.html#responses",
+    "href": "simulation/api.html#responses",
+    "title": "The API",
+    "section": "Responses",
+    "text": "Responses\nEvery response has the same three fields:\n{\"close_date\": \"2027-02-09\", \"parameter_set_id\": \"P1-baseline\", \"data\": ...}\n\nclose_date is the close the data reflects.\nparameter_set_id is the rule set for the next trade.\ndata holds the result.\n\nErrors come as {\"error\": {\"code\": ..., \"message\": ...}} with an HTTP status code. The message says what went wrong and what to do.",
+    "crumbs": [
+      "The API"
+    ]
+  },
+  {
+    "objectID": "simulation/api.html#endpoints",
+    "href": "simulation/api.html#endpoints",
+    "title": "The API",
+    "section": "Endpoints",
+    "text": "Endpoints\n\n\n\n\n\n\n\n\nMethod and path\nClient function\nWhat\n\n\n\n\nGET /health\n\nLiveness check, no token needed\n\n\nGET /calendar\nget_calendar()\nTrading days and their deadlines\n\n\nGET /universe?close_date=\nget_universe()\nThe stocks you can buy after that close, with sp500\n\n\nGET /parameters\nget_parameters()\nAll rule sets, and the next trading day\n\n\nPOST /validate\nvalidate()\nCheck a submission without storing it\n\n\nPOST /submit\nsubmit()\nSubmit target weights (201 accepted, 422 rejected; both are logged)\n\n\nDELETE /submit/{id}\ncancel()\nWithdraw a submission before its deadline\n\n\nGET /submissions\nget_submissions()\nYour submissions, newest first\n\n\nGET /portfolio\nget_portfolio()\nPortfolio value, cash and positions at the latest close\n\n\nGET /performance\nget_performance()\nYour daily portfolio value and statistics, with the benchmarks\n\n\nGET /leaderboard\nget_leaderboard()\nEveryone under pseudonyms\n\n\nGET /benchmarks\nget_benchmarks()\nNaive 1/N, buy and hold, SPY\n\n\nGET /public/leaderboard.json\n\nThe public leaderboard’s data, no token needed\n\n\n\nA submission body:\n{\"close_date\": \"2027-02-09\",\n \"weights\": {\"AAPL\": 0.30, \"MSFT\": 0.20},\n \"rationale\": \"12-month momentum, top 30, equal weight.\"}\nIt trades at the next market open whose deadline (09:00 New York time) has not passed when it arrives. close_date may be any close up to the one before that open.",
+    "crumbs": [
+      "The API"
+    ]
+  },
+  {
+    "objectID": "simulation/api.html#error-codes",
+    "href": "simulation/api.html#error-codes",
+    "title": "The API",
+    "section": "Error codes",
+    "text": "Error codes\nRule checks on a submission (validate() and submit()):\n\n\n\n\n\n\n\nCode\nMeaning\n\n\n\n\nmalformed_weights\nWeights are not an object of finite numbers keyed by ticker\n\n\nduplicate_ticker\nA ticker appears more than once\n\n\ninvalid_close_date\nclose_date is missing or not a date (YYYY-MM-DD)\n\n\nclose_date_in_future\nclose_date is later than the close before the trade\n\n\nsimulation_ended\nThe last trading day’s deadline has passed\n\n\nunknown_ticker\nNot a stock in the simulation\n\n\nineligible_ticker\nNot in the universe that day (closed below $5), and the weight is not a hold or reduction of a current position\n\n\nshort_not_allowed\nA negative weight while shorting is off\n\n\nleverage_exceeded\nSum of absolute weights above the limit\n\n\nnet_exposure_exceeded\nSum of weights above the limit\n\n\nmax_weight_exceeded\nA single weight above the limit (no such limit in 2027)\n\n\ntoo_many_positions\nMore non-zero weights than allowed\n\n\nrationale_missing, rationale_too_long\nA submission needs a rationale of up to 10,000 characters\n\n\n\nCancelling a submission (cancel()):\n\n\n\nCode\nMeaning\n\n\n\n\nunknown_submission\nYour team has no submission with that id\n\n\nnot_cancellable\nAlready cancelled, or rejected\n\n\ncancel_deadline_passed\nIts trade’s deadline has passed\n\n\n\nRequests the API refuses before any rule check:\n\n\n\n\n\n\n\n\nCode\nStatus\nMeaning\n\n\n\n\ninvalid_json\n400\nThe body is not valid JSON\n\n\ninvalid_close_date, invalid_date\n400\nA date in the query is not YYYY-MM-DD\n\n\nmissing_token\n401\nNo Authorization: Bearer header\n\n\nunknown_token\n401\nThe server does not know the token\n\n\nnot_found\n404\nNo such endpoint\n\n\nno_universe\n422\nNo universe for that close_date yet\n\n\nnot_ready\n503\nThe data for this request is not loaded yet; try again later\n\n\ninternal_error\n500\nSomething broke on the server; the message gives a time to quote\n\n\n\nThe client packages add their own codes for problems they catch before sending anything, or when the server cannot be reached: connection_failed, timeout, server_unavailable, http_error and invalid_submission_id.",
+    "crumbs": [
+      "The API"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html",
+    "href": "simulation/index.html",
+    "title": "The trading simulation",
+    "section": "",
+    "text": "Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new target weights from R or Python. The simulation trades them at the next US market open, charges transaction costs, and values the portfolio at every close. Your team’s dashboard shows how you are doing against simple benchmarks and the cohort; the public leaderboard shows everyone under pseudonyms.",
+    "crumbs": [
+      "The trading simulation"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#teams-and-timeline",
+    "href": "simulation/index.html#teams-and-timeline",
+    "title": "The trading simulation",
+    "section": "Teams and timeline",
+    "text": "Teams and timeline\n\nWork alone or in a team of up to three. Each team gets one token and starts with $1,000,000 in cash.\nDry run: 25 January to 5 February 2027, to try the tools; results are reset afterwards.\nTrading: 8 February to 14 May 2027, every NYSE trading day.\n\nThe rules tighten during the semester. Every response from the simulation tells you which rule set applies to the next trade, so a change never catches you by surprise.\n\n\n\n\n\n\n\n\nFrom\nRule set\nWhat changes\n\n\n\n\n8 February\nP1\nLong only, no transaction costs\n\n\n1 March\nP2\nEvery trade costs 10 bps of its value\n\n\n5 April\nP3\nShort selling allowed: gross exposure up to 160 %, net up to 100 %, borrow fee 50 bps a year\n\n\n\nThroughout: at most 50 positions, no limit on a single weight, and gross exposure up to 100 % until shorting opens.",
+    "crumbs": [
+      "The trading simulation"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#what-you-can-trade",
+    "href": "simulation/index.html#what-you-can-trade",
+    "title": "The trading simulation",
+    "section": "What you can trade",
+    "text": "What you can trade\nThe universe is CRSP’s common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; get_universe() lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.\nPrices are not part of the simulation’s API. Download them yourself, for example with tidyfinance: it reads the same Yahoo Finance data the simulation trades at.",
+    "crumbs": [
+      "The trading simulation"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#how-a-day-works",
+    "href": "simulation/index.html#how-a-day-works",
+    "title": "The trading simulation",
+    "section": "How a day works",
+    "text": "How a day works\n\nDecide after a US close, with data up to that close. That day is your close_date.\nSubmit whenever you like. Your weights trade at the next market open whose deadline has not passed: 09:00 New York time on the trading day. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. You may submit as often as you like; the last accepted submission before a deadline is the one that trades. cancel() withdraws a submission until then.\nTrade at that day’s opening price. If you submit nothing, your portfolio is left as it is: no trades and no costs.\nMark to market at the close. Results appear the next morning, Copenhagen time.\n\nA submission is a set of target weights: fractions of your portfolio’s value, by ticker. Tickers you leave out are sold, and whatever the weights don’t use stays in cash. The simulation trades fractional shares so that after costs your weights are exactly the targets. If a submission breaks a rule, it is rejected as a whole with error codes saying why, and it still appears in your log. validate() runs the same checks without submitting.",
+    "crumbs": [
+      "The trading simulation"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#money-costs-and-corporate-actions",
+    "href": "simulation/index.html#money-costs-and-corporate-actions",
+    "title": "The trading simulation",
+    "section": "Money, costs and corporate actions",
+    "text": "Money, costs and corporate actions\n\nCash earns SOFR, the US overnight rate, day by day (act/360). Negative cash, which can arise once shorting opens, pays the same rate.\nTransaction costs are a fixed fraction of the value traded, in both directions.\nShort positions pay the borrow fee on their market value.\nDividends are paid into cash on the ex-date. Short positions pay them.\nStock splits change your share count, not your value.\nDelisted stocks are sold at their last price.\nA stock with no opening price that day cannot trade, so you keep what you held.",
+    "crumbs": [
+      "The trading simulation"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#benchmarks",
+    "href": "simulation/index.html#benchmarks",
+    "title": "The trading simulation",
+    "section": "Benchmarks",
+    "text": "Benchmarks\nThree automatic portfolios trade under the same rules and pay the same costs:\n\nNaive 1/N: equal weight in the S&P 500 stocks of the universe, rebalanced every day;\nBuy and hold: the same portfolio bought on the first day and never traded;\nMarket: the SPDR S&P 500 ETF (SPY), bought once.\n\nStatistics use daily returns net of costs. The Sharpe ratio is on returns in excess of SOFR, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.",
+    "crumbs": [
+      "The trading simulation"
+    ]
   }
 ]

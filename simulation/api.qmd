@@ -1,0 +1,97 @@
+---
+css: simulation.css
+title: "The API"
+---
+
+The client packages wrap a small JSON API. You only need it directly if you want to write your own client.
+
+- **Base address:** `https://eumel.tail81c88a.ts.net/aef`
+- **Interactive documentation:** [`/__docs__/`](https://eumel.tail81c88a.ts.net/aef/__docs__/)
+- **OpenAPI document:** [`/openapi.json`](https://eumel.tail81c88a.ts.net/aef/openapi.json)
+
+Every request except `/health` and `/public/` needs your team token as a header: `Authorization: Bearer aef_...`.
+
+## Responses
+
+Every response has the same three fields:
+
+```json
+{"close_date": "2027-02-09", "parameter_set_id": "P1-baseline", "data": ...}
+```
+
+- `close_date` is the close the data reflects.
+- `parameter_set_id` is the rule set for the next trade.
+- `data` holds the result.
+
+Errors come as `{"error": {"code": ..., "message": ...}}` with an HTTP status code. The message says what went wrong and what to do.
+
+## Endpoints
+
+| Method and path | Client function | What |
+|---|---|---|
+| `GET /health` | | Liveness check, no token needed |
+| `GET /calendar` | `get_calendar()` | Trading days and their deadlines |
+| `GET /universe?close_date=` | `get_universe()` | The stocks you can buy after that close, with `sp500` |
+| `GET /parameters` | `get_parameters()` | All rule sets, and the next trading day |
+| `POST /validate` | `validate()` | Check a submission without storing it |
+| `POST /submit` | `submit()` | Submit target weights (201 accepted, 422 rejected; both are logged) |
+| `DELETE /submit/{id}` | `cancel()` | Withdraw a submission before its deadline |
+| `GET /submissions` | `get_submissions()` | Your submissions, newest first |
+| `GET /portfolio` | `get_portfolio()` | Portfolio value, cash and positions at the latest close |
+| `GET /performance` | `get_performance()` | Your daily portfolio value and statistics, with the benchmarks |
+| `GET /leaderboard` | `get_leaderboard()` | Everyone under pseudonyms |
+| `GET /benchmarks` | `get_benchmarks()` | Naive 1/N, buy and hold, SPY |
+| `GET /public/leaderboard.json` | | The public leaderboard's data, no token needed |
+
+A submission body:
+
+```json
+{"close_date": "2027-02-09",
+ "weights": {"AAPL": 0.30, "MSFT": 0.20},
+ "rationale": "12-month momentum, top 30, equal weight."}
+```
+
+It trades at the next market open whose deadline (09:00 New York time) has not passed when it arrives. `close_date` may be any close up to the one before that open.
+
+## Error codes
+
+Rule checks on a submission (`validate()` and `submit()`):
+
+| Code | Meaning |
+|---|---|
+| `malformed_weights` | Weights are not an object of finite numbers keyed by ticker |
+| `duplicate_ticker` | A ticker appears more than once |
+| `invalid_close_date` | `close_date` is missing or not a date (`YYYY-MM-DD`) |
+| `close_date_in_future` | `close_date` is later than the close before the trade |
+| `simulation_ended` | The last trading day's deadline has passed |
+| `unknown_ticker` | Not a stock in the simulation |
+| `ineligible_ticker` | Not in the universe that day (closed below $5), and the weight is not a hold or reduction of a current position |
+| `short_not_allowed` | A negative weight while shorting is off |
+| `leverage_exceeded` | Sum of absolute weights above the limit |
+| `net_exposure_exceeded` | Sum of weights above the limit |
+| `max_weight_exceeded` | A single weight above the limit (no such limit in 2027) |
+| `too_many_positions` | More non-zero weights than allowed |
+| `rationale_missing`, `rationale_too_long` | A submission needs a rationale of up to 10,000 characters |
+
+Cancelling a submission (`cancel()`):
+
+| Code | Meaning |
+|---|---|
+| `unknown_submission` | Your team has no submission with that id |
+| `not_cancellable` | Already cancelled, or rejected |
+| `cancel_deadline_passed` | Its trade's deadline has passed |
+
+Requests the API refuses before any rule check:
+
+| Code | Status | Meaning |
+|---|---|---|
+| `invalid_json` | 400 | The body is not valid JSON |
+| `invalid_close_date`, `invalid_date` | 400 | A date in the query is not `YYYY-MM-DD` |
+| `missing_token` | 401 | No `Authorization: Bearer` header |
+| `unknown_token` | 401 | The server does not know the token |
+| `not_found` | 404 | No such endpoint |
+| `no_universe` | 422 | No universe for that `close_date` yet |
+| `not_ready` | 503 | The data for this request is not loaded yet; try again later |
+| `internal_error` | 500 | Something broke on the server; the message gives a time to quote |
+
+The client packages add their own codes for problems they catch before sending anything, or when the server cannot be reached: `connection_failed`, `timeout`, `server_unavailable`, `http_error` and `invalid_submission_id`.

@@ -1,0 +1,90 @@
+---
+css: simulation.css
+title: "Getting started"
+---
+
+## 1. Install the client
+
+The client packages are the same in R and Python: same functions, same column names. Source and starter notebooks are on [GitHub](https://github.com/advanced-empirical-finance/aefsim).
+
+::: {.panel-tabset}
+## R
+```r
+install.packages("pak")
+pak::pak("advanced-empirical-finance/aefsim/r")
+```
+## Python
+```sh
+uv add "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"
+# or: pip install "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"
+```
+:::
+
+## 2. Store your token
+
+Your team receives one token, starting with `aef_`. Treat it like a password: it lets anyone trade for your team. Keep it out of your code and your Git repository by storing it in the environment variable `AEF_TOKEN`.
+
+- **R:** add `AEF_TOKEN=aef_...` to `~/.Renviron` (`usethis::edit_r_environ()` opens the file), then restart R.
+- **Python:** `export AEF_TOKEN=aef_...` in your shell, or put it in a `.env` file that you never commit.
+
+## 3. Make a first submission
+
+::: {.panel-tabset}
+## R
+```r
+library(aefsim)
+universe <- get_universe()                   # the stocks you can buy after the latest close
+close_date <- max(universe$close_date)       # the close your decision is based on
+get_parameters()                             # the rules; applies_next marks the current ones
+
+weights <- tibble::tibble(ticker = c("AAPL", "MSFT", "JNJ"), weight = c(0.2, 0.2, 0.1))
+validate(weights, close_date = close_date)   # every check, nothing stored
+submit(weights, close_date = close_date,
+       rationale = "Three large caps, half the book in cash while we learn the ropes.")
+```
+## Python
+```python
+import aefsim
+import polars as pl
+universe = aefsim.get_universe()             # a polars DataFrame
+close_date = universe["close_date"].max()
+aefsim.get_parameters()
+
+weights = pl.DataFrame({"ticker": ["AAPL", "MSFT", "JNJ"], "weight": [0.2, 0.2, 0.1]})
+aefsim.validate(weights, close_date=close_date)
+aefsim.submit(weights, close_date=close_date,
+              rationale="Three large caps, half the book in cash while we learn the ropes.")
+```
+:::
+
+The check and the submission show the trade date: the next market open whose 09:00 New York deadline has not passed.
+
+The [starter notebooks](https://github.com/advanced-empirical-finance/aefsim/tree/main/notebooks) take a full example from prices to submission: they download a year of prices with tidyfinance, pick the 20 least volatile S&P 500 stocks, then validate and submit.
+
+## 4. The next morning
+
+```r
+get_submissions()     # status, trade date, rationale, weights
+get_portfolio()       # one row: portfolio value, cash and the positions
+get_performance()     # your daily portfolio value and statistics, next to the benchmarks
+get_leaderboard()     # every team under its pseudonym
+```
+
+Your team's [dashboard](dashboard.qmd) shows the same in charts.
+
+## When something goes wrong
+
+Every message says what went wrong and what to do, and ends with a code in brackets. A rejected submission lists every problem at once. The most common ones:
+
+| Code | Meaning |
+|---|---|
+| `close_date_in_future` | `close_date` is later than the close before your trade. The message names the date to use. |
+| `unknown_ticker` | Not a stock in the simulation. It uses Yahoo tickers, for example `BRK-B`. |
+| `ineligible_ticker` | Closed below $5. You may hold or reduce such a position, but not add to it. |
+| `short_not_allowed` | A negative weight before shorting opens on 5 April. |
+| `leverage_exceeded`, `net_exposure_exceeded` | The sum of absolute weights, or of weights, is above the limit. |
+| `too_many_positions` | More than 50 non-zero weights. |
+| `rationale_missing` | Every submission needs a rationale. |
+| `missing_token`, `unknown_token` | No token was found, or the server does not know it: check `AEF_TOKEN`. |
+
+The [API page](api.qmd) has the complete list.

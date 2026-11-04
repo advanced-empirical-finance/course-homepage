@@ -1,0 +1,63 @@
+---
+css: simulation.css
+title: "The trading simulation"
+subtitle: "Advanced Empirical Finance, spring 2027"
+---
+
+Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new **target weights** from R or Python. The simulation trades them at the next US market open, charges transaction costs, and values the portfolio at every close. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort; the public [leaderboard](leaderboard.qmd) shows everyone under pseudonyms.
+
+::: {.callout-note}
+## What counts is how you decide, not what you earn
+Every submission carries a **rationale**: what you expect and why. Together they form your decision log. The course assesses that log, how you manage risk as the rules change, and your final reflection, not your return. A good process with bad luck beats a lucky gamble.
+:::
+
+## Teams and timeline
+
+- Work alone or in a team of up to three. Each team gets one **token** and starts with **$1,000,000** in cash.
+- **Dry run:** 25 January to 5 February 2027, to try the tools; results are reset afterwards.
+- **Trading:** 8 February to 14 May 2027, every NYSE trading day.
+
+The rules tighten during the semester. Every response from the simulation tells you which rule set applies to the next trade, so a change never catches you by surprise.
+
+| From | Rule set | What changes |
+|---|---|---|
+| 8 February | P1 | Long only, no transaction costs |
+| 1 March | P2 | Every trade costs 10 bps of its value |
+| 5 April | P3 | Short selling allowed: gross exposure up to 160 %, net up to 100 %, borrow fee 50 bps a year |
+
+Throughout: at most 50 positions, no limit on a single weight, and gross exposure up to 100 % until shorting opens.
+
+## What you can trade
+
+The universe is CRSP's common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; `get_universe()` lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.
+
+Prices are not part of the simulation's API. Download them yourself, for example with [tidyfinance](https://www.tidy-finance.org): it reads the same Yahoo Finance data the simulation trades at.
+
+## How a day works
+
+1. **Decide** after a US close, with data up to that close. That day is your `close_date`.
+2. **Submit** whenever you like. Your weights trade at the next market open whose deadline has not passed: **09:00 New York time on the trading day**. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. You may submit as often as you like; the last accepted submission before a deadline is the one that trades. `cancel()` withdraws a submission until then.
+3. **Trade** at that day's opening price. If you submit nothing, your portfolio is left as it is: no trades and no costs.
+4. **Mark to market** at the close. Results appear the next morning, Copenhagen time.
+
+A submission is a set of target weights: fractions of your portfolio's value, by ticker. Tickers you leave out are sold, and whatever the weights don't use stays in cash. The simulation trades fractional shares so that after costs your weights are exactly the targets. If a submission breaks a rule, it is rejected as a whole with error codes saying why, and it still appears in your log. `validate()` runs the same checks without submitting.
+
+## Money, costs and corporate actions
+
+- **Cash** earns SOFR, the US overnight rate, day by day (act/360). Negative cash, which can arise once shorting opens, pays the same rate.
+- **Transaction costs** are a fixed fraction of the value traded, in both directions.
+- **Short positions** pay the borrow fee on their market value.
+- **Dividends** are paid into cash on the ex-date. Short positions pay them.
+- **Stock splits** change your share count, not your value.
+- **Delisted stocks** are sold at their last price.
+- A stock with **no opening price** that day cannot trade, so you keep what you held.
+
+## Benchmarks
+
+Three automatic portfolios trade under the same rules and pay the same costs:
+
+- **Naive 1/N:** equal weight in the S&P 500 stocks of the universe, rebalanced every day;
+- **Buy and hold:** the same portfolio bought on the first day and never traded;
+- **Market:** the SPDR S&P 500 ETF (SPY), bought once.
+
+Statistics use daily returns net of costs. The Sharpe ratio is on returns in excess of SOFR, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.
