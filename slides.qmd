@@ -72,19 +72,6 @@ Each lecture deck is embedded below. Click a deck and use its own controls
 <a class="btn btn-sm btn-outline-secondary" href="slides/aef-5-volatility-estimation-and-advanced-portfolio-choice.html" download>Download &#8595;</a>
 ```
 
-## Lecture 6 &mdash; High Frequency Econometrics {#aef-6-high-frequency-econometrics}
-
-::: {.ratio .ratio-16x9 .slide-embed}
-```{=html}
-<iframe src="slides/aef-6-high-frequency-econometrics.html" title="Lecture 6 &mdash; High Frequency Econometrics" loading="lazy" allowfullscreen></iframe>
-```
-:::
-
-```{=html}
-<a class="btn btn-sm btn-outline-primary" href="slides/aef-6-high-frequency-econometrics.html" target="_blank" rel="noopener">Open full screen &#8599;</a>
-<a class="btn btn-sm btn-outline-secondary" href="slides/aef-6-high-frequency-econometrics.html" download>Download &#8595;</a>
-```
-
 ## Mandatory Assignment 1 &mdash; Evaluation {#aef-mandatory-assignment-1-evaluation}
 
 ::: {.ratio .ratio-16x9 .slide-embed}

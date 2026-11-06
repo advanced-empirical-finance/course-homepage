@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>The trading game</title>
+<title>Team dashboard</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -74,35 +74,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../styles.css">
 <link rel="stylesheet" href="simulation.css">
@@ -218,10 +189,6 @@ window.Quarto = {
  <span class="dropdown-text">lecture 5 — volatility estimation and advanced portfolio choice</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../slides.html#aef-6-high-frequency-econometrics">
- <span class="dropdown-text">lecture 6 — high frequency econometrics</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../slides.html#aef-mandatory-assignment-1-evaluation">
  <span class="dropdown-text">mandatory assignment 1 — evaluation</span></a>
   </li>  
@@ -237,15 +204,15 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-trading-game">    
         <li>
-    <a class="dropdown-item" href="../simulation/index.html">
+    <a class="dropdown-item" href="../trading-game/index.html">
  <span class="dropdown-text">the game</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/getting-started.html">
+    <a class="dropdown-item" href="../trading-game/getting-started.html">
  <span class="dropdown-text">getting started</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/dashboard.html">
+    <a class="dropdown-item" href="../trading-game/dashboard.html">
  <span class="dropdown-text">team dashboard</span></a>
   </li>  
     </ul>
@@ -307,7 +274,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../simulation/index.html">The trading game</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../trading-game/dashboard.html">Team dashboard</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -321,19 +288,19 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../simulation/index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../trading-game/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">The trading game</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../simulation/getting-started.html" class="sidebar-item-text sidebar-link">
+  <a href="../trading-game/getting-started.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Getting started</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../simulation/dashboard.html" class="sidebar-item-text sidebar-link">
+  <a href="../trading-game/dashboard.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Team dashboard</span></a>
   </div>
 </li>
@@ -342,26 +309,15 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#teams-and-timeline" id="toc-teams-and-timeline" class="nav-link active" data-scroll-target="#teams-and-timeline">Teams and timeline</a></li>
-  <li><a href="#how-trading-works" id="toc-how-trading-works" class="nav-link" data-scroll-target="#how-trading-works">How trading works</a></li>
-  <li><a href="#the-asset-universe" id="toc-the-asset-universe" class="nav-link" data-scroll-target="#the-asset-universe">The asset universe</a></li>
-  <li><a href="#trading-costs" id="toc-trading-costs" class="nav-link" data-scroll-target="#trading-costs">Trading costs</a></li>
-  <li><a href="#money-and-corporate-actions" id="toc-money-and-corporate-actions" class="nav-link" data-scroll-target="#money-and-corporate-actions">Money and corporate actions</a></li>
-  <li><a href="#benchmarks" id="toc-benchmarks" class="nav-link" data-scroll-target="#benchmarks">Benchmarks</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">The trading game</h1>
+<h1 class="title">Team dashboard</h1>
 </div>
 
 
@@ -378,118 +334,36 @@ window.Quarto = {
 </header>
 
 
-<p>Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send a new <strong>weight vector</strong> from R or Python. <strong>You only decide and submit; everything else happens automatically:</strong> the trading game trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team’s <a href="../simulation/dashboard.html">dashboard</a> shows how you are doing against simple benchmarks and the cohort.</p>
+<p>Your team’s dashboard shows your portfolio next to the benchmarks and the cohort: how your value has developed, what you hold, every submission with its rationale, and a leaderboard of all teams under pseudonyms. Sign in with your team’s token; only your team sees its own portfolio and log.</p>
+<iframe class="dash-frame" id="dash-frame" src="https://eumel.tail81c88a.ts.net/aef-shadow-dashboard/" title="Team dashboard"></iframe>
+<script>
+  // The dashboard's sign-in box takes focus when it opens, which would scroll
+  // the page down to it. Undo scrolling the reader did not do, for a while.
+  (function () {
+    var start = Date.now(), reader = false;
+    ["wheel", "touchstart", "keydown", "mousedown"].forEach(function (e) {
+      window.addEventListener(e, function () { reader = true; }, {passive: true});
+    });
+    window.addEventListener("scroll", function () {
+      if (!reader && Date.now() - start < 15000) window.scrollTo(0, 0);
+    });
+  })();
+</script>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>What counts is how you decide, not what you earn
+<span class="screen-reader-only">Note</span>Test run
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Every submission carries a <strong>rationale</strong>: what you expect and why. Together they form your decision log. The course assesses that log, how you manage risk as the rules change, and your final reflection, not your return. A good process with bad luck beats a lucky gamble.</p>
+<p>Until the semester starts, the dashboard shows the course team’s test run, and only the course team can sign in. Your team’s token arrives before the dry run on 25 January 2027.</p>
 </div>
 </div>
-<section id="teams-and-timeline" class="level2">
-<h2 class="anchored" data-anchor-id="teams-and-timeline">Teams and timeline</h2>
-<ul>
-<li>Work alone or in a team of up to three. <strong>Choose your team during the dry run.</strong></li>
-<li>Each team gets one <strong>token</strong>: a key, like a password, that identifies your team to the trading game. The client packages and the dashboard use it to authenticate you. Keep it within your team.</li>
-<li>Each team starts with <strong>$1,000,000</strong> in cash.</li>
-<li><strong>Dry run:</strong> 25 January to 5 February 2027, to try the tools and form your team; results are reset afterwards.</li>
-<li><strong>Trading:</strong> 8 February to 14 May 2027, every NYSE trading day.</li>
-</ul>
-<p>The rules tighten during the semester. Every response from the trading game tells you which rules apply to the next trade, so a change never catches you by surprise.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>From</th>
-<th>What changes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>8 February</td>
-<td>Long and short positions, and borrowing cash, with a gross exposure of up to 300 % (defined below). No transaction costs.</td>
-</tr>
-<tr class="even">
-<td>1 March</td>
-<td>Every trade costs 10 bps (0.1 %) of its value.</td>
-</tr>
-<tr class="odd">
-<td>5 April</td>
-<td>Short positions pay a borrow fee of 50 bps a year.</td>
-</tr>
-</tbody>
-</table>
-<p>There is no limit on the number of positions or on a single weight.</p>
-</section>
-<section id="how-trading-works" class="level2">
-<h2 class="anchored" data-anchor-id="how-trading-works">How trading works</h2>
-<p><strong>You only decide and submit. The trades, the costs, dividends and the daily valuation happen automatically.</strong></p>
-<ol type="1">
-<li><strong>Decide and submit</strong>, whenever you like: a weight vector and a rationale.
-<ul>
-<li>Each weight <span class="math inline">\(w_i\)</span> is the fraction of your portfolio’s value you want in stock <span class="math inline">\(i\)</span>: positive for a long position, negative for a short one. Stocks you leave out get weight zero, so a position you hold in them is sold.</li>
-<li>Whatever the weights don’t use is cash, <span class="math inline">\(1 - \sum_i w_i\)</span>. It is negative if you borrow.</li>
-<li>Your <strong>gross exposure</strong> is the sum of the absolute weights, <span class="math inline">\(\sum_i |w_i|\)</span>: longs plus shorts. It may be at most 300 %. For example, 180 % long and 120 % short is a gross exposure of 300 % and leaves 40 % in cash.</li>
-<li><code>close_date</code> is the date of the latest market close in the data your decision is based on.</li>
-<li>If a submission breaks a rule, it is rejected as a whole with messages saying why, and it still appears in your log. <code>validate()</code> runs the same checks without submitting.</li>
-</ul></li>
-<li><strong>The trade happens automatically</strong> at the next market open whose deadline has not passed: <strong>09:00 New York time on the trading day</strong>. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00.
-<ul>
-<li>A submission sent after a deadline, over a weekend or before the trading game starts waits for the next open.</li>
-<li>Submitting again before the deadline simply replaces your previous submission: only the last one trades.</li>
-<li><code>cancel()</code> withdraws a submission before it trades.</li>
-<li>If you submit nothing, your portfolio stays as it is: no trades and no costs.</li>
-</ul></li>
-<li><strong>Your portfolio is valued every evening</strong> at that day’s closing prices: each position at its closing price, plus your cash. This is called <em>marking to market</em>. The results appear at about 01:30 Copenhagen time, after the nightly update.</li>
-</ol>
-</section>
-<section id="the-asset-universe" class="level2">
-<h2 class="anchored" data-anchor-id="the-asset-universe">The asset universe</h2>
-<p>The asset universe is CRSP’s common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; <code>get_universe()</code> lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.</p>
-</section>
-<section id="trading-costs" class="level2">
-<h2 class="anchored" data-anchor-id="trading-costs">Trading costs</h2>
-<p>From 1 March, every trade costs 10 bps of its value, buying and selling alike. When your weights trade at the open:</p>
-<ul>
-<li><span class="math inline">\(V\)</span> is your portfolio’s value at that day’s opening prices.</li>
-<li>Your <strong>drifted weights</strong> <span class="math inline">\(\tilde w_i\)</span> are what you hold just before the trade: each position’s value at the open divided by <span class="math inline">\(V\)</span>. They differ from the weights you last submitted because prices have moved since.</li>
-<li>The trading game buys and sells (fractional shares) so that position <span class="math inline">\(i\)</span> is worth exactly <span class="math inline">\(w_i V\)</span>, and charges</li>
-</ul>
-<p><span class="math display">\[\text{costs} = 0.001 \times V \times \sum_i \left| w_i - \tilde w_i \right|,\]</span></p>
-<p>paid in dollars from your cash. The sum <span class="math inline">\(\sum_i |w_i - \tilde w_i|\)</span> is your <strong>turnover</strong>: the share of your portfolio you traded. Right after the trade, your cash is <span class="math inline">\(\left(1 - \sum_i w_i\right) V\)</span> minus the costs.</p>
-</section>
-<section id="money-and-corporate-actions" class="level2">
-<h2 class="anchored" data-anchor-id="money-and-corporate-actions">Money and corporate actions</h2>
-<ul>
-<li><strong>Cash</strong> earns interest at the US overnight rate (SOFR), the risk-free rate in this trading game. Interest is paid for every calendar day, weekends and holidays included: each day earns the yearly rate divided by 360, the US money-market convention (<em>act/360</em>), so Monday’s interest covers three days. Negative cash, when you borrow, pays the same risk-free rate.</li>
-<li><strong>Short positions</strong> pay a borrow fee from 5 April: 50 bps a year on their market value, charged per calendar day like interest.</li>
-<li><strong>Dividends</strong> are paid into your cash on the <em>ex-date</em>: the first trading day on which the stock trades without its upcoming dividend. If you hold the stock at the close before the ex-date, you receive the dividend; a short position pays it.</li>
-<li><strong>Stock splits</strong> change your share count, not your value.</li>
-<li><strong>Delisted stocks</strong> are sold at their last price.</li>
-<li>A stock with <strong>no opening price</strong> that day cannot trade, so you keep what you held.</li>
-</ul>
-</section>
-<section id="benchmarks" class="level2">
-<h2 class="anchored" data-anchor-id="benchmarks">Benchmarks</h2>
-<p>Three automatic portfolios trade under the same rules and pay the same costs:</p>
-<ul>
-<li><strong>Naive 1/N:</strong> equal weight in the S&amp;P 500 stocks of the asset universe, rebalanced every day;</li>
-<li><strong>Buy and hold:</strong> the same portfolio bought on the first day and never traded;</li>
-<li><strong>Market:</strong> the SPDR S&amp;P 500 ETF (SPY), bought once.</li>
-</ul>
-<p>Statistics use daily returns net of costs. The Sharpe ratio is on returns in excess of the risk-free rate, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

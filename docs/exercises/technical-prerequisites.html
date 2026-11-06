@@ -188,10 +188,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">lecture 5 — volatility estimation and advanced portfolio choice</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../slides.html#aef-6-high-frequency-econometrics">
- <span class="dropdown-text">lecture 6 — high frequency econometrics</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../slides.html#aef-mandatory-assignment-1-evaluation">
  <span class="dropdown-text">mandatory assignment 1 — evaluation</span></a>
   </li>  
@@ -207,15 +203,15 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-trading-game">    
         <li>
-    <a class="dropdown-item" href="../simulation/index.html">
+    <a class="dropdown-item" href="../trading-game/index.html">
  <span class="dropdown-text">the game</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/getting-started.html">
+    <a class="dropdown-item" href="../trading-game/getting-started.html">
  <span class="dropdown-text">getting started</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/dashboard.html">
+    <a class="dropdown-item" href="../trading-game/dashboard.html">
  <span class="dropdown-text">team dashboard</span></a>
   </li>  
     </ul>
@@ -478,7 +474,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nba
 <pre><code> uvr r install 4.6.1
  uvr sync
  uv sync</code></pre>
-<p><code>uvr r install</code> installs R, <code>uvr sync</code> installs <em>all</em> R packages of the course, and <code>uv sync</code> installs Python and <em>all</em> Python packages of the course, including <code>aefsim</code>, the client for the <a href="../simulation/index.html">trading game</a>. Everyone gets exactly the same package versions, because they are recorded in the course repository (<code>uvr.lock</code> for R, <code>uv.lock</code> for Python). If Positron asks which R or Python to use, choose the one in the course repository (<code>.uvr</code> for R, <code>.venv</code> for Python).</p>
+<p><code>uvr r install</code> installs R, <code>uvr sync</code> installs <em>all</em> R packages of the course, and <code>uv sync</code> installs Python and <em>all</em> Python packages of the course, including <code>aefsim</code>, the client for the <a href="../trading-game/index.html">trading game</a>. Everyone gets exactly the same package versions, because they are recorded in the course repository (<code>uvr.lock</code> for R, <code>uv.lock</code> for Python). If Positron asks which R or Python to use, choose the one in the course repository (<code>.uvr</code> for R, <code>.venv</code> for Python).</p>
 <p>Adding a package works the same way in both: <code>uvr add tidymodels</code> for R, <code>uv add polars</code> for Python. To collaborate with your peers, commit the files <code>uvr.toml</code>, <code>uvr.lock</code>, <code>pyproject.toml</code> and <code>uv.lock</code>; your colleagues only have to run <code>uvr sync</code> and <code>uv sync</code> to replicate your exact package environment.</p></li>
 <li><p>To verify that R is working correctly, click on <code>New/New File</code> and select <code>R file</code> to open a new R script in Positron and type</p>
 <pre><code> library(tidyfinance)

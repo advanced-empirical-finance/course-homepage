@@ -252,10 +252,6 @@ window.Quarto = {
  <span class="dropdown-text">lecture 5 — volatility estimation and advanced portfolio choice</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../slides.html#aef-6-high-frequency-econometrics">
- <span class="dropdown-text">lecture 6 — high frequency econometrics</span></a>
-  </li>  
-        <li>
     <a class="dropdown-item" href="../slides.html#aef-mandatory-assignment-1-evaluation">
  <span class="dropdown-text">mandatory assignment 1 — evaluation</span></a>
   </li>  
@@ -271,15 +267,15 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-trading-game">    
         <li>
-    <a class="dropdown-item" href="../simulation/index.html">
+    <a class="dropdown-item" href="../trading-game/index.html">
  <span class="dropdown-text">the game</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/getting-started.html">
+    <a class="dropdown-item" href="../trading-game/getting-started.html">
  <span class="dropdown-text">getting started</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/dashboard.html">
+    <a class="dropdown-item" href="../trading-game/dashboard.html">
  <span class="dropdown-text">team dashboard</span></a>
   </li>  
     </ul>
@@ -518,11 +514,10 @@ window.Quarto = {
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> BytesIO, StringIO</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> zipfile</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> zipfile</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> BytesIO</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -531,7 +526,7 @@ window.Quarto = {
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content" data-group="language">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
-<p>First, we download the (large) dataset directly from within R. The data is stored as a .csv file within a zipped folder. For such purposes, the <code>archive</code> package is useful. Presumably, you want to store the output as a parquet file. Next, we set <code>options(timeout = 200)</code>, which allows the R session to download the dataset for 200 seconds. The default in R is 60 seconds which was too short on my machine.</p>
+<p>First, we download the (large) dataset directly from within R. The data is stored as a .csv file within a zipped folder. For such purposes, the <code>archive</code> package is useful. Presumably, you want to store the output as a parquet file. Next, we set <code>options(timeout = 1200)</code>, which allows the R session to download the dataset for 1200 seconds. The default in R is 60 seconds which was too short on my machine.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout =</span> <span class="dv">1200</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>characteristics <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">archive_read</span>(<span class="st">"https://dachxiu.chicagobooth.edu/download/datashare.zip"</span>, </span>
@@ -541,28 +536,32 @@ window.Quarto = {
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"date"</span> <span class="ot">=</span> <span class="st">"DATE"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">ymd</span>(date),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">floor_date</span>(date, <span class="st">"date"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">floor_date</span>(date, <span class="st">"month"</span>)</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span> <span class="fu">paste0</span>(<span class="st">"characteristic_"</span>, .), <span class="sc">-</span><span class="fu">c</span>(permno, date, sic2))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<p>First, we download the (large) dataset directly from within Python. The data is stored as a .csv file within a zipped folder. For such purposes, the <code>requests</code> library is useful. Presumably, you want to store the output as a parquet file. We set <code>timeout = 1200</code>, which allows the session to download the dataset for 1200 seconds. The default was too short on my machine.</p>
+<p>First, we download the (large) dataset directly from within Python. The data is stored as a .csv file within a zipped folder. For such purposes, the <code>requests</code> library is useful. Presumably, you want to store the output as a parquet file. We set <code>timeout = 1200</code>, which allows the session to download the dataset for 1200 seconds. The default was too short on my machine. Many characteristics are missing in the early years of the sample, so we let polars scan the whole file (<code>infer_schema_length=None</code>) before it decides on the column types. The column <code>DATE</code> stores dates as numbers such as <code>19570131</code>, which we convert to the first day of each month.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://dachxiu.chicagobooth.edu/download/datashare.zip"</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, timeout<span class="op">=</span><span class="dv">1200</span>, verify<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, timeout<span class="op">=</span><span class="dv">1200</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the contents of the zip file</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> zipfile.ZipFile(BytesIO(response.content)) <span class="im">as</span> z:</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    csv_file <span class="op">=</span> z.<span class="bu">open</span>(z.namelist()[<span class="dv">0</span>])</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Read the CSV file</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    characteristics <span class="op">=</span> pd.read_csv(csv_file)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (characteristics</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">'DATE'</span>: <span class="st">'date'</span>})</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    .assign(date<span class="op">=</span><span class="kw">lambda</span> df: pd.to_datetime(df[<span class="st">'date'</span>]).dt.to_period(<span class="st">'M'</span>).dt.to_timestamp())</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{col: <span class="st">'characteristic_'</span> <span class="op">+</span> col <span class="cf">for</span> col <span class="kw">in</span> characteristics.columns <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> [<span class="st">'permno'</span>, <span class="st">'date'</span>, <span class="st">'sic2'</span>]})</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)    </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> zipfile.ZipFile(BytesIO(response.content)) <span class="im">as</span> z:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    characteristics <span class="op">=</span> pl.read_csv(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        z.read(<span class="st">"datashare.csv"</span>), infer_schema_length<span class="op">=</span><span class="va">None</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (characteristics</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    .rename({<span class="st">"DATE"</span>: <span class="st">"date"</span>})</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    .with_columns(</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        date<span class="op">=</span>pl.col(<span class="st">"date"</span>).cast(pl.String).<span class="bu">str</span>.to_date(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">"</span>).dt.truncate(<span class="st">"1mo"</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    .select(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"permno"</span>, <span class="st">"date"</span>, <span class="st">"sic2"</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        pl.exclude(<span class="st">"permno"</span>, <span class="st">"date"</span>, <span class="st">"sic2"</span>).name.prefix(<span class="st">"characteristic_"</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -588,16 +587,15 @@ window.Quarto = {
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rank_transform(x):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    rx <span class="op">=</span> x.rank(na_option<span class="op">=</span><span class="st">'keep'</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    non_nas <span class="op">=</span> x.count()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    rx[rx <span class="op">&gt;</span> non_nas] <span class="op">=</span> np.nan</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">2</span> <span class="op">*</span> ((rx <span class="op">-</span> rx.<span class="bu">min</span>()) <span class="op">/</span> (rx.<span class="bu">max</span>() <span class="op">-</span> rx.<span class="bu">min</span>()) <span class="op">-</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    rx <span class="op">=</span> x.rank()  <span class="co"># missing values stay missing and get no rank</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    scaled <span class="op">=</span> (rx <span class="op">-</span> rx.<span class="bu">min</span>()) <span class="op">/</span> (rx.<span class="bu">max</span>() <span class="op">-</span> rx.<span class="bu">min</span>()) <span class="op">*</span> <span class="dv">2</span> <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># if all values in a month are equal, 0 / 0 gives NaN: treat it as missing</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> scaled.fill_nan(<span class="va">None</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (characteristics</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">'date'</span>, group_keys<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> group: group.<span class="bu">apply</span>(<span class="kw">lambda</span> x: rank_transform(x) <span class="cf">if</span> <span class="st">'characteristic'</span> <span class="kw">in</span> x.name <span class="kw">and</span> x.name <span class="op">!=</span> <span class="st">'date'</span> <span class="cf">else</span> x))</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    .with_columns(rank_transform(pl.col(<span class="st">"^characteristic_.*$"</span>)).over(<span class="st">"date"</span>))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -624,24 +622,35 @@ window.Quarto = {
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="op">=</span> (pd.read_parquet(<span class="st">"data-python/crsp_monthly.parquet"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  [[<span class="st">"date"</span>, <span class="st">"permno"</span>, <span class="st">"mktcap_lag"</span>, <span class="st">"ret_excess"</span>]])</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="op">=</span> (pd.read_parquet(<span class="st">"data-python/macro_predictors.parquet"</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  .drop(columns<span class="op">=</span>[<span class="st">'rp_div'</span>])</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  .rename(columns<span class="op">=</span><span class="kw">lambda</span> x: <span class="ss">f'macro_</span><span class="sc">{</span>x<span class="sc">}</span><span class="ss">'</span> <span class="cf">if</span> x <span class="op">!=</span> <span class="st">'date'</span> <span class="cf">else</span> x)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    characteristics</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    .merge(crsp_monthly, on<span class="op">=</span>[<span class="st">'date'</span>, <span class="st">'permno'</span>], how<span class="op">=</span><span class="st">'inner'</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    .merge(macro_predictors, on<span class="op">=</span><span class="st">'date'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    .sort_values(by<span class="op">=</span>[<span class="st">'permno'</span>, <span class="st">'date'</span>])</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    .reset_index(drop<span class="op">=</span><span class="va">True</span>)  </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">'permno'</span>, <span class="st">'date'</span>, <span class="st">'ret_excess'</span>, <span class="st">'mktcap_lag'</span>, <span class="st">'sic2'</span>] <span class="op">+</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>     [col <span class="cf">for</span> col <span class="kw">in</span> characteristics.columns <span class="cf">if</span> <span class="st">'macro_'</span> <span class="kw">in</span> col] <span class="op">+</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>     [col <span class="cf">for</span> col <span class="kw">in</span> characteristics.columns <span class="cf">if</span> <span class="st">'characteristic_'</span> <span class="kw">in</span> col]]</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># join keys need the same types in both tables: integer permno, plain dates</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="op">=</span> (pl.read_parquet(<span class="st">"data-python/crsp_monthly.parquet"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    .select(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"permno"</span>).cast(pl.Int64),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).cast(pl.Date),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"mktcap_lag"</span>, <span class="st">"ret_excess"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># the Goyal-Welch predictors, without the equity premium rp_div</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="op">=</span> (pl.read_parquet(<span class="st">"data-python/macro_predictors.parquet"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    .select(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).cast(pl.Date),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        pl.col(</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="st">"dp"</span>, <span class="st">"dy"</span>, <span class="st">"ep"</span>, <span class="st">"de"</span>, <span class="st">"svar"</span>, <span class="st">"bm"</span>, <span class="st">"ntis"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">"tbl"</span>, <span class="st">"lty"</span>, <span class="st">"ltr"</span>, <span class="st">"tms"</span>, <span class="st">"dfy"</span>, <span class="st">"infl"</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        ).name.prefix(<span class="st">"macro_"</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (characteristics</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    .join(crsp_monthly, how<span class="op">=</span><span class="st">"inner"</span>, on<span class="op">=</span>[<span class="st">"date"</span>, <span class="st">"permno"</span>])</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    .join(macro_predictors, how<span class="op">=</span><span class="st">"inner"</span>, on<span class="op">=</span><span class="st">"date"</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    .sort(<span class="st">"permno"</span>, <span class="st">"date"</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    .select(</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"permno"</span>, <span class="st">"date"</span>, <span class="st">"ret_excess"</span>, <span class="st">"mktcap_lag"</span>, <span class="st">"sic2"</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"^macro_.*$"</span>), pl.col(<span class="st">"^characteristic_.*$"</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -667,15 +676,15 @@ window.Quarto = {
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> replace_nas(x):</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    x[x.isna()] <span class="op">=</span> x.median(skipna<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x.fill_null(x.median())</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (characteristics</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">'date'</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> group: group.<span class="bu">apply</span>(replace_nas) <span class="cf">if</span> group.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).<span class="bu">any</span>().<span class="bu">any</span>() <span class="cf">else</span> group)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    .reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    .dropna(subset<span class="op">=</span>[<span class="st">'sic2'</span>])</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    .astype(<span class="st">'category'</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    .with_columns(replace_nas(pl.col(<span class="st">"^characteristic_.*$"</span>)).over(<span class="st">"date"</span>))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    .drop_nulls(<span class="st">"sic2"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    .with_columns(</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        sic2<span class="op">=</span>pl.col(<span class="st">"sic2"</span>).cast(pl.Int64).cast(pl.String).cast(pl.Categorical)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -695,10 +704,9 @@ window.Quarto = {
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>characteristics.to_parquet(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data-python/stock_characteristics_monthly.parquet"</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  index<span class="op">=</span><span class="va">False</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>characteristics.write_parquet(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data-python/stock_characteristics_monthly.parquet"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
