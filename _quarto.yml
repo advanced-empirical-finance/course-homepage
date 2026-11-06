@@ -53,24 +53,7 @@ website:
           - text: "portfolio choice under transaction costs"
             file: exercises/portfolio_choice.qmd
       - text: slides
-        menu:
-          - text: "all slides"
-            file: slides.qmd
-          - text: "---"
-          - text: "lecture 1 — introduction"
-            href: slides.qmd#aef-1-introduction
-          - text: "lecture 2 — portfolio choice"
-            href: slides.qmd#aef-2-portfolio-choice
-          - text: "lecture 3 — multifactor models and the reproducibility crisis"
-            href: slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis
-          - text: "lecture 4 — machine learning"
-            href: slides.qmd#aef-4-machine-learning
-          - text: "lecture 5 — volatility estimation and advanced portfolio choice"
-            href: slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice
-          - text: "mandatory assignment 1 — evaluation"
-            href: slides.qmd#aef-mandatory-assignment-1-evaluation
-          - text: "mandatory assignment 2 — evaluation"
-            href: slides.qmd#aef-mandatory-assignment-2-evaluation
+        file: slides.qmd
       - text: trading game
         menu:
           - text: the game
