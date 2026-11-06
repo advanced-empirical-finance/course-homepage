@@ -448,16 +448,16 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="install-the-required-software">Install the required software</h3>
 <ol type="1">
 <li><p>Install <a href="https://positron.posit.co/start.html">Positron (latest Version)</a>. <em>Positron is the integrated development environment (IDE) we use. It supports R, Python, Git, and Quarto in one place. Install Positron using the default settings.</em></p></li>
-<li><p>Register a <a href="https://happygitwithr.com/github-acct">free GitHub account</a>. <em>GitHub allows us to share course materials and collaborate. You can register on (https://github.com/).</em></p></li>
+<li><p>Register a free account on <a href="https://github.com/">GitHub</a>; <a href="https://happygitwithr.com/github-acct">Happy Git with R</a> has tips on choosing a username. <em>GitHub allows us to share course materials and collaborate.</em></p></li>
 <li><p>Install <a href="https://git-scm.com/install/">Git</a>. <em>Git is the version control system we use to connect to GitHub.</em></p></li>
-<li><p>Install <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> and <a href="https://github.com/nbafrank/uvr">uvr</a>. <em>uv installs Python and the Python packages of the course; uvr does the same for R. You don’t install R or Python yourself.</em> Open a terminal (on Windows: PowerShell) and run</p>
-<p>macOS and Linux:</p>
+<li><p>Install <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> and <a href="https://github.com/nbafrank/uvr">uvr</a>. <em>uv installs Python and the Python packages of the course; uvr does the same for R. You don’t install R or Python yourself.</em> Open a terminal and run the two lines for your system:</p>
+<p>macOS and Linux (Terminal):</p>
 <pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh
 curl -fsSL https://raw.githubusercontent.com/nbafrank/uvr/main/install.sh | sh</code></pre>
-<p>Windows:</p>
+<p>Windows (PowerShell):</p>
 <pre><code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nbafrank/uvr/main/install.ps1 | iex"</code></pre>
-<p>Then close the terminal and open a new one, so it finds <code>uv</code> and <code>uvr</code>. If you installed them earlier, update them instead with <code>uv self update</code> and <code>uvr upgrade</code>: the course needs uvr 0.4.8 or later (<code>uvr --version</code> shows yours).</p></li>
+<p>Then close the terminal and open a new one, so it finds <code>uv</code> and <code>uvr</code>. If uv and uvr are already on your computer, for example from another course, update them instead with <code>uv self update</code> and <code>uvr upgrade</code>; the course needs uvr 0.4.8 or later.</p></li>
 </ol>
 </section>
 <section id="set-up-the-course-repository" class="level3">
@@ -479,7 +479,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nba
  uvr sync
  uv sync</code></pre>
 <p><code>uvr r install</code> installs R, <code>uvr sync</code> installs <em>all</em> R packages of the course, and <code>uv sync</code> installs Python and <em>all</em> Python packages of the course, including <code>aefsim</code>, the client for the <a href="../simulation/index.html">trading game</a>. Everyone gets exactly the same package versions, because they are recorded in the course repository (<code>uvr.lock</code> for R, <code>uv.lock</code> for Python). If Positron asks which R or Python to use, choose the one in the course repository (<code>.uvr</code> for R, <code>.venv</code> for Python).</p>
-<p>You can add packages, e.g., with <code>uvr add tidymodels</code> for R or <code>uv add polars</code> for Python. To collaborate with your peers, commit the files <code>uvr.toml</code>, <code>uvr.lock</code>, <code>pyproject.toml</code> and <code>uv.lock</code>; your colleagues only have to run <code>uvr sync</code> and <code>uv sync</code> to replicate your exact package environment.</p></li>
+<p>Adding a package works the same way in both: <code>uvr add tidymodels</code> for R, <code>uv add polars</code> for Python. To collaborate with your peers, commit the files <code>uvr.toml</code>, <code>uvr.lock</code>, <code>pyproject.toml</code> and <code>uv.lock</code>; your colleagues only have to run <code>uvr sync</code> and <code>uv sync</code> to replicate your exact package environment.</p></li>
 <li><p>To verify that R is working correctly, click on <code>New/New File</code> and select <code>R file</code> to open a new R script in Positron and type</p>
 <pre><code> library(tidyfinance)
  download_data(
@@ -487,7 +487,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nba
          symbols = "AAPL",
          start_date = "2000-01-01",
          end_date = "2023-12-31")</code></pre>
-<p>Mark everything and press <code>Ctrl + Enter</code> to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console.</p></li>
+<p>Mark everything and press <code>Ctrl + Enter</code> to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error such as <code>there is no package called 'tidyfinance'</code>, Positron is not using the course’s R: when R starts, the console should say <code>uvr: library linked (… packages)</code>. If it doesn’t, choose R 4.6.1 with the interpreter icon on the top right, restart R (<code>Session</code> → <code>Restart R</code>), and run <code>uvr sync</code> in the Terminal again.</p></li>
 <li><p>To verify that Python is working correctly, click on <code>New/New File</code> and select <code>Python file</code> to open a new Python script in Positron and type</p>
 <pre><code> import tidyfinance as tf
  tf.download_data(
@@ -504,10 +504,9 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nba
 <p>Positron already includes Quarto, so you do not need to install it separately unless you want a standalone installation.</p>
 <ol type="1">
 <li><p>Install the newest version of <a href="https://quarto.org/docs/download/">Quarto</a>. (Quarto comes prebundled with Positron, so you will have access to quarto once you have followed the previous step)</p></li>
-<li><p>In order to create PDFs you will need to install a recent distribution of LaTeX. I recommend to install <code>TinyTeX</code>, a lightweight, cross-platform, portable, and easy-to-maintain LaTeX distribution by typing the command</p>
+<li><p>In order to create PDFs you will need to install a recent distribution of LaTeX. I recommend to install <code>TinyTeX</code>, a lightweight, cross-platform, portable, and easy-to-maintain LaTeX distribution, by running this command in Positron’s Terminal:</p>
 <pre><code>   quarto install tool tinytex</code></pre></li>
 </ol>
-<p>in Positron / Terminal or directly in the console</p>
 
 
 </section>
