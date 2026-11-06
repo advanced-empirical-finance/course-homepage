@@ -34,9 +34,3 @@ The guiding question of this course: **(How) can state-of-the-art methods improv
   </a>
 </div>
 ```
-
-## About the exercises
-
-The [exercise sets](exercises/index.qmd) partially subsume work I created with my colleagues Christoph Scheuch and Patrick Weiss for the books [Tidy Finance with R](https://www.tidy-finance.org/r/index.html) and [Tidy Finance with Python](https://www.tidy-finance.org/python/index.html). Feedback on *every* aspect is very welcome — if you spot typos, mistakes, or anything that deserves more attention, contact me or my colleagues at [contact@tidy-finance.org](mailto:contact@tidy-finance.org).
-
-Try to solve each question on your own before consulting the proposed answers, and discuss issues with your peers. The most direct way to get help is to post your questions on StackExchange or Absalon. As an absolute minimum, make sure you are familiar with Grolemund and Wickham's [R for Data Science](https://r4ds.hadley.nz/) before starting.
