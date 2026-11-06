@@ -61,14 +61,15 @@ As usual, I download daily prices for the 30 index constituents and compute (adj
 #| message: false
 
 ticker <- download_data(
-  type = "constituents",
+  "Index Constituents",
   index = "Dow Jones Industrial Average"
 ) |> pull(symbol)
 
 index_prices <- download_data(
-  type = "stock_prices",
+  "Stock Prices",
   symbols = ticker,
-  start_date = "2000-01-01"
+  start_date = "2000-01-01",
+  end_date = Sys.Date()
 )
 
 returns <- index_prices |>
@@ -84,12 +85,12 @@ returns <- index_prices |>
 ```{python}
 #| label: py-download-dj-returns
 tickers = (
-    tf.download_data(domain="constituents", index="Dow Jones Industrial Average")
+    tf.download_data(domain="Index Constituents", index="Dow Jones Industrial Average")
     ["symbol"].to_list()
 )
 
 index_prices = tf.download_data(
-    domain="stock_prices",
+    domain="Stock Prices",
     symbols=tickers,
     start_date="2000-01-01",
     end_date=date.today(),

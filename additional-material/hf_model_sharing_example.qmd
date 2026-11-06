@@ -72,7 +72,7 @@ Suppose we want to predict monthly S&P 500 excess returns using macroeconomic pr
 
 ```{r}
 #| label: download-data-r
-data <- download_data("macro_predictors", "monthly")
+data <- download_data("Goyal-Welch", "monthly")
 ```
 
 ## Python
