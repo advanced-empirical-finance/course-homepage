@@ -22,7 +22,7 @@ This exercise should help you to fight your way through an actual academic appli
 ```{r}
 #| label: r-load-libraries
 library(tidyverse)
-library(arrow)
+library(nanoparquet)
 library(lubridate)
 library(archive)
 ```

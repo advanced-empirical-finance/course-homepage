@@ -22,7 +22,7 @@ In these exercises, you familiarize yourself with the details behind shrinkage r
 ```{r}
 #| label: r-load-libraries
 # Load required packages
-library(arrow)
+library(nanoparquet)
 library(tidyverse)
 
 # Read in the data
