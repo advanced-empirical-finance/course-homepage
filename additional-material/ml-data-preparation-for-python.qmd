@@ -20,7 +20,8 @@ The code relies on the following Python packages. Note that the packages sklearn
 # | echo: true
 
 import numpy as np
-import pandas as pd
+import polars as pl
+import polars.selectors as cs
 import requests
 import zipfile
 import joblib
@@ -40,7 +41,9 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 > we build a large collection of stock-level predictive characteristics based on the cross-section of stock returns literature. These include 94 characteristics (61 of which are updated annually, 13 are updated quarterly, and 20 are updated monthly). In addition, we include 74 industry dummies corresponding to the first two digits of Standard Industrial Classification (SIC) codes. 
 
 
-The authors provide the dataset with stock-level characteristics online. While the original sample from the published version ended in December 2016, the author furnished the stock-level characteristics dataset until 2021. I download this (large) dataset directly from within Python from the Dacheng Xiu’s homepage. The data is stored as a .csv file within a zipped folder. For such purposes, the archive package is useful. I set timeout = 1200, which allows the Python session to download the dataset for 20 minutes. To avoid multiple downloads, I first check if the .csv file is already stored in the data-folder. If not, the download will be initiated and the .csv will be saved in the data-folder.
+The authors provide the dataset with stock-level characteristics online. While the original sample from the published version ended in December 2016, the author furnished the stock-level characteristics dataset until 2021. I download this (large) dataset directly from within Python from the Dacheng Xiu’s homepage. The data is stored as a .csv file within a zipped folder. For such purposes, the zipfile module is useful. I set timeout = 1200, which allows the Python session to download the dataset for 20 minutes. To avoid multiple downloads, I first check if the .csv file is already stored in the data-folder. If not, the download will be initiated and the .csv will be saved in the data-folder.
+
+Instead of reading the large file into memory right away, I scan it with `pl.scan_csv()`. polars then only reads the data once I call `collect()` after the first cleaning steps below. Many characteristics are missing in the early years of the sample, so I let polars infer the column types from the entire file (`infer_schema_length=None`) rather than from the first rows only.
 
 ```{python}
 # | label: read data
@@ -57,11 +60,9 @@ if not datashare_path.exists():
     response.raise_for_status()
 
     with zipfile.ZipFile(BytesIO(response.content)) as z:
-        characteristics = pd.read_csv(z.open("datashare.csv"))
+        z.extract("datashare.csv", path=datashare_path.parent)
 
-    characteristics.to_csv(datashare_path, index=False)
-
-characteristics = pd.read_csv(datashare_path)
+characteristics = pl.scan_csv(datashare_path, infer_schema_length=None)
 ```
 
 
@@ -69,32 +70,19 @@ characteristics = pd.read_csv(datashare_path)
 # | label: transform data
 # | include: true
 # | echo: true
-characteristics = (
-    characteristics.assign(
-        DATE=lambda df: (
-            pd.to_datetime(
-                df["DATE"],
-                format="%Y%m%d",
-                errors="raise",
-            )
-            .dt.to_period("M")
-            .dt.to_timestamp()
-        )
+characteristics = (characteristics
+    .with_columns(
+        pl.col("DATE").cast(pl.String).str.to_date("%Y%m%d").dt.truncate("1mo")
     )
-    .rename(columns={"DATE": "month"})
-    .pipe(
-        lambda df: df.rename(
-            columns={
-                col: f"characteristic_{col}"
-                for col in df.columns
-                if col not in ["permno", "month", "sic2"]
-            }
-        )
+    .rename({"DATE": "month"})
+    .rename(
+        lambda col: col
+        if col in ["permno", "month", "sic2"]
+        else f"characteristic_{col}"
     )
-)
-
-characteristics = characteristics.dropna(subset=["sic2"]).assign(
-    sic2=lambda df: df["sic2"].astype("category")
+    .drop_nulls("sic2")
+    .with_columns(pl.col("sic2").cast(pl.String).cast(pl.Categorical))
+    .collect()
 )
 ```
 
@@ -102,32 +90,28 @@ The characteristics appear in raw format. As many machine-learning applications 
 
 > We cross-sectionally rank all stock characteristics period-by-period and map these ranks into the [-1, 1] interval (footnote 29).
 
-The idea is that at each date, the cross-section of each predictor should be scaled such that the maximum value is 1 and the minimum value is -1. The cross-sectional ranking is time-consuming. The function below explicitly handles NA values, so they do not tamper with the ranking.
+The idea is that at each date, the cross-section of each predictor should be scaled such that the maximum value is 1 and the minimum value is -1. The cross-sectional ranking is time-consuming. The function below explicitly handles NA values, so they do not tamper with the ranking. With `over("month")`, polars applies it to the cross-section of each month.
 
 ```{python}
 # | label: scaling
 # | include: true
 # | echo: true
 def rank_transform(x):
-    x = pd.Series(x)
+    """Map the ranks of x into the [-1, 1] interval."""
+    rank_x = x.rank(method="average")  # NAs keep a missing rank
+    min_rank = 1
+    max_rank = x.count()  # number of non-NA values
 
-    rank_x = x.rank(method="average", na_option="keep")
-    min_rank = 1.0
-    max_rank = float(x.notna().sum())
-
-    if max_rank == 0:  # only NAs
-        return pd.Series(np.nan, index=x.index)
-    elif max_rank == 1:  # exactly one non-NA
-        return pd.Series(np.nan, index=x.index)
-    else:
-        scaled = 2 * ((rank_x - min_rank) / (max_rank - min_rank) - 0.5)
-        return scaled
+    # NA if there are only NAs or exactly one non-NA value
+    return pl.when(max_rank > 1).then(
+        ((rank_x - min_rank) / (max_rank - min_rank) - 0.5) * 2
+    )
 
 
 char_cols = [col for col in characteristics.columns if "characteristic" in col]
 
-characteristics[char_cols] = characteristics.groupby("month")[char_cols].transform(
-    rank_transform
+characteristics = characteristics.with_columns(
+    rank_transform(pl.col(char_cols)).over("month")
 )
 ```
 
@@ -149,12 +133,12 @@ I interpret the divergence as follows: First, I replace missing values with the 
 # | include: true
 # | echo: true
 
-characteristics[char_cols] = characteristics.groupby("month")[char_cols].transform(
-    lambda x: x.fillna(x.median(skipna=True))
+characteristics = (characteristics
+    .with_columns(
+        pl.col(char_cols).fill_null(pl.col(char_cols).median().over("month"))
+    )
+    .with_columns(pl.col(char_cols).fill_null(0))
 )
-
-characteristics[char_cols] = characteristics[char_cols].fillna(0)
-
 ```
 
 > We obtain monthly total individual equity returns from CRSP for all firms listed in the NYSE, AMEX, and NASDAQ. Our sample begins in March 1957 (the start date of the S&P 500) (p. 2248)
@@ -176,56 +160,36 @@ To remain consistent, we only lag the macropredictors by one month.
 # | label: crsp and macro
 # | include: true
 # | echo: true
-crsp_monthly = pd.read_parquet("data/crsp_monthly.parquet")
-macro_predictors = pd.read_parquet("data/macro_predictors.parquet")
-
-crsp_monthly = (
-    crsp_monthly.assign(
-        month=lambda df: (
-            pd.to_datetime(df["date"], errors="raise")
-            .dt.to_period("M")
-            .dt.to_timestamp()
-        )
+crsp_monthly = (pl.read_parquet("data/crsp_monthly.parquet")
+    .with_columns(
+        month=pl.col("date").cast(pl.Date).dt.truncate("1mo"),
+        permno=pl.col("permno").cast(pl.Int64),  # same type as in datashare.csv
     )
-    .loc[:, ["month", "permno", "mktcap_lag", "ret"]]
-    .rename(columns={"ret": "ret_excess"})
+    .select("month", "permno", "mktcap_lag", "ret")
+    .rename({"ret": "ret_excess"})
 )
 
-macro_predictors = (
-    macro_predictors.assign(
-        month=lambda df: (
-            pd.to_datetime(df["date"], errors="raise")
-            .dt.to_period("M")
-            .dt.to_timestamp()
-        )
-    )
-    .loc[:, ["month", "dp", "ep", "bm", "ntis", "tbl", "tms", "dfy", "svar"]]
-    .rename(
-        columns={
-            col: f"macro_{col}" for col in macro_predictors.columns if col != "month"
-        }
-    )
+macro_predictors = (pl.read_parquet("data/macro_predictors.parquet")
+    .with_columns(month=pl.col("date").cast(pl.Date).dt.truncate("1mo"))
+    .select("month", "dp", "ep", "bm", "ntis", "tbl", "tms", "dfy", "svar")
+    .rename(lambda col: col if col == "month" else f"macro_{col}")
 )
 
-macro_predictors = macro_predictors.sort_values("month").assign(
-    **{
-        col: macro_predictors[col].shift(1)
-        for col in macro_predictors.columns
-        if col != "month"
-    }
+macro_predictors = (macro_predictors
+    .sort("month")
+    .with_columns(pl.exclude("month").shift(1))
 )
 
-characteristics = (
-    characteristics.merge(crsp_monthly, on=["month", "permno"], how="inner")
-    .merge(macro_predictors, on="month", how="inner")
-    .sort_values(["month", "permno"])
-    .assign(macro_intercept=1)
-    .loc[
-        :,
-        ["permno", "month", "ret_excess", "mktcap_lag", "sic2"]
-        + [col for col in characteristics.columns if "macro" in col]
-        + [col for col in characteristics.columns if "characteristic" in col],
-    ]
+characteristics = (characteristics
+    .join(crsp_monthly, how="inner", on=["month", "permno"])
+    .join(macro_predictors, how="inner", on="month")
+    .sort("month", "permno")
+    .with_columns(macro_intercept=pl.lit(1))
+    .select(
+        "permno", "month", "ret_excess", "mktcap_lag", "sic2",
+        cs.contains("macro"),
+        cs.contains("characteristic"),
+    )
 )
 ```
 
@@ -235,40 +199,35 @@ Before applying machine-learning models, the authors include interaction terms b
 
 > We include 74 industry dummies corresponding to the first two digits of Standard Industrial Classification (SIC) codes. [...] [The stock-level covariates also include] interactions between stock-level characteristics and macroeconomic state variables. The total number of covariates is 94×(8+1)+74=920. (p. 2249)
 
-The following recipe creates dummies for each `sic2` code and adds interaction terms between macro variables and stock characteristics. Note that `data` for the recipe is only required to identify the columns in the sample. No computations are performed at the first step. For that reason, I call `head()` to keep the computational burden a bit lower without affecting the outcome. 
+The following recipe creates dummies for each `sic2` code and adds interaction terms between macro variables and stock characteristics. Note that the data is only required to identify the columns in the sample. No computations are performed at the first step: the recipe is just a list of polars expressions, one for each interaction term, which polars evaluates only when I apply them to the data in the next step.
 
 ```{python}
 # | label: recipe
 # | include: true
 # | echo: true
 
-id_cols = ["permno", "month", "mktcap_lag"]
+char_cols = [col for col in characteristics.columns if "characteristic" in col]
+macro_cols = [col for col in characteristics.columns if "macro" in col]
 
-y = characteristics["ret_excess"]
-X = characteristics.drop(columns=id_cols + ["ret_excess"])
-
-char_cols = [c for c in X.columns if "characteristic" in c]
-macro_cols = [c for c in X.columns if "macro" in c]
-
-for c in char_cols:
-    for m in macro_cols:
-        X[f"{c}_x_{m}"] = X[c] * X[m]
-
-X = pd.get_dummies(X, columns=["sic2"], prefix="sic2")
-
+interaction_terms = [
+    (pl.col(c) * pl.col(m)).alias(f"{c}_x_{m}")
+    for c in char_cols
+    for m in macro_cols
+]
 ```
 
-Next, I create the full dataset containing 3,046,332 monthly observations and 920 covariates.
+Next, I create the full dataset containing 3,046,332 monthly observations and 920 covariates. `to_dummies()` replaces `sic2` with one dummy column per industry.
 
 ```{python}
 # | label: bake
 # | include: true
 # | echo: true
 
-characteristics_prepared = pd.concat([characteristics[id_cols], y, X], axis=1).assign(
-    year=lambda df: df["month"].dt.year
+characteristics_prepared = (characteristics
+    .with_columns(interaction_terms)
+    .to_dummies("sic2")
+    .with_columns(year=pl.col("month").dt.year())
 )
-
 ```
 
 I store the prepared file for your convenience. Furthermore, the authors never use the entire dataset for training, instead, only a fraction needs to be available in memory at any given point in time.
@@ -278,9 +237,11 @@ I store the prepared file for your convenience. Furthermore, the authors never u
 # | include: true
 # | echo: true
 
-for year, df_year in characteristics_prepared.groupby("year"):
-    df_year.drop(columns="year").to_parquet(
-        f"results/characteristics_prepared/year={year}.parquet", index=False
+Path("results/characteristics_prepared").mkdir(parents=True, exist_ok=True)
+
+for (year,), data_year in characteristics_prepared.group_by("year"):
+    data_year.drop("year").write_parquet(
+        f"results/characteristics_prepared/year={year}.parquet"
     )
 ```
 
@@ -299,45 +260,41 @@ validation_length = 12
 all_years = np.arange(1967, 2022)
 oos_years = np.arange(1987, 2022)
 
-estimation_periods = pd.DataFrame(
-    {
-        "oos_year": oos_years,
-    }
-)
-
-estimation_periods = estimation_periods.assign(
-    validation_end=lambda df: df["oos_year"] - 1,
-    validation_start=lambda df: df["oos_year"] - validation_length,
-    training_start=1957,
-    training_end=lambda df: df["validation_start"] - 1,
-).loc[
-    :,
-    [
+estimation_periods = (pl.DataFrame({"oos_year": oos_years})
+    .with_columns(
+        validation_end=pl.col("oos_year") - 1,
+        validation_start=pl.col("oos_year") - validation_length,
+        training_start=pl.lit(1957),
+    )
+    .with_columns(training_end=pl.col("validation_start") - 1)
+    .select(
         "training_start",
         "training_end",
         "validation_start",
         "validation_end",
         "oos_year",
-    ],
-]
+    )
+)
 
-rows = []
-
-for _, row in estimation_periods.iterrows():
-    for year in all_years:
-        if row.training_start <= year <= row.training_end:
-            classification = "Training"
-        elif row.validation_start <= year <= row.validation_end:
-            classification = "Validation"
-        elif year == row.oos_year:
-            classification = "OOS"
-        else:
-            continue
-        rows.append(
-            {"year": year, "oos_year": row.oos_year, "classification": classification}
+visualization_data = (estimation_periods
+    .join(pl.DataFrame({"year": all_years}), how="cross")
+    .with_columns(
+        classification=pl.when(
+            pl.col("year").is_between(pl.col("training_start"), pl.col("training_end"))
         )
-
-visualization_data = pd.DataFrame(rows)
+        .then(pl.lit("Training"))
+        .when(
+            pl.col("year").is_between(
+                pl.col("validation_start"), pl.col("validation_end")
+            )
+        )
+        .then(pl.lit("Validation"))
+        .when(pl.col("year") == pl.col("oos_year"))
+        .then(pl.lit("OOS"))
+    )
+    .drop_nulls("classification")
+    .select("year", "oos_year", "classification")
+)
 
 (
     ggplot(visualization_data, aes(x="year", y="oos_year", color="classification"))
@@ -402,7 +359,7 @@ grid = list(ParameterGrid(param_grid))
 
 id_cols_new = ["permno", "month", "mktcap_lag", "year"]
 
-X = characteristics_prepared.drop(columns=id_cols_new + ["ret_excess"])
+X = characteristics_prepared.drop(id_cols_new + ["ret_excess"])
 y = characteristics_prepared["ret_excess"]
 ```
 
@@ -417,25 +374,30 @@ The following performs the model estimation to create predictions for all the ye
 
 j = 0
 
-split_dates = estimation_periods.iloc[j]
-oos_year = int(split_dates["oos_year"])
+split_dates = estimation_periods.row(j, named=True)
+oos_year = split_dates["oos_year"]
 pred_file = Path(f"results/predictions_{oos_year}.parquet")
 
 id_cols = ["permno", "month", "mktcap_lag", "year"]
 
-X_train, y_train = characteristics_prepared[
-    characteristics_prepared["month"].dt.year < split_dates["training_end"]
-].pipe(lambda df: (df.drop(columns=id_cols + ["ret_excess"]), df["ret_excess"]))
+training_data = characteristics_prepared.filter(
+    pl.col("year") < split_dates["training_end"]
+)
 
-X_val, y_val = characteristics_prepared[
-    (characteristics_prepared["month"].dt.year >= split_dates["validation_start"])
-    & (characteristics_prepared["month"].dt.year <= split_dates["validation_end"])
-].pipe(lambda df: (df.drop(columns=id_cols + ["ret_excess"]), df["ret_excess"]))
+validation_data = characteristics_prepared.filter(
+    pl.col("year").is_between(
+        split_dates["validation_start"], split_dates["validation_end"]
+    )
+)
 
-X_combined = pd.concat([X_train, X_val], axis=0)
-y_combined = pd.concat([y_train, y_val], axis=0)
+combined_data = pl.concat([training_data, validation_data])
 
-test_fold = np.concatenate([np.full(len(X_train), -1), np.zeros(len(X_val))])
+X_combined = combined_data.drop(id_cols + ["ret_excess"]).to_numpy()
+y_combined = combined_data["ret_excess"].to_numpy()
+
+test_fold = np.concatenate(
+    [np.full(training_data.height, -1), np.zeros(validation_data.height)]
+)
 
 ps = PredefinedSplit(test_fold)
 ```
@@ -478,17 +440,17 @@ rf_final = RandomForestRegressor(
 
 rf_final.fit(X_combined, y_combined)
 
-joblib.dump(rf_final, f"results/fitted_workflow_{int(split_dates['oos_year'])}.joblib")
+joblib.dump(rf_final, f"results/fitted_workflow_{oos_year}.joblib")
 
-out_of_sample = characteristics_prepared[
-    characteristics_prepared["month"].dt.year == oos_year
-].copy()
+out_of_sample = characteristics_prepared.filter(pl.col("year") == oos_year)
 
-X_oos = out_of_sample.drop(columns=id_cols + ["ret_excess"])
+X_oos = out_of_sample.drop(id_cols + ["ret_excess"]).to_numpy()
 
-out_of_sample[".pred"] = rf_final.predict(X_oos)
+out_of_sample = out_of_sample.with_columns(
+    pl.Series(".pred", rf_final.predict(X_oos))
+)
 
-out_of_sample.to_parquet(pred_file)
+out_of_sample.write_parquet(pred_file)
 
 print(f"Finished {oos_year}")
 ``` 
@@ -580,53 +542,51 @@ fitted_workflow = joblib.load("results/fitted_workflow_1987.joblib")
 
 def create_predictions(oos_year):
 
-    out_of_sample = characteristics_prepared[
-        characteristics_prepared["month"].dt.year == oos_year
-    ].copy()
+    out_of_sample = characteristics_prepared.filter(pl.col("year") == oos_year)
 
     id_cols = ["permno", "month", "mktcap_lag", "year"]
 
-    X_oos = out_of_sample.drop(columns=id_cols + ["ret_excess"])
+    X_oos = out_of_sample.drop(id_cols + ["ret_excess"]).to_numpy()
 
-    out_of_sample[".pred"] = fitted_workflow.predict(X_oos)
-
-    out_of_sample = out_of_sample[
-        ["permno", "month", "mktcap_lag", "ret_excess", ".pred"]
-    ]
+    out_of_sample = (out_of_sample
+        .with_columns(pl.Series(".pred", fitted_workflow.predict(X_oos)))
+        .select("permno", "month", "mktcap_lag", "ret_excess", ".pred")
+    )
 
     return out_of_sample
 
 
-oos_predictions = pd.concat(
-    [create_predictions(y) for y in estimation_periods["oos_year"]], axis=0
-).reset_index(drop=True)
+oos_predictions = pl.concat(
+    [create_predictions(y) for y in estimation_periods["oos_year"]]
+)
 ```
 ::: {.callout-warning}
 
 Note that I am calling the fitted model from the first out-of-sample year (1987) in each iteration. In other words, the model parameters do not get updated every year as in the original paper. *If* you estimated the model for each value of $j$ as described above, you can replace the line above to replicate the original procedure. 
 :::
-To assign portfolios using the predictions, I implement a procedure similar to the `assign_portfolio()` from the tidyfinance package in `R`. I use `pandas.qcut`to divide the predicted reutns into deciles (portfolios 1-10).
+To assign portfolios using the predictions, I implement a procedure similar to the `assign_portfolio()` from the tidyfinance package in `R`. I use the polars function `qcut()` to divide the predicted returns into deciles (portfolios 1-10), which `over("month")` computes separately for each month.
 
 ```{python}
 # | label: assign portfolios
 # | include: true
 # | echo: true
-def assign_portfolio(group):
-    group = group.copy()
-    group["portfolio"] = (
-        pd.qcut(group[".pred"], 10, labels=False, duplicates="drop") + 1
+def assign_portfolio(sorting_variable, n_portfolios):
+    """Assign portfolios to a bin between breakpoints."""
+    return pl.col(sorting_variable).qcut(
+        n_portfolios,
+        labels=[str(i) for i in range(1, n_portfolios + 1)],
+        allow_duplicates=True,
     )
-    return group
 
 
-ml_portfolios = oos_predictions.groupby("month", group_keys=False).apply(
-    assign_portfolio
-)
-
-ml_portfolios = (
-    ml_portfolios.groupby(["portfolio", "month"])
-    .agg(ret_predicted=(".pred", "mean"), ret_excess=("ret_excess", "mean"))
-    .reset_index()
+ml_portfolios = (oos_predictions
+    .with_columns(portfolio=assign_portfolio(".pred", 10).over("month"))
+    .group_by("portfolio", "month")
+    .agg(
+        ret_predicted=pl.col(".pred").mean(),
+        ret_excess=pl.col("ret_excess").mean(),
+    )
+    .with_columns(pl.col("portfolio").cast(pl.String))
 )
 ```
 
@@ -636,32 +596,36 @@ Finally, we evaluate the performance of the ML-portfolios. The table reports the
 # | label: evaluation
 # | include: true
 # | echo: true
-hml = ml_portfolios.pivot(index="month", columns="portfolio")
-
-hml_portfolio = pd.DataFrame(
-    {
-        "month": hml.index,
-        "portfolio": "H-L",
-        "ret_excess": hml["ret_excess"][10] - hml["ret_excess"][1],
-        "ret_predicted": hml["ret_predicted"][10] - hml["ret_predicted"][1],
-    }
-).reset_index(drop=True)
-
-final_portfolios = pd.concat([ml_portfolios, hml_portfolio], axis=0)
-
-summary = final_portfolios.groupby("portfolio").agg(
-    predicted_mean=("ret_predicted", "mean"),
-    realized_mean=("ret_excess", "mean"),
-    realized_sd=("ret_excess", "std"),
+hml_portfolio = (ml_portfolios
+    .filter(pl.col("portfolio").is_in(["1", "10"]))
+    .pivot(on="portfolio", index="month", values=["ret_predicted", "ret_excess"])
+    .select(
+        pl.lit("H-L").alias("portfolio"),
+        "month",
+        ret_predicted=pl.col("ret_predicted_10") - pl.col("ret_predicted_1"),
+        ret_excess=pl.col("ret_excess_10") - pl.col("ret_excess_1"),
+    )
 )
 
-summary["sharpe_ratio"] = summary["realized_mean"] / summary["realized_sd"]
+final_portfolios = pl.concat([ml_portfolios, hml_portfolio])
+
+portfolio_labels = pl.Enum([str(i) for i in range(1, 11)] + ["H-L"])
+
+summary = (final_portfolios
+    .group_by("portfolio")
+    .agg(
+        predicted_mean=pl.col("ret_predicted").mean(),
+        realized_mean=pl.col("ret_excess").mean(),
+        realized_sd=pl.col("ret_excess").std(),
+    )
+    .with_columns(
+        sharpe_ratio=pl.col("realized_mean") / pl.col("realized_sd"),
+        portfolio=pl.col("portfolio").cast(portfolio_labels),
+    )
+    .sort("portfolio")
+)
 
 print(summary)
 
-summary_reset = summary.reset_index()
-summary_reset["portfolio"] = summary_reset["portfolio"].astype(
-    str
-)  
-summary_reset.to_parquet("results/portfolio_summary.parquet", index=False)
+summary.write_parquet("results/portfolio_summary.parquet")
 ```

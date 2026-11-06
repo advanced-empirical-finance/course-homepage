@@ -41,13 +41,13 @@ library(base64enc)
 
 ## Python
 
-We import six libraries. `tidyfinance` provides the same financial data as the R version. `pandas` and `numpy` handle data manipulation. `sklearn` covers preprocessing, modelling, and cross-validation. `joblib` serialises model objects to disk. `huggingface_hub` uploads and downloads files from Hugging Face.
+We import six libraries. `tidyfinance` provides the same financial data as the R version. `polars` and `numpy` handle data manipulation. `sklearn` covers preprocessing, modelling, and cross-validation. `joblib` serialises model objects to disk. `huggingface_hub` uploads and downloads files from Hugging Face.
 
 ```{python}
 #| label: load-packages-py
 
 import tidyfinance as tf
-import pandas as pd
+import polars as pl
 import numpy as np
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
@@ -77,13 +77,13 @@ data <- download_data("macro_predictors", "monthly")
 
 ## Python
 
-`tf.download_data()` returns the same dataset as a pandas DataFrame.
+`tf.download_data()` returns the same dataset as a polars DataFrame.
 
 ```{python}
 #| label: download-data-py
 
 data = tf.download_data(
-    domain="macro_predictors",
+    domain="Goyal-Welch",
     dataset="monthly",
 )
 ```
@@ -109,23 +109,21 @@ test_data <- testing(split)
 
 ## Python
 
-We sort by `date` first to guarantee chronological order, then slice at the 80% mark. We also separate the feature matrix `X` from the target vector `y` for both splits, dropping `date` from the features since it carries no predictive signal.
+We sort by `date` first to guarantee chronological order, then slice at the 80% mark. We also separate the feature matrix `X` from the target vector `y` for both splits, dropping `date` from the features since it carries no predictive signal. `.to_numpy()` turns both into the numpy arrays that sklearn works with.
 
 ```{python}
 #| label: train-test-split-py
 
-data = data.sort_values("date").reset_index(drop=True)
+data = data.sort("date")
 
-split_idx  = int(len(data) * 0.8)
-train_data = data.iloc[:split_idx]
-test_data  = data.iloc[split_idx:]
+split_idx  = int(data.height * 0.8)
+train_data = data.head(split_idx)
+test_data  = data.slice(split_idx)
 
-feature_cols = [c for c in data.columns if c not in ["date", "rp_div"]]
-
-X_train = train_data[feature_cols]
-y_train = train_data["rp_div"]
-X_test  = test_data[feature_cols]
-y_test  = test_data["rp_div"]
+X_train = train_data.select(pl.exclude("date", "rp_div")).to_numpy()
+y_train = train_data["rp_div"].to_numpy()
+X_test  = test_data.select(pl.exclude("date", "rp_div")).to_numpy()
+y_test  = test_data["rp_div"].to_numpy()
 ```
 
 :::
