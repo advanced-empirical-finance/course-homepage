@@ -784,7 +784,7 @@
     "href": "simulation/getting-started.html#when-something-goes-wrong",
     "title": "Getting started",
     "section": "When something goes wrong",
-    "text": "When something goes wrong\nEvery message says what went wrong and what to do, and ends with a code in brackets. A check or a rejected submission lists every problem at once, for example:\nCheck: problems found\nTrades at the open on 2027-02-10 (rules P1-baseline)\nPositions 21, gross 1.050, net 1.050, cash -0.050\nErrors:\n  unknown_ticker BRKB: Not a stock in the simulation on 2027-02-09. Check the spelling: the simulation uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.\n  net_exposure_exceeded: The weights add up to 1.05 (net exposure); the limit is 1.00. They may add up to less: the rest of the book stays in cash.",
+    "text": "When something goes wrong\nEvery message says what went wrong and what to do, and ends with a code in brackets. A check or a rejected submission lists every problem at once, for example:\nCheck: problems found\nTrades at the open on 2027-02-10 (rules P1-baseline)\nPositions 21, gross 1.050, net 1.050, cash -0.050\nErrors:\n  unknown_ticker BRKB: Not a stock in the trading game on 2027-02-09. Check the spelling: the trading game uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.\n  net_exposure_exceeded: The weights add up to 1.05 (net exposure); the limit is 1.00. They may add up to less: the rest of the book stays in cash.",
     "crumbs": [
       "Getting started"
     ]
@@ -802,21 +802,21 @@
   {
     "objectID": "simulation/index.html",
     "href": "simulation/index.html",
-    "title": "The trading simulation",
+    "title": "The trading game",
     "section": "",
-    "text": "Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new target weights from R or Python. You only decide and submit; everything else happens automatically: the simulation trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team’s dashboard shows how you are doing against simple benchmarks and the cohort, and its leaderboard tab shows every team under a pseudonym.",
+    "text": "Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send a new weight vector from R or Python. You only decide and submit; everything else happens automatically: the trading game trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team’s dashboard shows how you are doing against simple benchmarks and the cohort.",
     "crumbs": [
-      "The trading simulation"
+      "The trading game"
     ]
   },
   {
     "objectID": "simulation/index.html#teams-and-timeline",
     "href": "simulation/index.html#teams-and-timeline",
-    "title": "The trading simulation",
+    "title": "The trading game",
     "section": "Teams and timeline",
-    "text": "Teams and timeline\n\nWork alone or in a team of up to three. Each team gets one token and starts with $1,000,000 in cash.\nDry run: 25 January to 5 February 2027, to try the tools; results are reset afterwards.\nTrading: 8 February to 14 May 2027, every NYSE trading day.\n\nThe rules tighten during the semester. Every response from the simulation tells you which rule set applies to the next trade, so a change never catches you by surprise.\n\n\n\n\n\n\n\n\nFrom\nRule set\nWhat changes\n\n\n\n\n8 February\nP1\nLong only, no transaction costs\n\n\n1 March\nP2\nEvery trade costs 10 bps of its value\n\n\n5 April\nP3\nShort selling allowed: gross exposure up to 160 %, net up to 100 %, borrow fee 50 bps a year\n\n\n\nThroughout: no limit on the number of positions or on a single weight, and gross exposure up to 100 % until shorting opens. Large, diversified portfolios are welcome.",
+    "text": "Teams and timeline\n\nWork alone or in a team of up to three. Choose your team during the dry run.\nEach team gets one token: a key, like a password, that identifies your team to the trading game. The client packages and the dashboard use it to authenticate you. Keep it within your team.\nEach team starts with $1,000,000 in cash.\nDry run: 25 January to 5 February 2027, to try the tools and form your team; results are reset afterwards.\nTrading: 8 February to 14 May 2027, every NYSE trading day.\n\nThe rules tighten during the semester. Every response from the trading game tells you which rules apply to the next trade, so a change never catches you by surprise.\n\n\n\n\n\n\n\nFrom\nWhat changes\n\n\n\n\n8 February\nLong and short positions, and borrowing cash, with a gross exposure of up to 300 % (defined below). No transaction costs.\n\n\n1 March\nEvery trade costs 10 bps (0.1 %) of its value.\n\n\n5 April\nShort positions pay a borrow fee of 50 bps a year.\n\n\n\nThere is no limit on the number of positions or on a single weight.",
     "crumbs": [
-      "The trading simulation"
+      "The trading game"
     ]
   },
   {
@@ -852,11 +852,11 @@
   {
     "objectID": "simulation/index.html#benchmarks",
     "href": "simulation/index.html#benchmarks",
-    "title": "The trading simulation",
+    "title": "The trading game",
     "section": "Benchmarks",
-    "text": "Benchmarks\nThree automatic portfolios trade under the same rules and pay the same costs:\n\nNaive 1/N: equal weight in the S&P 500 stocks of the universe, rebalanced every day;\nBuy and hold: the same portfolio bought on the first day and never traded;\nMarket: the SPDR S&P 500 ETF (SPY), bought once.\n\nStatistics use daily returns net of costs. The Sharpe ratio is on returns in excess of SOFR, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.",
+    "text": "Benchmarks\nThree automatic portfolios trade under the same rules and pay the same costs:\n\nNaive 1/N: equal weight in the S&P 500 stocks of the asset universe, rebalanced every day;\nBuy and hold: the same portfolio bought on the first day and never traded;\nMarket: the SPDR S&P 500 ETF (SPY), bought once.\n\nStatistics use daily returns net of costs. The Sharpe ratio is on returns in excess of the risk-free rate, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.",
     "crumbs": [
-      "The trading simulation"
+      "The trading game"
     ]
   },
   {
@@ -864,7 +864,7 @@
     "href": "simulation/getting-started.html#save-your-token",
     "title": "Getting started",
     "section": "2. Save your token",
-    "text": "2. Save your token\nYour team receives one token, starting with aef_. Treat it like a password: it lets anyone trade for your team. Run set_token() once and paste the token when asked:\n\nRPython\n\n\nlibrary(aefsim)\nlibrary(tidyfinance)\nlibrary(dplyr)\n\nset_token()   # once per project\n\n\nimport datetime as dt\n\nimport aefsim\nimport polars as pl\nimport tidyfinance as tf\n\naefsim.set_token()  # once per project\n\n\n\nIt asks where to save the token: project for your project’s folder or home for your home folder. For a project folder, it offers to add the file to .gitignore, so the token never ends up in Git. From then on the client finds the token by itself, in every new session too. Don’t put the token in your code.",
+    "text": "2. Save your token\nYour team receives one token, starting with aef_: the key with which the client authenticates your team to the trading game. Treat it like a password: it lets anyone trade for your team. Run set_token() once and paste the token when asked:\n\nRPython\n\n\nlibrary(aefsim)\nlibrary(tidyfinance)\nlibrary(dplyr)\n\nset_token()   # once per project\n\n\nimport datetime as dt\n\nimport aefsim\nimport polars as pl\nimport tidyfinance as tf\n\naefsim.set_token()  # once per project\n\n\n\nIt asks where to save the token: project for your project’s folder or home for your home folder. For a project folder, it offers to add the file to .gitignore, so the token never ends up in Git. From then on the client finds the token by itself, in every new session too. Don’t put the token in your code.",
     "crumbs": [
       "Getting started"
     ]
@@ -884,7 +884,7 @@
     "href": "simulation/getting-started.html#what-can-you-trade-and-under-which-rules",
     "title": "Getting started",
     "section": "3. What can you trade, and under which rules?",
-    "text": "3. What can you trade, and under which rules?\n\nRPython\n\n\nuniverse &lt;- get_universe()\nclose_date &lt;- max(universe$close_date)   # the latest close\ncount(universe, sp500)\n\nget_parameters()                    # costs, shorting, leverage; applies_next marks the current rules\nget_calendar() |&gt; filter(is_next)   # the next trading day and its deadline\n\n\nuniverse = aefsim.get_universe()\nclose_date = universe[\"close_date\"].max()  # the latest close\nuniverse.group_by(\"sp500\").len()\n\naefsim.get_parameters()                            # costs, shorting, leverage; applies_next marks the current rules\naefsim.get_calendar().filter(pl.col(\"is_next\"))  # the next trading day and its deadline\n\n\n\nget_universe() lists the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.",
+    "text": "3. What can you trade, and under which rules?\n\nRPython\n\n\nuniverse &lt;- get_universe()\nclose_date &lt;- max(universe$close_date)   # the latest close\ncount(universe, sp500)\n\nget_parameters()                    # costs, shorting, leverage; applies_next marks the current rules\nget_calendar() |&gt; filter(is_next)   # the next trading day and its deadline\n\n\nuniverse = aefsim.get_universe()\nclose_date = universe[\"close_date\"].max()  # the latest close\nuniverse.group_by(\"sp500\").len()\n\naefsim.get_parameters()                            # costs, shorting, leverage; applies_next marks the current rules\naefsim.get_calendar().filter(pl.col(\"is_next\"))  # the next trading day and its deadline\n\n\n\nget_universe() lists the asset universe, the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. Each comes with its CRSP permno, so a portfolio you build from CRSP data, such as tidyfinance’s crsp_monthly, maps to tickers with a join on permno. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.",
     "crumbs": [
       "Getting started"
     ]
@@ -894,7 +894,7 @@
     "href": "simulation/getting-started.html#download-prices",
     "title": "Getting started",
     "section": "4. Download prices",
-    "text": "4. Download prices\nFor the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the simulation trades at.\n\nRPython\n\n\ncandidates &lt;- universe |&gt; filter(sp500) |&gt; pull(ticker)\nprices &lt;- download_data(\"stock_prices\", symbols = candidates,\n                        start_date = close_date - 365, end_date = close_date)\n\n\ncandidates = universe.filter(pl.col(\"sp500\"))[\"ticker\"].to_list()\nprices = tf.download_data(\n    domain=\"stock_prices\",\n    symbols=candidates,\n    start_date=str(close_date - dt.timedelta(days=365)),\n    end_date=str(close_date),\n)",
+    "text": "4. Download prices\nFor the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the trading game trades at.\n\nRPython\n\n\ncandidates &lt;- universe |&gt; filter(sp500) |&gt; pull(ticker)\nprices &lt;- download_data(\"stock_prices\", symbols = candidates,\n                        start_date = close_date - 365, end_date = close_date)\n\n\ncandidates = universe.filter(pl.col(\"sp500\"))[\"ticker\"].to_list()\nprices = tf.download_data(\n    domain=\"stock_prices\",\n    symbols=candidates,\n    start_date=str(close_date - dt.timedelta(days=365)),\n    end_date=str(close_date),\n)",
     "crumbs": [
       "Getting started"
     ]
@@ -904,7 +904,7 @@
     "href": "simulation/getting-started.html#build-a-portfolio",
     "title": "Getting started",
     "section": "5. Build a portfolio",
-    "text": "5. Build a portfolio\nAs an example, not a recommendation: the 20 S&P 500 stocks with the lowest volatility over the past year, equal weight.\n\nRPython\n\n\nweights &lt;- prices |&gt;\n  arrange(symbol, date) |&gt;\n  group_by(symbol) |&gt;\n  mutate(ret = adjusted_close / lag(adjusted_close) - 1) |&gt;\n  summarise(vol = sd(ret, na.rm = TRUE) * sqrt(252), days = n()) |&gt;\n  filter(days &gt;= 200) |&gt;\n  slice_min(vol, n = 20) |&gt;\n  transmute(ticker = symbol, weight = 1 / n())\nweights\n\n\nvolatility = (\n    prices.sort(\"symbol\", \"date\")\n    .with_columns(ret=pl.col(\"adjusted_close\").pct_change().over(\"symbol\"))\n    .group_by(\"symbol\")\n    .agg(vol=pl.col(\"ret\").std() * 252 ** 0.5, days=pl.len())\n    .filter(pl.col(\"days\") &gt;= 200)\n    .sort(\"vol\")\n    .head(20)\n)\nweights = volatility.select(ticker=\"symbol\", weight=pl.lit(1 / volatility.height))\nweights\n\n\n\nWeights are fractions of your portfolio’s value, in a data frame with the columns ticker and weight. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.",
+    "text": "5. Build a portfolio\nAs an example, not a recommendation: the 20 S&P 500 stocks with the lowest volatility over the past year, equal weight.\n\nRPython\n\n\nweights &lt;- prices |&gt;\n  arrange(symbol, date) |&gt;\n  group_by(symbol) |&gt;\n  mutate(ret = adjusted_close / lag(adjusted_close) - 1) |&gt;\n  summarise(vol = sd(ret, na.rm = TRUE) * sqrt(252), days = n()) |&gt;\n  filter(days &gt;= 200) |&gt;\n  slice_min(vol, n = 20) |&gt;\n  transmute(ticker = symbol, weight = 1 / n())\nweights\n\n\nvolatility = (\n    prices.sort(\"symbol\", \"date\")\n    .with_columns(ret=pl.col(\"adjusted_close\").pct_change().over(\"symbol\"))\n    .group_by(\"symbol\")\n    .agg(vol=pl.col(\"ret\").std() * 252 ** 0.5, days=pl.len())\n    .filter(pl.col(\"days\") &gt;= 200)\n    .sort(\"vol\")\n    .head(20)\n)\nweights = volatility.select(ticker=\"symbol\", weight=pl.lit(1 / volatility.height))\nweights\n\n\n\nYour weight vector is a data frame with the columns ticker and weight: each weight is the fraction of your portfolio’s value in that stock, negative for a short position. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.",
     "crumbs": [
       "Getting started"
     ]
@@ -914,7 +914,7 @@
     "href": "simulation/getting-started.html#check-then-submit",
     "title": "Getting started",
     "section": "6. Check, then submit",
-    "text": "6. Check, then submit\n\nRPython\n\n\nvalidate(weights, close_date = close_date)   # every check, nothing stored\n\nresult &lt;- submit(\n  weights, close_date = close_date,\n  rationale = \"Low-volatility tilt: equal weight in the 20 least volatile S&P 500 stocks over the past year.\"\n)\nresult\n\n\naefsim.validate(weights, close_date=close_date)  # every check, nothing stored\n\nresult = aefsim.submit(\n    weights,\n    close_date=close_date,\n    rationale=\"Low-volatility tilt: equal weight in the 20 least volatile S&P 500 stocks over the past year.\",\n)\nresult\n\n\n\nvalidate() runs every check the simulation runs and stores nothing. That’s all you do: the trade happens automatically at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.\nChanged your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with cancel(result$submission_id) in R, aefsim.cancel(result.submission_id) in Python.",
+    "text": "6. Check, then submit\n\nRPython\n\n\nvalidate(weights, close_date = close_date)   # every check, nothing stored\n\nresult &lt;- submit(\n  weights, close_date = close_date,\n  rationale = \"Low-volatility tilt: equal weight in the 20 least volatile S&P 500 stocks over the past year.\"\n)\nresult\n\n\naefsim.validate(weights, close_date=close_date)  # every check, nothing stored\n\nresult = aefsim.submit(\n    weights,\n    close_date=close_date,\n    rationale=\"Low-volatility tilt: equal weight in the 20 least volatile S&P 500 stocks over the past year.\",\n)\nresult\n\n\n\nvalidate() runs every check the trading game runs and stores nothing. That’s all you do: the trade happens automatically at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.\nChanged your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with cancel(result$submission_id) in R, aefsim.cancel(result.submission_id) in Python.",
     "crumbs": [
       "Getting started"
     ]
@@ -922,11 +922,41 @@
   {
     "objectID": "simulation/index.html#how-trading-works",
     "href": "simulation/index.html#how-trading-works",
-    "title": "The trading simulation",
+    "title": "The trading game",
     "section": "How trading works",
-    "text": "How trading works\nYou only decide and submit. The trades, the costs, dividends and the daily valuation happen automatically.\n\nDecide and submit, whenever you like: target weights and a rationale. close_date is the date of the latest market close in the data your decision is based on.\nThe trade happens automatically at the next market open whose deadline has not passed: 09:00 New York time on the trading day. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. Submitting again before the deadline simply replaces your previous submission: only the last one trades. cancel() withdraws a submission until the deadline. If you submit nothing, your portfolio stays as it is: no trades and no costs.\nYour portfolio is valued every evening at that day’s closing prices: each position at its closing price, plus your cash. This is called marking to market. Results appear the next morning, Copenhagen time.\n\nA submission is a set of target weights: fractions of your portfolio’s value, by ticker. Tickers you leave out are sold, and whatever the weights don’t use stays in cash. The simulation trades fractional shares so that after costs your weights are exactly the targets. If a submission breaks a rule, it is rejected as a whole with error codes saying why, and it still appears in your log. validate() runs the same checks without submitting.",
+    "text": "How trading works\nYou only decide and submit. The trades, the costs, dividends and the daily valuation happen automatically.\n\nDecide and submit, whenever you like: a weight vector and a rationale.\n\nEach weight \\(w_i\\) is the fraction of your portfolio’s value you want in stock \\(i\\): positive for a long position, negative for a short one. Stocks you leave out get weight zero, so a position you hold in them is sold.\nWhatever the weights don’t use is cash, \\(1 - \\sum_i w_i\\). It is negative if you borrow.\nYour gross exposure is the sum of the absolute weights, \\(\\sum_i |w_i|\\): longs plus shorts. It may be at most 300 %. For example, 180 % long and 120 % short is a gross exposure of 300 % and leaves 40 % in cash.\nclose_date is the date of the latest market close in the data your decision is based on.\nIf a submission breaks a rule, it is rejected as a whole with messages saying why, and it still appears in your log. validate() runs the same checks without submitting.\n\nThe trade happens automatically at the next market open whose deadline has not passed: 09:00 New York time on the trading day. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00.\n\nA submission sent after a deadline, over a weekend or before the trading game starts waits for the next open.\nSubmitting again before the deadline simply replaces your previous submission: only the last one trades.\ncancel() withdraws a submission before it trades.\nIf you submit nothing, your portfolio stays as it is: no trades and no costs.\n\nYour portfolio is valued every evening at that day’s closing prices: each position at its closing price, plus your cash. This is called marking to market. The results appear at about 01:30 Copenhagen time, after the nightly update.",
     "crumbs": [
-      "The trading simulation"
+      "The trading game"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#the-asset-universe",
+    "href": "simulation/index.html#the-asset-universe",
+    "title": "The trading game",
+    "section": "The asset universe",
+    "text": "The asset universe\nThe asset universe is CRSP’s common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; get_universe() lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.",
+    "crumbs": [
+      "The trading game"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#trading-costs",
+    "href": "simulation/index.html#trading-costs",
+    "title": "The trading game",
+    "section": "Trading costs",
+    "text": "Trading costs\nFrom 1 March, every trade costs 10 bps of its value, buying and selling alike. When your weights trade at the open:\n\n\\(V\\) is your portfolio’s value at that day’s opening prices.\nYour drifted weights \\(\\tilde w_i\\) are what you hold just before the trade: each position’s value at the open divided by \\(V\\). They differ from the weights you last submitted because prices have moved since.\nThe trading game buys and sells (fractional shares) so that position \\(i\\) is worth exactly \\(w_i V\\), and charges\n\n\\[\\text{costs} = 0.001 \\times V \\times \\sum_i \\left| w_i - \\tilde w_i \\right|,\\]\npaid in dollars from your cash. The sum \\(\\sum_i |w_i - \\tilde w_i|\\) is your turnover: the share of your portfolio you traded. Right after the trade, your cash is \\(\\left(1 - \\sum_i w_i\\right) V\\) minus the costs.",
+    "crumbs": [
+      "The trading game"
+    ]
+  },
+  {
+    "objectID": "simulation/index.html#money-and-corporate-actions",
+    "href": "simulation/index.html#money-and-corporate-actions",
+    "title": "The trading game",
+    "section": "Money and corporate actions",
+    "text": "Money and corporate actions\n\nCash earns interest at the US overnight rate (SOFR), the risk-free rate in this trading game. Interest is paid for every calendar day, weekends and holidays included: each day earns the yearly rate divided by 360, the US money-market convention (act/360), so Monday’s interest covers three days. Negative cash, when you borrow, pays the same risk-free rate.\nShort positions pay a borrow fee from 5 April: 50 bps a year on their market value, charged per calendar day like interest.\nDividends are paid into your cash on the ex-date: the first trading day on which the stock trades without its upcoming dividend. If you hold the stock at the close before the ex-date, you receive the dividend; a short position pays it.\nStock splits change your share count, not your value.\nDelisted stocks are sold at their last price.\nA stock with no opening price that day cannot trade, so you keep what you held.",
+    "crumbs": [
+      "The trading game"
     ]
   }
 ]
