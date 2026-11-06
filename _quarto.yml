@@ -81,7 +81,6 @@ website:
              - additional-material/quarto-documentation.qmd
              - additional-material/github-collaboration.qmd
              - additional-material/ml-data-preparation-for-python.qmd
-             - additional-material/storing-and-sharing-workflows.qmd
 
 format:
   html:
