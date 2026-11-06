@@ -2,17 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.23">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>More resources</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -34,15 +40,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1fe81d0376b2c50856e68e651e390326.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-bf6eb96aae9c14dc0f6a560829a25e9d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f0b758df4557945c28654855ebd7cb32.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -157,7 +162,7 @@ ul.task-list li input[type="checkbox"] {
   </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -195,10 +200,6 @@ window.Quarto = {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    </a>
-  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -206,7 +207,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">home</span></a>
   </li>  
   <li class="nav-item">
@@ -221,12 +222,31 @@ window.Quarto = {
     <a class="nav-link" href="../slides.html"> 
 <span class="menu-text">slides</span></a>
   </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-trading-game" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">trading game</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-trading-game">    
+        <li>
+    <a class="dropdown-item" href="../simulation/index.html">
+ <span class="dropdown-text">the game</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../simulation/getting-started.html">
+ <span class="dropdown-text">getting started</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../simulation/dashboard.html">
+ <span class="dropdown-text">team dashboard</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
-    <a class="nav-link" href="../additional-material/index.html"> 
-<span class="menu-text">more ressources</span></a>
+    <a class="nav-link active" href="../additional-material/index.html" aria-current="page"> 
+<span class="menu-text">more resources</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/advanced-empirical-finance/AEF-2026-course-homepage"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/advanced-empirical-finance/course-homepage"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -251,10 +271,6 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -313,12 +329,6 @@ window.Quarto = {
  <span class="menu-text">Replicating Gu Kelly &amp; Xiu (2020)</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../additional-material/storing-and-sharing-workflows.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Storing and sharing ML models in Python</span></a>
-  </div>
-</li>
       </ul>
   </li>
     </ul>
@@ -364,7 +374,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="positron-ai">Positron &amp; AI</h2>
 <div id="listing-positron-ai" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1780397707468" data-listing-reading-time-sort="6" data-listing-word-count-sort="1130">
+<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1793806249481" data-listing-reading-time-sort="6" data-listing-word-count-sort="1130">
 <a href="../additional-material/positron-ai-assistant.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -377,7 +387,7 @@ Positron AI Assistant Guide
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="1" data-categories="YXNzaWdubWVudHMlMkN3b3JrZmxvdyUyQ3JlcHJvZHVjaWJpbGl0eQ==" data-listing-date-sort="1772924400000" data-listing-file-modified-sort="1773655016102" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="23" data-listing-word-count-sort="4488">
+<div class="g-col-1" data-index="1" data-categories="YXNzaWdubWVudHMlMkN3b3JrZmxvdyUyQ3JlcHJvZHVjaWJpbGl0eQ==" data-listing-date-sort="1772924400000" data-listing-file-modified-sort="1793806249457" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="23" data-listing-word-count-sort="4488">
 <a href="../additional-material/assignment-quality-criteria.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -398,7 +408,7 @@ Assignment Quality Criteria
 <h2 class="anchored" data-anchor-id="reproducible-workflows">Reproducible workflows</h2>
 <div id="listing-reproducible-workflows" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1780397728794" data-listing-reading-time-sort="12" data-listing-word-count-sort="2394">
+<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1793806249481" data-listing-reading-time-sort="12" data-listing-word-count-sort="2394">
 <a href="../additional-material/quarto-documentation.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -411,7 +421,7 @@ Reproducible Research with Quarto
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1780397734895" data-listing-reading-time-sort="5" data-listing-word-count-sort="996">
+<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1793963322246" data-listing-reading-time-sort="5" data-listing-word-count-sort="997">
 <a href="../additional-material/github-collaboration.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -432,7 +442,7 @@ Collaboration with Git and GitHub
 <h2 class="anchored" data-anchor-id="machine-learning-workflows">Machine-learning workflows</h2>
 <div id="listing-ml-workflows" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1780397740533" data-listing-reading-time-sort="22" data-listing-word-count-sort="4377">
+<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1793963322246" data-listing-reading-time-sort="22" data-listing-word-count-sort="4378">
 <a href="../additional-material/ml-data-preparation-for-python.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">
@@ -445,20 +455,7 @@ Replicating Gu Kelly &amp; Xiu (2020)
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1780397745234" data-listing-reading-time-sort="3" data-listing-word-count-sort="558">
-<a href="../additional-material/storing-and-sharing-workflows.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Storing and sharing ML models in Python
-</h5>
-<div class="card-text listing-description delink">
-<p>Persist and share trained ML models in Python so results stay reproducible across machines and sessions.</p>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="2" data-listing-file-modified-sort="1780397750079" data-listing-reading-time-sort="9" data-listing-word-count-sort="1686">
+<div class="g-col-1" data-index="1" data-listing-file-modified-sort="1793963307601" data-listing-reading-time-sort="9" data-listing-word-count-sort="1686">
 <a href="../additional-material/hf_model_sharing_example.html" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <div class="card-body post-contents">

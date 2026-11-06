@@ -20,7 +20,6 @@ listing:
   - id: ml-workflows
     contents:
       - ml-data-preparation-for-python.qmd
-      - storing-and-sharing-workflows.qmd
       - hf_model_sharing_example.qmd
     type: grid
     fields: [title, description]
