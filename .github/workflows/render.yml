@@ -62,14 +62,12 @@ jobs:
       - name: Install R and the R packages
         working-directory: course-homepage
         run: |
+          sudo apt-get update -q
+          # the binary of Matrix (and so reticulate) links against LAPACK
+          sudo apt-get install -y -q liblapack3 libblas3
           uvr r install 4.6.1
-          uvr sync --frozen --unattended 2>&1 | tee uvr-sync.log
-          # uvr prints the apt-get line for any system library a package needs
-          install=$(sed -n 's/^ *Install with: //p' uvr-sync.log | head -n 1)
-          if [ -n "$install" ]; then
-            sudo apt-get update -q
-            eval "$install"
-          fi
+          # --install-system-deps: uvr apt-installs the libraries packages need
+          uvr sync --frozen --unattended --install-system-deps
 
       - name: Install the Python packages
         working-directory: course-homepage
