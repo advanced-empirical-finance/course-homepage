@@ -35,14 +35,14 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
 
 5.  Configure Git in Positron:
      - Open Positron, open the source control view `(Ctrl+Shift+G)`. *If Git is not yet installed, the Source Control view will show instructions on how to install it*
-     - Once Git is detected you can clone the course GitHub repository by opening the source control view `(Ctrl+Shift+G)` and clicking `Clone Repository`. Paste the address of the course repository (use the copy button on the right):
+     - Once Git is detected you can clone the course GitHub repository by opening the source control view `(Ctrl+Shift+G)` and clicking `Clone Repository`. Paste the address of the course repository:
 
        ```{.default}
        https://github.com/advanced-empirical-finance/course-repository.git
        ```
 
        Then choose a local folder where the repository should be stored. Cloning a repository simply means creating your own copy of a shared project so you can work on it on your computer without affecting the original.
-6. Open the cloned repository in Positron by navigating to `File` -> `Open Project` and selecting the folder where you cloned the repository. The folder contains all course materials, including R and Python scripts, datasets, lecture slides, templates for the mandatory assignment and configuration files for R and Python environments.
+6. Open the cloned repository in Positron by navigating to `File` -> `Open Project` and selecting the folder where you cloned the repository. The folder contains the course materials: lecture slides, templates for the mandatory assignments, the configuration files for the R and Python environments, and an empty `data` folder that you fill with the course data in [exercise 3](financial_data.qmd).
 
 ### Install R, Python and the course packages
 
