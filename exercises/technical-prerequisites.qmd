@@ -11,7 +11,7 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
 ### Install the required software
 
 1.  Install [Positron (latest Version)](https://positron.posit.co/start.html). *Positron is the integrated development environment (IDE) we use. It supports R, Python, Git, and Quarto in one place. Install Positron using the default settings.*
-2.  Register a free account on [GitHub](https://github.com/); [Happy Git with R](https://happygitwithr.com/github-acct) has tips on choosing a username. *GitHub allows us to share course materials and collaborate.*
+2.  Register a free account on [GitHub](https://github.com/). *GitHub allows us to share course materials and collaborate.*
 3.  Install [Git](https://git-scm.com/install/). *Git is the version control system we use to connect to GitHub.*
 4.  Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and [uvr](https://github.com/nbafrank/uvr). *uv installs Python and the Python packages of the course; uvr does the same for R. You don't install R or Python yourself.* Open a terminal and run the two lines for your system:
 
