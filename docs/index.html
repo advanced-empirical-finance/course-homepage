@@ -98,14 +98,109 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./slides-index.html"> 
 <span class="menu-text">lecture plan</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./exercises/index.html"> 
-<span class="menu-text">exercises</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-exercises" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">exercises</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-exercises">    
+        <li>
+    <a class="dropdown-item" href="./exercises/index.html">
+ <span class="dropdown-text">overview</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./slides.html"> 
-<span class="menu-text">slides</span></a>
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">introduction</li>
+        <li>
+    <a class="dropdown-item" href="./exercises/technical-prerequisites.html">
+ <span class="dropdown-text">technical prerequisites</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./exercises/introduction.html">
+ <span class="dropdown-text">introduction to tidy finance</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">asset pricing</li>
+        <li>
+    <a class="dropdown-item" href="./exercises/financial_data.html">
+ <span class="dropdown-text">accessing &amp; managing financial data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./exercises/beta_estimation.html">
+ <span class="dropdown-text">beta estimation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./exercises/portfolio_sorts.html">
+ <span class="dropdown-text">portfolio sorts</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">machine learning</li>
+        <li>
+    <a class="dropdown-item" href="./exercises/gu_kelly_xiu.html">
+ <span class="dropdown-text">empirical asset pricing via machine learning</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./exercises/machine_learning.html">
+ <span class="dropdown-text">shrinkage estimation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./exercises/machine_learning_nonlinear.html">
+ <span class="dropdown-text">neural networks</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">covariance estimation and portfolio choice</li>
+        <li>
+    <a class="dropdown-item" href="./exercises/covariance_estimation.html">
+ <span class="dropdown-text">(co)variance estimation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./exercises/portfolio_choice.html">
+ <span class="dropdown-text">portfolio choice under transaction costs</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-slides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">slides</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-slides">    
+        <li>
+    <a class="dropdown-item" href="./slides.html">
+ <span class="dropdown-text">all slides</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-1-introduction">
+ <span class="dropdown-text">lecture 1 — introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-2-portfolio-choice">
+ <span class="dropdown-text">lecture 2 — portfolio choice</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-3-multifactor-models-and-the-reproducibility-crisis">
+ <span class="dropdown-text">lecture 3 — multifactor models and the reproducibility crisis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-4-machine-learning">
+ <span class="dropdown-text">lecture 4 — machine learning</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-5-volatility-estimation-and-advanced-portfolio-choice">
+ <span class="dropdown-text">lecture 5 — volatility estimation and advanced portfolio choice</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-6-high-frequency-econometrics">
+ <span class="dropdown-text">lecture 6 — high frequency econometrics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-mandatory-assignment-1-evaluation">
+ <span class="dropdown-text">mandatory assignment 1 — evaluation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides.html#aef-mandatory-assignment-2-evaluation">
+ <span class="dropdown-text">mandatory assignment 2 — evaluation</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-trading-game" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">trading game</span>
@@ -125,10 +220,47 @@ ul.task-list li input[type="checkbox"] {
   </li>  
     </ul>
   </li>
-  <li class="nav-item">
-    <a class="nav-link" href="./additional-material/index.html"> 
-<span class="menu-text">more resources</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">more resources</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more-resources">    
+        <li>
+    <a class="dropdown-item" href="./additional-material/index.html">
+ <span class="dropdown-text">overview</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">positron &amp; AI</li>
+        <li>
+    <a class="dropdown-item" href="./additional-material/positron-ai-assistant.html">
+ <span class="dropdown-text">positron AI assistant guide</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./additional-material/assignment-quality-criteria.html">
+ <span class="dropdown-text">assignment quality criteria</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">reproducible workflows</li>
+        <li>
+    <a class="dropdown-item" href="./additional-material/quarto-documentation.html">
+ <span class="dropdown-text">reproducible research with quarto</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./additional-material/github-collaboration.html">
+ <span class="dropdown-text">collaboration with git and github</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">ML workflows</li>
+        <li>
+    <a class="dropdown-item" href="./additional-material/ml-data-preparation-for-python.html">
+ <span class="dropdown-text">replicating Gu, Kelly &amp; Xiu (2020)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./additional-material/hf_model_sharing_example.html">
+ <span class="dropdown-text">sharing trained models via Hugging Face Hub</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/advanced-empirical-finance/course-homepage"> <i class="bi bi-github" role="img">
 </i> 
