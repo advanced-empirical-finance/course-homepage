@@ -32,7 +32,7 @@ uv run quarto render    # runs Quarto with the Python in .venv
 
 Python pages use the kernel `python3` from `.venv`, which is why Quarto runs through `uv run`. Some R chunks run even though `_quarto.yml` sets `eval: false`, so the R packages have to be installed too.
 
-If a full render fails half-way, it can leave `docs/` emptied; `git checkout -- docs` restores it.
+The render writes the site into `docs/` and copies the decks into `slides/`. Git ignores both, so a local render never shows up in a commit.
 
 ## Rendering a few pages
 
