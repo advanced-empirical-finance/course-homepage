@@ -2,17 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.23">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Accessing &amp; managing financial data</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -67,15 +73,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1fe81d0376b2c50856e68e651e390326.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-bf6eb96aae9c14dc0f6a560829a25e9d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f0b758df4557945c28654855ebd7cb32.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -114,10 +119,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    </a>
-  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -125,7 +126,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">home</span></a>
   </li>  
   <li class="nav-item">
@@ -133,19 +134,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">lecture plan</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../exercises/index.html"> 
+    <a class="nav-link active" href="../exercises/index.html" aria-current="page"> 
 <span class="menu-text">exercises</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../slides.html"> 
 <span class="menu-text">slides</span></a>
   </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-trading-game" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">trading game</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-trading-game">    
+        <li>
+    <a class="dropdown-item" href="../simulation/index.html">
+ <span class="dropdown-text">the game</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../simulation/getting-started.html">
+ <span class="dropdown-text">getting started</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../simulation/dashboard.html">
+ <span class="dropdown-text">team dashboard</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="../additional-material/index.html"> 
-<span class="menu-text">more ressources</span></a>
+<span class="menu-text">more resources</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/advanced-empirical-finance/AEF-2026-course-homepage"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/advanced-empirical-finance/course-homepage"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -170,10 +190,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
-      </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -335,7 +351,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p><strong>Exercises:</strong></p>
 <ol type="1">
-<li><p>Read the book chapters <a href="https://www.tidy-finance.org/r/accessing-and-managing-financial-data.html">Accessing &amp; managing financial data</a> and <a href="https://www.tidy-finance.org/r/wrds-crsp-and-compustat.html">WRDS, CRSP, and Compustat</a> entirely. If you prefer to read Python code, the chapters are available <a href="https://www.tidy-finance.org/python/accessing-and-managing-financial-data.html">here</a> and <a href="https://www.tidy-finance.org/python/wrds-crsp-and-compustat.html">here</a>. They may contain some advanced concepts but also a description of almost every important dataset relevant to research in empirical finance. To get more information on how to compute returns adjusted for delisting, follow the procedure described in Chapter 7.2 of the book <em>Empirical Asset Pricing</em>.</p></li>
+<li><p>Read the book chapters <a href="https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html">Accessing and managing financial data</a> and <a href="https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html">WRDS, CRSP, and Compustat</a> entirely; both show the R and the Python code side by side. They may contain some advanced concepts but also a description of almost every important dataset relevant to research in empirical finance. Since CRSP’s update in July 2022, monthly returns already include delisting returns, so you no longer need to adjust for delistings yourself; the second chapter explains the details.</p></li>
 <li><p>Download the file <code>crsp_monthly.parquet</code> from Absalon. Store it in the folder called <code>data-r</code> (<code>data-python</code>) within your standard working directory for the course. Almost all exercises from now on will start with reading data out of this file, so make sure you familiarize yourself with this short <em>minimal setup to load data into your R or Python session memory from a fresh session</em> (you can consult it anytime again later during the course).</p></li>
 </ol>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
@@ -343,23 +359,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tab-content" data-group="language">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pd.read_parquet(<span class="st">"data-python/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="op">=</span> pl.read_parquet(<span class="st">"data-python/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data-r/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nanoparquet)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data-r/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-<ol start="4" type="1">
-<li>If you need help with .parquet files, post your question on Absalon. Your TA, your peers, and I will help you!</li>
-<li>Replicate the following two figures provided in the lecture slides: i) Create a time series of the number of stocks in the CRSP sample, which are listed on NASDAQ, NYSE, and AMEX. ii) Illustrate the time series of total market values (inflation-adjusted) based on industry classification <code>siccd</code>. The book <em>Empirical Asset Pricing</em> (Bali, Murrey, and Engle) provides a detailed walk-through if you need help.</li>
+<ol start="3" type="1">
+<li><p>If you need help with .parquet files, post your question on Absalon. Your TA, your peers, and I will help you!</p></li>
+<li><p>Replicate the following two figures provided in the lecture slides: i) Create a time series of the number of stocks in the CRSP sample by listing exchange (NYSE, NYSE American, formerly AMEX, and Nasdaq). ii) Illustrate the time series of total market values (inflation-adjusted) by industry, based on CRSP’s SIC codes (<code>siccd</code>). The book <em>Empirical Asset Pricing</em> (Bali, Murray, and Engle) provides a detailed walk-through if you need help.</p></li>
 </ol>
-<p><strong>Solutions:</strong> All solutions are provided in the book chapter <em>WRDS, CRSP, and Compustat</em> (<a href="https://www.tidy-finance.org/r/wrds-crsp-and-compustat.html">R version</a> and <a href="https://www.tidy-finance.org/python/wrds-crsp-and-compustat.html">Python version</a>) and the lecture slides.</p>
+<p><strong>Solutions:</strong> All solutions are provided in the book chapter <a href="https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html">WRDS, CRSP, and Compustat</a>, in R and Python, and in the lecture slides.</p>
 
 
 
