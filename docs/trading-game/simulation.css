@@ -1,4 +1,0 @@
-/* The simulation pages' own components; the course homepage and the
-   standalone site both load this file. */
-:root { --red: #901A1E; --red-soft: #F3E6E6; --ink: #141416; --ash: #8A8A8E; --hair: #E6E3DF; --slate: #4A6B8C; }
-.dash-frame { width: 100%; height: 85vh; min-height: 640px; border: 1px solid var(--hair); border-radius: 8px; margin: 8px 0 16px; }

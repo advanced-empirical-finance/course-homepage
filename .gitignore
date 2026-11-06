@@ -1,10 +1,16 @@
-.quarto/
-_site/
+# Rendered site: GitHub Actions renders and publishes it (.github/workflows/render.yml)
+/docs/
 /.quarto/
-
 **/*.quarto_ipynb
-.claude/settings.local.json
-.Renviron
+
+# Lecture decks: tools/build-slides-page.R copies them from ../course-repository
+/slides/
+
+# R and Python environments: uvr sync and uv sync create them
 /.uvr/library/
 /.uvr/activate*
-.venv/
+/.venv/
+
+# Local settings and secrets
+/.Renviron
+/.claude/settings.local.json
