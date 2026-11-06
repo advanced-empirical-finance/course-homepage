@@ -8,7 +8,7 @@ title: Beta Estimation
 1. Read in the Fama-French monthly market returns (`factors_ff_monthly`) from `factors_ff_monthly.parquet`
 1. Compute the market beta $\beta_\text{AAPL}$ of ticker `AAPL` (`permno == 14593`). You can use the function `lm()` (R) or `smf.ols` (Python) for that purpose (alternatively: compute the well-known OLS estimate $(X'X)^{-1}X'Y$ on your own).
 1. For monthly data, it is common to compute $\beta_i$ based on a rolling window of length five years. Implement a rolling procedure that estimates assets market beta each month based on the last 60 observations. You can use the package `slider` (R), `statsmodels.regression.rolling` (Python), or a simple `for` loop. (*Note*: this is going to be a time-consuming computational task)
-1. Store the beta estimates as `beta_exercise.parquet` in `data-r` / `data-python` (the file `beta.parquet` already contains the estimated values from the textbook - it may be a good idea to compare your results with the ones we get).
+1. Store the beta estimates as `beta_exercise.parquet` in the `data` folder (the file `beta.parquet` already contains the estimated values from the textbook - it may be a good idea to compare your results with the ones we get).
 1. Provide summary statistics for the cross-section of estimated betas
 1. What is the theoretical prediction of CAPM concerning the relationship between market beta and expected returns? What would you expect if you create portfolios based on beta (you create a high- and a low-beta portfolio each month and track the performance over time)? How should the expected returns differ between high and low-beta portfolios?
 
