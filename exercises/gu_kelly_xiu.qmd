@@ -10,7 +10,7 @@ This exercise guides you through an actual academic application of machine learn
 1.  Read Section 2 of the paper ("An empirical study of U.S. equities"). The authors approximate the conditional expected return $E_t\left(r_{i, t+1}\right) = g^\star(z_{i,t})$ with different machine learning methods. The returns are monthly total equity returns from CRSP for all firms listed on NYSE, AMEX, and NASDAQ, starting in March 1957. Use `crsp_monthly.parquet` from Absalon for the returns.
 2.  The paper's main input is a collection of 94 stock characteristics (Table A.6 in the Internet Appendix). You do not have to compute them yourself: *download* them from [Dacheng Xiu's homepage](https://dachxiu.chicagobooth.edu/download/datashare.zip) and read the *readme* file.
 3.  Rank all characteristics cross-sectionally, month by month, and map the ranks into the $[-1, 1]$ interval (footnote 29). Replace missing characteristics with the cross-sectional median of the month (footnote 30).
-4.  Merge the characteristics with the excess returns from CRSP and with the eight macroeconomic predictors of the paper, following Welch and Goyal (2008): `dp`, `ep`, `bm`, `ntis`, `tbl`, `tms`, `dfy`, and `svar`. You find them in `macro_predictors.parquet` in the `data-r` / `data-python` folder of the course repository. Make sure the timing is right: the predictors in row $t$ must be known before the return in row $t$ is realized.
+4.  Merge the characteristics with the excess returns from CRSP and with the eight macroeconomic predictors of the paper, following Welch and Goyal (2008): `dp`, `ep`, `bm`, `ntis`, `tbl`, `tms`, `dfy`, and `svar`. You stored them in `macro_predictors.parquet` in the `data` folder when you worked through the Tidy Finance chapter [Accessing and managing financial data](https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html). Make sure the timing is right: the predictors in row $t$ must be known before the return in row $t$ is realized.
 5.  Build the paper's 920 covariates: the 94 characteristics, their interactions with the eight macroeconomic predictors, and 74 industry dummies from the first two digits of the SIC code (`sic2`). The resulting dataset is huge. How can you keep it manageable on your own computer?
 6.  Split the sample the way the paper does: 18 years of training data (1957–1974), 12 years of validation data (1975–1986), and the remaining years for out-of-sample testing, with an expanding training sample and a rolling validation sample, refitted once a year. Illustrate the scheme in a figure.
 7.  Fit a random forest with 300 trees for the first out-of-sample year (1987). Tune the number of variables considered at each split and the size of the trees on the validation sample. Then set up an elastic net with mixing parameter 0.5 in the same way.
@@ -193,10 +193,10 @@ The characteristics are already aligned with the returns they predict: the readm
 ## R
 ```{r}
 #| label: r-merge-crsp-macro
-crsp_monthly <- read_parquet("data-r/crsp_monthly.parquet") |>
+crsp_monthly <- read_parquet("data/crsp_monthly.parquet") |>
   select(permno, date, ret_excess, mktcap_lag)
 
-macro_predictors <- read_parquet("data-r/macro_predictors.parquet") |>
+macro_predictors <- read_parquet("data/macro_predictors.parquet") |>
   select(date, dp, ep, bm, ntis, tbl, tms, dfy, svar) |>
   rename_with(\(x) paste0("macro_", x), -date) |>
   mutate(date = date %m+% months(1))
@@ -214,7 +214,7 @@ characteristics <- characteristics |>
 ## Python
 ```{python}
 #| label: py-merge-crsp-macro
-crsp_monthly = (pl.read_parquet("data-python/crsp_monthly.parquet")
+crsp_monthly = (pl.read_parquet("data/crsp_monthly.parquet")
     .select(
         pl.col("permno").cast(pl.Int64),
         pl.col("date").cast(pl.Date),
@@ -222,7 +222,7 @@ crsp_monthly = (pl.read_parquet("data-python/crsp_monthly.parquet")
     )
 )
 
-macro_predictors = (pl.read_parquet("data-python/macro_predictors.parquet")
+macro_predictors = (pl.read_parquet("data/macro_predictors.parquet")
     .select(
         pl.col("date").cast(pl.Date).dt.offset_by("1mo"),
         pl.col("dp", "ep", "bm", "ntis", "tbl", "tms", "dfy", "svar").name.prefix("macro_")
@@ -248,13 +248,13 @@ polars joins only columns of the same type, so the Python code casts `permno` an
 ## R
 ```{r}
 #| label: r-write-characteristics
-write_parquet(characteristics, "data-r/stock_characteristics_monthly.parquet")
+write_parquet(characteristics, "data/stock_characteristics_monthly.parquet")
 ```
 
 ## Python
 ```{python}
 #| label: py-write-characteristics
-characteristics.write_parquet("data-python/stock_characteristics_monthly.parquet")
+characteristics.write_parquet("data/stock_characteristics_monthly.parquet")
 ```
 :::
 
@@ -270,7 +270,7 @@ We first describe these steps once and then apply them to each year of data sepa
 ## R
 ```{r}
 #| label: r-covariates
-characteristics <- read_parquet("data-r/stock_characteristics_monthly.parquet") |>
+characteristics <- read_parquet("data/stock_characteristics_monthly.parquet") |>
   mutate(sic2 = factor(sic2))
 
 rec <- recipe(ret_excess ~ ., data = characteristics |> slice_head(n = 1000)) |>
@@ -284,7 +284,7 @@ rec <- recipe(ret_excess ~ ., data = characteristics |> slice_head(n = 1000)) |>
 ## Python
 ```{python}
 #| label: py-covariates
-characteristics = (pl.read_parquet("data-python/stock_characteristics_monthly.parquet")
+characteristics = (pl.read_parquet("data/stock_characteristics_monthly.parquet")
     .with_columns(pl.col("sic2").cast(pl.Int64).cast(pl.String))
 )
 
@@ -305,26 +305,26 @@ Now we apply the steps year by year and store one file per year in the folder `c
 ## R
 ```{r}
 #| label: r-store-covariates
-dir.create("data-r/characteristics_prepared", showWarnings = FALSE)
+dir.create("data/characteristics_prepared", showWarnings = FALSE)
 
 for (y in unique(year(characteristics$date))) {
   characteristics |>
     filter(year(date) == y) |>
     bake(rec, new_data = _) |>
-    write_parquet(paste0("data-r/characteristics_prepared/", y, ".parquet"))
+    write_parquet(paste0("data/characteristics_prepared/", y, ".parquet"))
 }
 ```
 
 ## Python
 ```{python}
 #| label: py-store-covariates
-Path("data-python/characteristics_prepared").mkdir(exist_ok=True)
+Path("data/characteristics_prepared").mkdir(exist_ok=True)
 
 for (y,), data_year in characteristics.group_by(pl.col("date").dt.year()):
     (data_year
         .with_columns(covariates)
         .drop(macro_cols + ["sic2"])
-        .write_parquet(f"data-python/characteristics_prepared/{y}.parquet")
+        .write_parquet(f"data/characteristics_prepared/{y}.parquet")
     )
 ```
 :::
@@ -336,7 +336,7 @@ Each file holds the identifiers `permno`, `date` and `mktcap_lag`, the excess re
 ```{r}
 #| label: r-read-years
 read_years <- function(start, end) {
-  files <- paste0("data-r/characteristics_prepared/", start:end, ".parquet")
+  files <- paste0("data/characteristics_prepared/", start:end, ".parquet")
   files[file.exists(files)] |>
     map(read_parquet) |>
     list_rbind()
@@ -347,7 +347,7 @@ read_years <- function(start, end) {
 ```{python}
 #| label: py-read-years
 def read_years(start, end):
-    files = [Path(f"data-python/characteristics_prepared/{y}.parquet") for y in range(start, end + 1)]
+    files = [Path(f"data/characteristics_prepared/{y}.parquet") for y in range(start, end + 1)]
     return pl.concat([pl.read_parquet(f) for f in files if f.exists()])
 ```
 :::
@@ -552,13 +552,13 @@ A wider grid would likely help if you have the computing time. The fitted model 
 #| label: r-rf-store
 rf_fit |>
   butcher() |>
-  write_rds("data-r/rf_fit_1987.rds")
+  write_rds("data/rf_fit_1987.rds")
 ```
 
 ## Python
 ```{python}
 #| label: py-rf-store
-joblib.dump(rf_fit, "data-python/rf_fit_1987.joblib")
+joblib.dump(rf_fit, "data/rf_fit_1987.joblib")
 ```
 :::
 
@@ -611,7 +611,7 @@ We predict the excess returns of every out-of-sample year with the stored model.
 ## R
 ```{r}
 #| label: r-oos-predictions
-rf_fit <- read_rds("data-r/rf_fit_1987.rds")
+rf_fit <- read_rds("data/rf_fit_1987.rds")
 
 predict_year <- function(oos_year) {
   out_of_sample <- read_years(oos_year, oos_year)
@@ -628,7 +628,7 @@ oos_predictions <- estimation_periods$oos_year |>
 ## Python
 ```{python}
 #| label: py-oos-predictions
-rf_fit = joblib.load("data-python/rf_fit_1987.joblib")
+rf_fit = joblib.load("data/rf_fit_1987.joblib")
 
 
 def predict_year(oos_year):

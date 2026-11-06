@@ -6,7 +6,7 @@ title: Accessing & managing financial data
 
 1. Read the book chapters [Accessing and managing financial data](https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html) and [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) entirely; both show the R and the Python code side by side. They may contain some advanced concepts but also a description of almost every important dataset relevant to research in empirical finance. Since CRSP's update in July 2022, monthly returns already include delisting returns, so you no longer need to adjust for delistings yourself; the second chapter explains the details.
 
-2. Download the file `crsp_monthly.parquet` from Absalon. Store it in the folder called `data-r` (`data-python`) within your standard working directory for the course. Almost all exercises from now on will start with reading data out of this file, so make sure you familiarize yourself with this short *minimal setup to load data into your R or Python session memory from a fresh session* (you can consult it anytime again later during the course).
+2. Download the file `crsp_monthly.parquet` from Absalon. Store it in the folder `data` of the course repository, where R and Python both read it. Almost all exercises from now on will start with reading data out of this file, so make sure you familiarize yourself with this short *minimal setup to load data into your R or Python session memory from a fresh session* (you can consult it anytime again later during the course).
 
 ::: {.panel-tabset group="language"}
 ## Python
@@ -16,7 +16,7 @@ title: Accessing & managing financial data
 #| eval: false
 import polars as pl
 
-crsp_monthly = pl.read_parquet("data-python/crsp_monthly.parquet")
+crsp_monthly = pl.read_parquet("data/crsp_monthly.parquet")
 ```
 
 ## R
@@ -26,7 +26,7 @@ crsp_monthly = pl.read_parquet("data-python/crsp_monthly.parquet")
 #| eval: false
 library(nanoparquet)
 
-crsp_monthly <- read_parquet("data-r/crsp_monthly.parquet")
+crsp_monthly <- read_parquet("data/crsp_monthly.parquet")
 ```
 
 :::

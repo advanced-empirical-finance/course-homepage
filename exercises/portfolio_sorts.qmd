@@ -4,7 +4,7 @@ title: Portfolio sorts
 
 **Exercises:**
 
-1. Load the monthly CRSP file, the Fama-French Factors, and the estimated betas from `crsp_monthly.parquet`, `factors_ff_monthly.parquet`, and `beta.parquet` in `data-r` / `data-python`.
+1. Load the monthly CRSP file, the Fama-French Factors, and the estimated betas from `crsp_monthly.parquet`, `factors_ff3_monthly.parquet`, and `beta.parquet` in the `data` folder (`factors_ff3_monthly.parquet` comes from the Tidy Finance chapter [Accessing and managing financial data](https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html), `beta.parquet` from Absalon).
 1. Create portfolio sorts based on the *lagged* beta. Specifically, you compute the breakpoint as the median *lag* beta each month. Then, you compute the returns of a portfolio that invests only in the stocks with a higher beta than the breakpoint and a portfolio that invests only in the stocks with a lower beta than the breakpoints. The portfolio weights can either be equal or value-weighted.
 1. What are the monthly excess returns of both portfolios?
 1. Does a portfolio that goes long high beta stocks and short low beta stocks yield an excess return significantly different from zero?
