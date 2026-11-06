@@ -1,8 +1,19 @@
 # AEF course homepage
 
-Source of the Advanced Empirical Finance homepage at <https://aef-course.ku.dk>. Quarto renders it into `docs/`, which is committed; GitHub Pages serves `main:/docs` (the custom domain comes from `CNAME`).
+Source of the Advanced Empirical Finance homepage at <https://aef-course.ku.dk>.
 
-## Full render
+## Publishing
+
+GitHub renders and publishes the site: the workflow `.github/workflows/render.yml` installs the course environment (Quarto 1.10.19, R 4.6.1 with uvr, Python with uv), checks out `course-repository` for the slide decks, runs `uv run quarto render` and deploys the result to GitHub Pages.
+
+- **Pull requests** render only, as a check.
+- **Pushes to `main`** render and publish.
+- **Nightly:** a run at 02:41 UTC picks up new slide decks from `course-repository`.
+- **On demand:** "Run workflow" on the Actions tab.
+
+To change a page, edit its `.qmd` in a pull request; there is no need to render locally.
+
+## Rendering locally (preview)
 
 R packages come from [uvr](https://github.com/nbafrank/uvr) (`uvr.toml`, `uvr.lock`), Python packages from [uv](https://docs.astral.sh/uv/) (`pyproject.toml`, `uv.lock`); both lists match the course repository's. In a terminal, in this folder:
 
@@ -16,7 +27,7 @@ uv run quarto render    # runs Quarto with the Python in .venv
 
 `quarto render` rebuilds every page. Besides the packages it needs:
 
-- **One Quarto version.** `docs/` is currently built partly with 1.8.23 and partly with 1.10.19; a full render with one version settles that.
+- **One Quarto version.** The workflow uses 1.10.19; use the same locally.
 - **The lecture slides.** The pre-render hook `tools/build-slides-page.R` copies the rendered decks from `../course-repository/lecture-slides` into `slides/` and regenerates `slides.qmd`. Check out `course-repository` next to this repository, or point `SLIDES_SRC` at the decks.
 
 Python pages use the kernel `python3` from `.venv`, which is why Quarto runs through `uv run`. Some R chunks run even though `_quarto.yml` sets `eval: false`, so the R packages have to be installed too.
