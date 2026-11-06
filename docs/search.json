@@ -894,7 +894,7 @@
     "href": "simulation/getting-started.html#download-prices",
     "title": "Getting started",
     "section": "4. Download prices",
-    "text": "4. Download prices\nFor the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the trading game trades at.\n\nRPython\n\n\ncandidates &lt;- universe |&gt; filter(sp500) |&gt; pull(ticker)\nprices &lt;- download_data(\"Stock Prices\", symbols = candidates,\n                        start_date = close_date - 365, end_date = close_date)\n\n\ncandidates = universe.filter(pl.col(\"sp500\"))[\"ticker\"].to_list()\nprices = tf.download_data(\n    domain=\"stock_prices\",\n    symbols=candidates,\n    start_date=str(close_date - dt.timedelta(days=365)),\n    end_date=str(close_date),\n)",
+    "text": "4. Download prices\nFor the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the trading game trades at.\n\nRPython\n\n\ncandidates &lt;- universe |&gt; filter(sp500) |&gt; pull(ticker)\nprices &lt;- download_data(\"Stock Prices\", symbols = candidates,\n                        start_date = close_date - 365, end_date = close_date)\n\n\ncandidates = universe.filter(pl.col(\"sp500\"))[\"ticker\"].to_list()\nprices = tf.download_data(\n    domain=\"Stock Prices\",\n    symbols=candidates,\n    start_date=str(close_date - dt.timedelta(days=365)),\n    end_date=str(close_date),\n)",
     "crumbs": [
       "Getting started"
     ]

@@ -108,7 +108,7 @@ prices <- download_data("Stock Prices", symbols = candidates,
 ```python
 candidates = universe.filter(pl.col("sp500"))["ticker"].to_list()
 prices = tf.download_data(
-    domain="stock_prices",
+    domain="Stock Prices",
     symbols=candidates,
     start_date=str(close_date - dt.timedelta(days=365)),
     end_date=str(close_date),
