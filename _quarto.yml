@@ -99,8 +99,6 @@ website:
           - text: "ML workflows"
           - text: "replicating Gu, Kelly & Xiu (2020)"
             file: additional-material/ml-data-preparation-for-python.qmd
-          - text: "sharing trained models via Hugging Face Hub"
-            file: additional-material/hf_model_sharing_example.qmd
       - icon: github
         url:  https://github.com/advanced-empirical-finance/course-homepage
   sidebar:
@@ -147,7 +145,6 @@ website:
          - section: ML workflows
            contents:
              - additional-material/ml-data-preparation-for-python.qmd
-             - additional-material/hf_model_sharing_example.qmd
 
 format:
   html:
