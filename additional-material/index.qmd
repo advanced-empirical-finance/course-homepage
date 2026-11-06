@@ -17,13 +17,6 @@ listing:
     fields: [title, description]
     sort: false
     categories: false
-  - id: ml-workflows
-    contents:
-      - ml-data-preparation-for-python.qmd
-    type: grid
-    fields: [title, description]
-    sort: false
-    categories: false
 ---
 
 Guides and references that support the lectures and assignments, grouped by topic. Click any card to open the full write-up.
@@ -36,9 +29,4 @@ Guides and references that support the lectures and assignments, grouped by topi
 ## Reproducible workflows
 
 :::{#reproducible-workflows}
-:::
-
-## Machine-learning workflows
-
-:::{#ml-workflows}
 :::

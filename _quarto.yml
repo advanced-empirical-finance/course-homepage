@@ -78,10 +78,6 @@ website:
             file: additional-material/quarto-documentation.qmd
           - text: "collaboration with git and github"
             file: additional-material/github-collaboration.qmd
-          - text: "---"
-          - text: "ML workflows"
-          - text: "replicating Gu, Kelly & Xiu (2020)"
-            file: additional-material/ml-data-preparation-for-python.qmd
       - icon: github
         url:  https://github.com/advanced-empirical-finance/course-homepage
   sidebar:
@@ -125,9 +121,6 @@ website:
            contents:
              - additional-material/quarto-documentation.qmd
              - additional-material/github-collaboration.qmd
-         - section: ML workflows
-           contents:
-             - additional-material/ml-data-preparation-for-python.qmd
 
 format:
   html:
