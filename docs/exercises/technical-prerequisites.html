@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -398,15 +433,15 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="install-the-required-software">Install the required software</h3>
 <ol type="1">
 <li><p>Install <a href="https://positron.posit.co/start.html">Positron (latest Version)</a>. <em>Positron is the integrated development environment (IDE) we use. It supports R, Python, Git, and Quarto in one place. Install Positron using the default settings.</em></p></li>
-<li><p>Register a free account on <a href="https://github.com/">GitHub</a>; <a href="https://happygitwithr.com/github-acct">Happy Git with R</a> has tips on choosing a username. <em>GitHub allows us to share course materials and collaborate.</em></p></li>
+<li><p>Register a free account on <a href="https://github.com/">GitHub</a>. <em>GitHub allows us to share course materials and collaborate.</em></p></li>
 <li><p>Install <a href="https://git-scm.com/install/">Git</a>. <em>Git is the version control system we use to connect to GitHub.</em></p></li>
 <li><p>Install <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> and <a href="https://github.com/nbafrank/uvr">uvr</a>. <em>uv installs Python and the Python packages of the course; uvr does the same for R. You don’t install R or Python yourself.</em> Open a terminal and run the two lines for your system:</p>
 <p>macOS and Linux (Terminal):</p>
-<pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh
-curl -fsSL https://raw.githubusercontent.com/nbafrank/uvr/main/install.sh | sh</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsSL</span> https://raw.githubusercontent.com/nbafrank/uvr/main/install.sh <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Windows (PowerShell):</p>
-<pre><code>powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nbafrank/uvr/main/install.ps1 | iex"</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>powershell <span class="op">-</span>ExecutionPolicy ByPass <span class="op">-</span>c <span class="st">"irm https://astral.sh/uv/install.ps1 | iex"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>powershell <span class="op">-</span>ExecutionPolicy ByPass <span class="op">-</span>c <span class="st">"irm https://raw.githubusercontent.com/nbafrank/uvr/main/install.ps1 | iex"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then close the terminal and open a new one, so it finds <code>uv</code> and <code>uvr</code>. If uv and uvr are already on your computer, for example from another course, update them instead with <code>uv self update</code> and <code>uvr upgrade</code>; the course needs uvr 0.4.8 or later.</p></li>
 </ol>
 </section>
@@ -415,8 +450,10 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nba
 <ol start="5" type="1">
 <li>Configure Git in Positron:
 <ul>
-<li>Open Positron, open the source control view <code>(Ctrl+Shift+G)</code>. <em>If Git is not yet installed, the Source Control view will show instructions on how to install it</em></li>
-<li>Once Git is detected you can clone the course Github repository by opening the source control view <code>(Ctrl+Shift+G)</code> and clicking <code>Clone Repository</code>. Then, you provide the course repository url <a href="https://github.com/advanced-empirical-finance/course-repository.git">https://github.com/advanced-empirical-finance/course-repository.git</a> and choose a local folder where the repository should be stored. Cloning a repository simply means creating your own copy of a shared project so you can work on it on your computer without affecting the original.</li>
+<li><p>Open Positron, open the source control view <code>(Ctrl+Shift+G)</code>. <em>If Git is not yet installed, the Source Control view will show instructions on how to install it</em></p></li>
+<li><p>Once Git is detected you can clone the course GitHub repository by opening the source control view <code>(Ctrl+Shift+G)</code> and clicking <code>Clone Repository</code>. Paste the address of the course repository (use the copy button on the right):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>https://github.com/advanced-empirical-finance/course-repository.git</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then choose a local folder where the repository should be stored. Cloning a repository simply means creating your own copy of a shared project so you can work on it on your computer without affecting the original.</p></li>
 </ul></li>
 <li>Open the cloned repository in Positron by navigating to <code>File</code> -&gt; <code>Open Project</code> and selecting the folder where you cloned the repository. The folder contains all course materials, including R and Python scripts, datasets, lecture slides, templates for the mandatory assignment and configuration files for R and Python environments.</li>
 </ol>
@@ -425,26 +462,26 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nba
 <h3 class="anchored" data-anchor-id="install-r-python-and-the-course-packages">Install R, Python and the course packages</h3>
 <ol start="7" type="1">
 <li><p>Open the Terminal (not the Console) in Positron, inside the course repository, and run</p>
-<pre><code> uvr r install 4.6.1
- uvr sync
- uv sync</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uvr</span> r install 4.6.1</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uvr</span> sync</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> sync</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>uvr r install</code> installs R, <code>uvr sync</code> installs <em>all</em> R packages of the course, and <code>uv sync</code> installs Python and <em>all</em> Python packages of the course, including <code>aefsim</code>, the client for the <a href="../trading-game/index.html">trading game</a>. Everyone gets exactly the same package versions, because they are recorded in the course repository (<code>uvr.lock</code> for R, <code>uv.lock</code> for Python). If Positron asks which R or Python to use, choose the one in the course repository (<code>.uvr</code> for R, <code>.venv</code> for Python).</p>
 <p>Adding a package works the same way in both: <code>uvr add tidymodels</code> for R, <code>uv add polars</code> for Python. To collaborate with your peers, commit the files <code>uvr.toml</code>, <code>uvr.lock</code>, <code>pyproject.toml</code> and <code>uv.lock</code>; your colleagues only have to run <code>uvr sync</code> and <code>uv sync</code> to replicate your exact package environment.</p></li>
 <li><p>To verify that R is working correctly, click on <code>New/New File</code> and select <code>R file</code> to open a new R script in Positron and type</p>
-<pre><code> library(tidyfinance)
- download_data(
-         domain = "Stock Prices",
-         symbols = "AAPL",
-         start_date = "2000-01-01",
-         end_date = "2023-12-31")</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyfinance)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">download_data</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">domain =</span> <span class="st">"Stock Prices"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">symbols =</span> <span class="st">"AAPL"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">start_date =</span> <span class="st">"2000-01-01"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">end_date =</span> <span class="st">"2023-12-31"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Mark everything and press <code>Ctrl + Enter</code> to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error such as <code>there is no package called 'tidyfinance'</code>, Positron is not using the course’s R: when R starts, the console should say <code>uvr: library linked (… packages)</code>. If it doesn’t, choose R 4.6.1 with the interpreter icon on the top right, restart R (<code>Session</code> → <code>Restart R</code>), and run <code>uvr sync</code> in the Terminal again.</p></li>
 <li><p>To verify that Python is working correctly, click on <code>New/New File</code> and select <code>Python file</code> to open a new Python script in Positron and type</p>
-<pre><code> import tidyfinance as tf
- tf.download_data(
-         domain="Stock Prices",
-         symbols="AAPL",
-         start_date="2000-01-01",
-         end_date="2023-12-31")</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tidyfinance <span class="im">as</span> tf</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>tf.download_data(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        domain<span class="op">=</span><span class="st">"Stock Prices"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        symbols<span class="op">=</span><span class="st">"AAPL"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        start_date<span class="op">=</span><span class="st">"2000-01-01"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        end_date<span class="op">=</span><span class="st">"2023-12-31"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Mark everything and press <code>Ctrl + Enter</code> to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error, select the course’s Python environment first: click on the interpreter icon on the top right and choose the one in the course repository’s <code>.venv</code>.</p></li>
 </ol>
 </section>
@@ -455,7 +492,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/nba
 <ol type="1">
 <li><p>Install the newest version of <a href="https://quarto.org/docs/download/">Quarto</a>. (Quarto comes prebundled with Positron, so you will have access to quarto once you have followed the previous step)</p></li>
 <li><p>In order to create PDFs you will need to install a recent distribution of LaTeX. I recommend to install <code>TinyTeX</code>, a lightweight, cross-platform, portable, and easy-to-maintain LaTeX distribution, by running this command in Positron’s Terminal:</p>
-<pre><code>   quarto install tool tinytex</code></pre></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> install tool tinytex</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 </ol>
 
 

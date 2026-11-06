@@ -98,6 +98,19 @@ Each lecture deck is embedded below. Click a deck and use its own controls
 <a class="btn btn-sm btn-outline-secondary" href="slides/aef-mandatory-assignment-2-evaluation.html" download>Download &#8595;</a>
 ```
 
+## Reproducibility In Asset Pricing {#aef-reproducibility-in-asset-pricing}
+
+::: {.ratio .ratio-16x9 .slide-embed}
+```{=html}
+<iframe src="slides/aef-reproducibility-in-asset-pricing.html" title="Reproducibility In Asset Pricing" loading="lazy" allowfullscreen></iframe>
+```
+:::
+
+```{=html}
+<a class="btn btn-sm btn-outline-primary" href="slides/aef-reproducibility-in-asset-pricing.html" target="_blank" rel="noopener">Open full screen &#8599;</a>
+<a class="btn btn-sm btn-outline-secondary" href="slides/aef-reproducibility-in-asset-pricing.html" download>Download &#8595;</a>
+```
+
 ```{=html}
 <style>
   .slide-embed { border: 1px solid var(--bs-border-color); border-radius: .375rem; overflow: hidden; margin-bottom: .5rem; }

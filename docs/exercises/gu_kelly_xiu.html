@@ -465,7 +465,7 @@ window.Quarto = {
 <li>Read Section 2 of the paper (“An empirical study of U.S. equities”). The authors approximate the conditional expected return <span class="math inline">\(E_t\left(r_{i, t+1}\right) = g^\star(z_{i,t})\)</span> with different machine learning methods. The returns are monthly total equity returns from CRSP for all firms listed on NYSE, AMEX, and NASDAQ, starting in March 1957. Use <code>crsp_monthly.parquet</code> from Absalon for the returns.</li>
 <li>The paper’s main input is a collection of 94 stock characteristics (Table A.6 in the Internet Appendix). You do not have to compute them yourself: <em>download</em> them from <a href="https://dachxiu.chicagobooth.edu/download/datashare.zip">Dacheng Xiu’s homepage</a> and read the <em>readme</em> file.</li>
 <li>Rank all characteristics cross-sectionally, month by month, and map the ranks into the <span class="math inline">\([-1, 1]\)</span> interval (footnote 29). Replace missing characteristics with the cross-sectional median of the month (footnote 30).</li>
-<li>Merge the characteristics with the excess returns from CRSP and with the eight macroeconomic predictors of the paper, following Welch and Goyal (2008): <code>dp</code>, <code>ep</code>, <code>bm</code>, <code>ntis</code>, <code>tbl</code>, <code>tms</code>, <code>dfy</code>, and <code>svar</code>. You find them in <code>macro_predictors.parquet</code> in the <code>data-r</code> / <code>data-python</code> folder of the course repository. Make sure the timing is right: the predictors in row <span class="math inline">\(t\)</span> must be known before the return in row <span class="math inline">\(t\)</span> is realized.</li>
+<li>Merge the characteristics with the excess returns from CRSP and with the eight macroeconomic predictors of the paper, following Welch and Goyal (2008): <code>dp</code>, <code>ep</code>, <code>bm</code>, <code>ntis</code>, <code>tbl</code>, <code>tms</code>, <code>dfy</code>, and <code>svar</code>. You stored them in <code>macro_predictors.parquet</code> in the <code>data</code> folder when you worked through the Tidy Finance chapter <a href="https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html">Accessing and managing financial data</a>. Make sure the timing is right: the predictors in row <span class="math inline">\(t\)</span> must be known before the return in row <span class="math inline">\(t\)</span> is realized.</li>
 <li>Build the paper’s 920 covariates: the 94 characteristics, their interactions with the eight macroeconomic predictors, and 74 industry dummies from the first two digits of the SIC code (<code>sic2</code>). The resulting dataset is huge. How can you keep it manageable on your own computer?</li>
 <li>Split the sample the way the paper does: 18 years of training data (1957–1974), 12 years of validation data (1975–1986), and the remaining years for out-of-sample testing, with an expanding training sample and a rolling validation sample, refitted once a year. Illustrate the scheme in a figure.</li>
 <li>Fit a random forest with 300 trees for the first out-of-sample year (1987). Tune the number of variables considered at each split and the size of the trees on the validation sample. Then set up an elastic net with mixing parameter 0.5 in the same way.</li>
@@ -661,10 +661,10 @@ window.Quarto = {
 <div class="tab-content" data-group="language">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data-r/crsp_monthly.parquet"</span>) <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data/crsp_monthly.parquet"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(permno, date, ret_excess, mktcap_lag)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data-r/macro_predictors.parquet"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data/macro_predictors.parquet"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(date, dp, ep, bm, ntis, tbl, tms, dfy, svar) <span class="sc">|&gt;</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_with</span>(\(x) <span class="fu">paste0</span>(<span class="st">"macro_"</span>, x), <span class="sc">-</span>date) <span class="sc">|&gt;</span></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> date <span class="sc">%m+%</span> <span class="fu">months</span>(<span class="dv">1</span>))</span>
@@ -681,7 +681,7 @@ window.Quarto = {
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="op">=</span> (pl.read_parquet(<span class="st">"data-python/crsp_monthly.parquet"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="op">=</span> (pl.read_parquet(<span class="st">"data/crsp_monthly.parquet"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    .select(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"permno"</span>).cast(pl.Int64),</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).cast(pl.Date),</span>
@@ -689,7 +689,7 @@ window.Quarto = {
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="op">=</span> (pl.read_parquet(<span class="st">"data-python/macro_predictors.parquet"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="op">=</span> (pl.read_parquet(<span class="st">"data/macro_predictors.parquet"</span>)</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    .select(</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"date"</span>).cast(pl.Date).dt.offset_by(<span class="st">"1mo"</span>),</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        pl.col(<span class="st">"dp"</span>, <span class="st">"ep"</span>, <span class="st">"bm"</span>, <span class="st">"ntis"</span>, <span class="st">"tbl"</span>, <span class="st">"tms"</span>, <span class="st">"dfy"</span>, <span class="st">"svar"</span>).name.prefix(<span class="st">"macro_"</span>)</span>
@@ -716,12 +716,12 @@ window.Quarto = {
 <div class="tab-content" data-group="language">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(characteristics, <span class="st">"data-r/stock_characteristics_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_parquet</span>(characteristics, <span class="st">"data/stock_characteristics_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>characteristics.write_parquet(<span class="st">"data-python/stock_characteristics_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>characteristics.write_parquet(<span class="st">"data/stock_characteristics_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -739,7 +739,7 @@ window.Quarto = {
 <div class="tab-content" data-group="language">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>characteristics <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data-r/stock_characteristics_monthly.parquet"</span>) <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>characteristics <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data/stock_characteristics_monthly.parquet"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sic2 =</span> <span class="fu">factor</span>(sic2))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(ret_excess <span class="sc">~</span> ., <span class="at">data =</span> characteristics <span class="sc">|&gt;</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">1000</span>)) <span class="sc">|&gt;</span></span>
@@ -752,7 +752,7 @@ window.Quarto = {
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (pl.read_parquet(<span class="st">"data-python/stock_characteristics_monthly.parquet"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (pl.read_parquet(<span class="st">"data/stock_characteristics_monthly.parquet"</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    .with_columns(pl.col(<span class="st">"sic2"</span>).cast(pl.Int64).cast(pl.String))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -774,25 +774,25 @@ window.Quarto = {
 <div class="tab-content" data-group="language">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data-r/characteristics_prepared"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"data/characteristics_prepared"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (y <span class="cf">in</span> <span class="fu">unique</span>(<span class="fu">year</span>(characteristics<span class="sc">$</span>date))) {</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  characteristics <span class="sc">|&gt;</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">year</span>(date) <span class="sc">==</span> y) <span class="sc">|&gt;</span></span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bake</span>(rec, <span class="at">new_data =</span> _) <span class="sc">|&gt;</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_parquet</span>(<span class="fu">paste0</span>(<span class="st">"data-r/characteristics_prepared/"</span>, y, <span class="st">".parquet"</span>))</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_parquet</span>(<span class="fu">paste0</span>(<span class="st">"data/characteristics_prepared/"</span>, y, <span class="st">".parquet"</span>))</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Path(<span class="st">"data-python/characteristics_prepared"</span>).mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Path(<span class="st">"data/characteristics_prepared"</span>).mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (y,), data_year <span class="kw">in</span> characteristics.group_by(pl.col(<span class="st">"date"</span>).dt.year()):</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    (data_year</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        .with_columns(covariates)</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        .drop(macro_cols <span class="op">+</span> [<span class="st">"sic2"</span>])</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        .write_parquet(<span class="ss">f"data-python/characteristics_prepared/</span><span class="sc">{</span>y<span class="sc">}</span><span class="ss">.parquet"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        .write_parquet(<span class="ss">f"data/characteristics_prepared/</span><span class="sc">{</span>y<span class="sc">}</span><span class="ss">.parquet"</span>)</span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -805,7 +805,7 @@ window.Quarto = {
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>read_years <span class="ot">&lt;-</span> <span class="cf">function</span>(start, end) {</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  files <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"data-r/characteristics_prepared/"</span>, start<span class="sc">:</span>end, <span class="st">".parquet"</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  files <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"data/characteristics_prepared/"</span>, start<span class="sc">:</span>end, <span class="st">".parquet"</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  files[<span class="fu">file.exists</span>(files)] <span class="sc">|&gt;</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map</span>(read_parquet) <span class="sc">|&gt;</span></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list_rbind</span>()</span>
@@ -815,7 +815,7 @@ window.Quarto = {
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_years(start, end):</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    files <span class="op">=</span> [Path(<span class="ss">f"data-python/characteristics_prepared/</span><span class="sc">{</span>y<span class="sc">}</span><span class="ss">.parquet"</span>) <span class="cf">for</span> y <span class="kw">in</span> <span class="bu">range</span>(start, end <span class="op">+</span> <span class="dv">1</span>)]</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    files <span class="op">=</span> [Path(<span class="ss">f"data/characteristics_prepared/</span><span class="sc">{</span>y<span class="sc">}</span><span class="ss">.parquet"</span>) <span class="cf">for</span> y <span class="kw">in</span> <span class="bu">range</span>(start, end <span class="op">+</span> <span class="dv">1</span>)]</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pl.concat([pl.read_parquet(f) <span class="cf">for</span> f <span class="kw">in</span> files <span class="cf">if</span> f.exists()])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
@@ -1024,12 +1024,12 @@ window.Quarto = {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="sc">|&gt;</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">butcher</span>() <span class="sc">|&gt;</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_rds</span>(<span class="st">"data-r/rf_fit_1987.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_rds</span>(<span class="st">"data/rf_fit_1987.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>joblib.dump(rf_fit, <span class="st">"data-python/rf_fit_1987.joblib"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>joblib.dump(rf_fit, <span class="st">"data/rf_fit_1987.joblib"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1085,7 +1085,7 @@ window.Quarto = {
 <div class="tab-content" data-group="language">
 <div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data-r/rf_fit_1987.rds"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/rf_fit_1987.rds"</span>)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>predict_year <span class="ot">&lt;-</span> <span class="cf">function</span>(oos_year) {</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  out_of_sample <span class="ot">&lt;-</span> <span class="fu">read_years</span>(oos_year, oos_year)</span>
@@ -1101,7 +1101,7 @@ window.Quarto = {
 </div>
 <div id="tabset-16-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-16-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="op">=</span> joblib.load(<span class="st">"data-python/rf_fit_1987.joblib"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="op">=</span> joblib.load(<span class="st">"data/rf_fit_1987.joblib"</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict_year(oos_year):</span>
