@@ -1,0 +1,105 @@
+# Renders the homepage with the course environment and publishes it on
+# GitHub Pages. Pull requests only render, as a check; pushes to main, the
+# nightly run (which picks up new slide decks from course-repository) and
+# manual runs also publish.
+name: Render and publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "41 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out the homepage
+        uses: actions/checkout@v4
+        with:
+          path: course-homepage
+
+      # The pre-render hook copies the decks from ../course-repository.
+      - name: Check out the course repository
+        uses: actions/checkout@v4
+        with:
+          repository: advanced-empirical-finance/course-repository
+          path: course-repository
+
+      - name: Install Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.10.19
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: course-homepage/uv.lock
+
+      - name: Install uvr
+        run: |
+          curl -fsSL https://github.com/nbafrank/uvr/releases/download/v0.4.8/uvr-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          sudo mv uvr /usr/local/bin/
+
+      - name: Cache R and the R packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.uvr
+            course-homepage/.uvr/library
+          key: uvr-${{ runner.os }}-${{ hashFiles('course-homepage/uvr.lock', 'course-homepage/.r-version') }}
+
+      - name: Install R and the R packages
+        working-directory: course-homepage
+        run: |
+          uvr r install 4.6.1
+          uvr sync --frozen --unattended 2>&1 | tee uvr-sync.log
+          # uvr prints the apt-get line for any system library a package needs
+          install=$(sed -n 's/^ *Install with: //p' uvr-sync.log | head -n 1)
+          if [ -n "$install" ]; then
+            sudo apt-get update -q
+            eval "$install"
+          fi
+
+      - name: Install the Python packages
+        working-directory: course-homepage
+        run: uv sync --frozen
+
+      - name: Render
+        working-directory: course-homepage
+        run: |
+          eval "$(uvr activate --emit sh)"
+          export RETICULATE_PYTHON="$PWD/.venv/bin/python"
+          export QUARTO_PYTHON="$PWD/.venv/bin/python"
+          uv run quarto render
+
+      - name: Upload the site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: course-homepage/docs
+
+  publish:
+    if: github.event_name != 'pull_request'
+    needs: render
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish on GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
