@@ -80,7 +80,7 @@ git fetch upstream
 Then grab the environment files:
 
 ```bash
-git checkout upstream/main -- renv.lock uv.lock .Rprofile pyproject.toml _quarto.yml .python-version .gitignore
+git checkout upstream/main -- uvr.toml uvr.lock .Rprofile pyproject.toml uv.lock _quarto.yml .python-version .gitignore
 ```
 
 The files will appear in Positron's file explorer. To copy an entire folder, use `git checkout upstream/main -- foldername/`.
