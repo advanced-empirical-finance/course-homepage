@@ -332,7 +332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="tab-content" data-group="language">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>candidates <span class="ot">&lt;-</span> universe <span class="sc">|&gt;</span> <span class="fu">filter</span>(sp500) <span class="sc">|&gt;</span> <span class="fu">pull</span>(ticker)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>prices <span class="ot">&lt;-</span> <span class="fu">download_data</span>(<span class="st">"stock_prices"</span>, <span class="at">symbols =</span> candidates,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>prices <span class="ot">&lt;-</span> <span class="fu">download_data</span>(<span class="st">"Stock Prices"</span>, <span class="at">symbols =</span> candidates,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">start_date =</span> close_date <span class="sc">-</span> <span class="dv">365</span>, <span class="at">end_date =</span> close_date)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
