@@ -196,7 +196,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../simulation/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">The trading simulation</span></a>
+ <span class="menu-text">The trading game</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,7 +274,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="save-your-token" class="level2">
 <h2 class="anchored" data-anchor-id="save-your-token">2. Save your token</h2>
-<p>Your team receives one token, starting with <code>aef_</code>. Treat it like a password: it lets anyone trade for your team. Run <code>set_token()</code> once and paste the token when asked:</p>
+<p>Your team receives one token, starting with <code>aef_</code>: the key with which the client authenticates your team to the trading game. Treat it like a password: it lets anyone trade for your team. Run <code>set_token()</code> once and paste the token when asked:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -321,11 +321,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><code>get_universe()</code> lists the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.</p>
+<p><code>get_universe()</code> lists the asset universe, the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. Each comes with its CRSP <code>permno</code>, so a portfolio you build from CRSP data, such as tidyfinance’s <code>crsp_monthly</code>, maps to tickers with a join on <code>permno</code>. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.</p>
 </section>
 <section id="download-prices" class="level2">
 <h2 class="anchored" data-anchor-id="download-prices">4. Download prices</h2>
-<p>For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the simulation trades at.</p>
+<p>For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the trading game trades at.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -378,7 +378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Weights are fractions of your portfolio’s value, in a data frame with the columns <code>ticker</code> and <code>weight</code>. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.</p>
+<p>Your weight vector is a data frame with the columns <code>ticker</code> and <code>weight</code>: each weight is the fraction of your portfolio’s value in that stock, negative for a short position. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.</p>
 </section>
 <section id="check-then-submit" class="level2">
 <h2 class="anchored" data-anchor-id="check-then-submit">6. Check, then submit</h2>
@@ -406,7 +406,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><code>validate()</code> runs every check the simulation runs and stores nothing. That’s all you do: <strong>the trade happens automatically</strong> at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.</p>
+<p><code>validate()</code> runs every check the trading game runs and stores nothing. That’s all you do: <strong>the trade happens automatically</strong> at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.</p>
 <p>Changed your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with <code>cancel(result$submission_id)</code> in R, <code>aefsim.cancel(result.submission_id)</code> in Python.</p>
 </section>
 <section id="the-next-morning" class="level2">
@@ -438,7 +438,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 Trades at the open on 2027-02-10 (rules P1-baseline)
 Positions 21, gross 1.050, net 1.050, cash -0.050
 Errors:
-  unknown_ticker BRKB: Not a stock in the simulation on 2027-02-09. Check the spelling: the simulation uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.
+  unknown_ticker BRKB: Not a stock in the trading game on 2027-02-09. Check the spelling: the trading game uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.
   net_exposure_exceeded: The weights add up to 1.05 (net exposure); the limit is 1.00. They may add up to less: the rest of the book stays in cash.</code></pre>
 
 

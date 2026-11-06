@@ -30,7 +30,7 @@ uv add "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=py
 
 ## 2. Save your token
 
-Your team receives one token, starting with `aef_`. Treat it like a password: it lets anyone trade for your team. Run `set_token()` once and paste the token when asked:
+Your team receives one token, starting with `aef_`: the key with which the client authenticates your team to the trading game. Treat it like a password: it lets anyone trade for your team. Run `set_token()` once and paste the token when asked:
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -86,11 +86,11 @@ aefsim.get_calendar().filter(pl.col("is_next"))  # the next trading day and its 
 
 :::
 
-`get_universe()` lists the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.
+`get_universe()` lists the asset universe, the stocks you can buy after the latest close: common stocks on NYSE, NYSE American and Nasdaq that closed at $5 or more. Each comes with its CRSP `permno`, so a portfolio you build from CRSP data, such as tidyfinance's `crsp_monthly`, maps to tickers with a join on `permno`. A stock you hold that drops below $5 stays in your portfolio; you may keep or reduce it, but not buy more.
 
 ## 4. Download prices
 
-For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the simulation trades at.
+For the example, tidyfinance downloads a year of prices from Yahoo Finance, the source the trading game trades at.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -152,7 +152,7 @@ weights
 
 :::
 
-Weights are fractions of your portfolio's value, in a data frame with the columns `ticker` and `weight`. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.
+Your weight vector is a data frame with the columns `ticker` and `weight`: each weight is the fraction of your portfolio's value in that stock, negative for a short position. Stocks you leave out get weight zero, so this replaces your whole portfolio; whatever does not add up to one stays in cash.
 
 ## 6. Check, then submit
 
@@ -184,7 +184,7 @@ result
 
 :::
 
-`validate()` runs every check the simulation runs and stores nothing. That's all you do: **the trade happens automatically** at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.
+`validate()` runs every check the trading game runs and stores nothing. That's all you do: **the trade happens automatically** at the next market open whose deadline, 09:00 New York time (usually 15:00 in Copenhagen), has not passed; the check shows that date. The rationale is your decision log: write down what you expect and why.
 
 Changed your mind? Submit again before the deadline: the new submission simply replaces the previous one. Or withdraw it with `cancel(result$submission_id)` in R, `aefsim.cancel(result.submission_id)` in Python.
 
@@ -224,6 +224,6 @@ Check: problems found
 Trades at the open on 2027-02-10 (rules P1-baseline)
 Positions 21, gross 1.050, net 1.050, cash -0.050
 Errors:
-  unknown_ticker BRKB: Not a stock in the simulation on 2027-02-09. Check the spelling: the simulation uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.
+  unknown_ticker BRKB: Not a stock in the trading game on 2027-02-09. Check the spelling: the trading game uses Yahoo tickers, and share classes take a hyphen, as in BRK-B. get_universe() lists the stocks you can buy.
   net_exposure_exceeded: The weights add up to 1.05 (net exposure); the limit is 1.00. They may add up to less: the rest of the book stays in cash.
 ```

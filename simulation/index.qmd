@@ -1,10 +1,9 @@
 ---
 css: simulation.css
-title: "The trading simulation"
-subtitle: "Advanced Empirical Finance, spring 2027"
+title: "The trading game"
 ---
 
-Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send new **target weights** from R or Python. **You only decide and submit; everything else happens automatically:** the simulation trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort, and its leaderboard tab shows every team under a pseudonym.
+Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send a new **weight vector** from R or Python. **You only decide and submit; everything else happens automatically:** the trading game trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort.
 
 ::: {.callout-note}
 ## What counts is how you decide, not what you earn
@@ -13,41 +12,60 @@ Every submission carries a **rationale**: what you expect and why. Together they
 
 ## Teams and timeline
 
-- Work alone or in a team of up to three. Each team gets one **token** and starts with **$1,000,000** in cash.
-- **Dry run:** 25 January to 5 February 2027, to try the tools; results are reset afterwards.
+- Work alone or in a team of up to three. **Choose your team during the dry run.**
+- Each team gets one **token**: a key, like a password, that identifies your team to the trading game. The client packages and the dashboard use it to authenticate you. Keep it within your team.
+- Each team starts with **$1,000,000** in cash.
+- **Dry run:** 25 January to 5 February 2027, to try the tools and form your team; results are reset afterwards.
 - **Trading:** 8 February to 14 May 2027, every NYSE trading day.
 
-The rules tighten during the semester. Every response from the simulation tells you which rule set applies to the next trade, so a change never catches you by surprise.
+The rules tighten during the semester. Every response from the trading game tells you which rules apply to the next trade, so a change never catches you by surprise.
 
-| From | Rule set | What changes |
-|---|---|---|
-| 8 February | P1 | Long only, no transaction costs |
-| 1 March | P2 | Every trade costs 10 bps of its value |
-| 5 April | P3 | Short selling allowed: gross exposure up to 160 %, net up to 100 %, borrow fee 50 bps a year |
+| From | What changes |
+|---|---|
+| 8 February | Long and short positions, and borrowing cash, with a gross exposure of up to 300 % (defined below). No transaction costs. |
+| 1 March | Every trade costs 10 bps (0.1 %) of its value. |
+| 5 April | Short positions pay a borrow fee of 50 bps a year. |
 
-Throughout: no limit on the number of positions or on a single weight, and gross exposure up to 100 % until shorting opens. Large, diversified portfolios are welcome.
-
-## What you can trade
-
-The universe is CRSP's common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; `get_universe()` lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.
+There is no limit on the number of positions or on a single weight.
 
 ## How trading works
 
 **You only decide and submit. The trades, the costs, dividends and the daily valuation happen automatically.**
 
-1. **Decide and submit**, whenever you like: target weights and a rationale. `close_date` is the date of the latest market close in the data your decision is based on.
-2. **The trade happens automatically** at the next market open whose deadline has not passed: **09:00 New York time on the trading day**. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00. A submission sent after a deadline, over a weekend or before the simulation starts waits for the next open. Submitting again before the deadline simply replaces your previous submission: only the last one trades. `cancel()` withdraws a submission until the deadline. If you submit nothing, your portfolio stays as it is: no trades and no costs.
-3. **Your portfolio is valued every evening** at that day's closing prices: each position at its closing price, plus your cash. This is called *marking to market*. Results appear the next morning, Copenhagen time.
+1. **Decide and submit**, whenever you like: a weight vector and a rationale.
+    - Each weight $w_i$ is the fraction of your portfolio's value you want in stock $i$: positive for a long position, negative for a short one. Stocks you leave out get weight zero, so a position you hold in them is sold.
+    - Whatever the weights don't use is cash, $1 - \sum_i w_i$. It is negative if you borrow.
+    - Your **gross exposure** is the sum of the absolute weights, $\sum_i |w_i|$: longs plus shorts. It may be at most 300 %. For example, 180 % long and 120 % short is a gross exposure of 300 % and leaves 40 % in cash.
+    - `close_date` is the date of the latest market close in the data your decision is based on.
+    - If a submission breaks a rule, it is rejected as a whole with messages saying why, and it still appears in your log. `validate()` runs the same checks without submitting.
+2. **The trade happens automatically** at the next market open whose deadline has not passed: **09:00 New York time on the trading day**. That is 15:00 in Copenhagen, except from 15 to 26 March 2027, when the US is already on summer time and the deadline is 14:00.
+    - A submission sent after a deadline, over a weekend or before the trading game starts waits for the next open.
+    - Submitting again before the deadline simply replaces your previous submission: only the last one trades.
+    - `cancel()` withdraws a submission before it trades.
+    - If you submit nothing, your portfolio stays as it is: no trades and no costs.
+3. **Your portfolio is valued every evening** at that day's closing prices: each position at its closing price, plus your cash. This is called *marking to market*. The results appear at about 01:30 Copenhagen time, after the nightly update.
 
-A submission is a set of target weights: fractions of your portfolio's value, by ticker. Tickers you leave out are sold, and whatever the weights don't use stays in cash. The simulation trades fractional shares so that after costs your weights are exactly the targets. If a submission breaks a rule, it is rejected as a whole with error codes saying why, and it still appears in your log. `validate()` runs the same checks without submitting.
+## The asset universe
 
-## Money, costs and corporate actions
+The asset universe is CRSP's common stock: ordinary shares of US companies (share codes 10 and 11) listed on NYSE, NYSE American or Nasdaq. ETFs, funds, ADRs and REITs are excluded. Membership comes from CRSP itself, at its latest update, so a stock listed since then can be traded only once CRSP includes it. You can buy a stock if it closed at $5 or more on the day before your trade; `get_universe()` lists exactly those stocks. If a stock you hold drops below $5, you may keep it or reduce it, but not add to it.
 
-- **Cash** earns interest at SOFR, the US overnight rate, for every calendar day, weekends and holidays included. Each day's interest is the yearly rate divided by 360, the US money-market convention (*act/360*: actual days over a 360-day year). Over a weekend, Monday's interest covers three days.
-- **No borrowing to buy stock:** your weights add up to at most 100 %, so you never hold less than zero cash after a trade. Once shorting opens, the proceeds of short sales can pay for extra long positions, up to 160 % gross. Cash can then turn slightly negative between trades, from borrow fees and dividends owed on short positions; negative cash pays the same SOFR rate.
-- **Transaction costs** are a fixed fraction of the value traded, in both directions.
-- **Short positions** pay the borrow fee, 50 bps a year on their market value, accrued per calendar day like interest.
-- **Dividends** are paid into cash on the ex-date. Short positions pay them.
+## Trading costs
+
+From 1 March, every trade costs 10 bps of its value, buying and selling alike. When your weights trade at the open:
+
+- $V$ is your portfolio's value at that day's opening prices.
+- Your **drifted weights** $\tilde w_i$ are what you hold just before the trade: each position's value at the open divided by $V$. They differ from the weights you last submitted because prices have moved since.
+- The trading game buys and sells (fractional shares) so that position $i$ is worth exactly $w_i V$, and charges
+
+$$\text{costs} = 0.001 \times V \times \sum_i \left| w_i - \tilde w_i \right|,$$
+
+paid in dollars from your cash. The sum $\sum_i |w_i - \tilde w_i|$ is your **turnover**: the share of your portfolio you traded. Right after the trade, your cash is $\left(1 - \sum_i w_i\right) V$ minus the costs.
+
+## Money and corporate actions
+
+- **Cash** earns interest at the US overnight rate (SOFR), the risk-free rate in this trading game. Interest is paid for every calendar day, weekends and holidays included: each day earns the yearly rate divided by 360, the US money-market convention (*act/360*), so Monday's interest covers three days. Negative cash, when you borrow, pays the same risk-free rate.
+- **Short positions** pay a borrow fee from 5 April: 50 bps a year on their market value, charged per calendar day like interest.
+- **Dividends** are paid into your cash on the *ex-date*: the first trading day on which the stock trades without its upcoming dividend. If you hold the stock at the close before the ex-date, you receive the dividend; a short position pays it.
 - **Stock splits** change your share count, not your value.
 - **Delisted stocks** are sold at their last price.
 - A stock with **no opening price** that day cannot trade, so you keep what you held.
@@ -56,8 +74,8 @@ A submission is a set of target weights: fractions of your portfolio's value, by
 
 Three automatic portfolios trade under the same rules and pay the same costs:
 
-- **Naive 1/N:** equal weight in the S&P 500 stocks of the universe, rebalanced every day;
+- **Naive 1/N:** equal weight in the S&P 500 stocks of the asset universe, rebalanced every day;
 - **Buy and hold:** the same portfolio bought on the first day and never traded;
 - **Market:** the SPDR S&P 500 ETF (SPY), bought once.
 
-Statistics use daily returns net of costs. The Sharpe ratio is on returns in excess of SOFR, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.
+Statistics use daily returns net of costs. The Sharpe ratio is on returns in excess of the risk-free rate, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.
