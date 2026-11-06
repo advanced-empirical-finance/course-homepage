@@ -25,13 +25,10 @@ title: "Lecture plan"
 | 16 | Mon Apr 13 | Volatility estimation | [📊](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice "Volatility estimation & advanced portfolio choice") |  | |
 | 17 | Thu Apr 23 | Portfolio optimization | [📊](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice "Volatility estimation & advanced portfolio choice") | [10](exercises/portfolio_choice.qmd) | |
 | 18 | Mon Apr 27 | Parametric Portfolio Choice | [📊](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice "Volatility estimation & advanced portfolio choice") |  | |
-|  | Thu Apr 30 | High-frequency econometrics | [📊](slides.qmd#aef-6-high-frequency-econometrics "High-frequency econometrics") | | |
 | | Fri May 1  | **MA 3 released** |  | | |
 | 19 | Thu May 7 | Guest lecture: Cilie Feldager Chief GenAI Model Evaluation Expert (Danske Bank) |  |  | |
 | | Sun May 10 | **MA 3 deadline (8pm)** |  | | |
-| 20 | Mon May 11 | High-frequency econometrics | [📊](slides.qmd#aef-6-high-frequency-econometrics "High-frequency econometrics") | | |
-| 21 | Tue May 19 | High-frequency econometrics | [📊](slides.qmd#aef-6-high-frequency-econometrics "High-frequency econometrics") | | |
-|  | Thu May 21 | Q&A |  | | |
+| 21 | Thu May 21 | Q&A |  | | |
 
 : {.primary .hover}
 

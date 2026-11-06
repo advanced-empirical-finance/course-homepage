@@ -25,8 +25,8 @@ If a full render fails half-way, it can leave `docs/` emptied; `git checkout -- 
 
 ## Rendering a few pages
 
-`quarto render index.qmd` or `quarto render simulation` renders one page or one folder and leaves the rest of `docs/` alone. Pass one file or folder per call: several files in one call are merged into one page. Pages you don't re-render keep their old navbar until the next full render.
+`quarto render index.qmd` or `quarto render trading-game` renders one page or one folder and leaves the rest of `docs/` alone. Pass one file or folder per call: several files in one call are merged into one page. Pages you don't re-render keep their old navbar until the next full render.
 
 ## The trading game
 
-`simulation/` holds the trading simulation's pages (rules, getting started, team dashboard). Their source is `site/` in the simulation repository, copied here with its `site/sync-homepage.sh`; change them there, not here.
+`trading-game/` holds the trading game's pages (rules, getting started, team dashboard). Their source is `site/` in the aef-sim repository, copied here with its `site/sync-homepage.sh`; change them there, not here.

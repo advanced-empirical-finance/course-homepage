@@ -216,7 +216,7 @@ def logL_arch(params, p, ret):
 
 The function `logL_arch` computes the (log) likelihood of an ARCH specification with $p$ lags. It returns the *negative* log-likelihood because the optimizers used below (`optim` in R, `scipy.optimize.minimize` in Python) search for minima.
 
-The following lines estimate the model on demeaned AAPL returns (in percent) with $p = 2$ lags. Note the (almost) arbitrary choice of initial parameter vector. Also note that neither `logL_arch` nor the optimizer enforces the regularity conditions that would guarantee a stationary volatility process.
+The following lines estimate the model on demeaned AAPL returns (in percent) with $p = 2$ lags. Note the (almost) arbitrary choice of initial parameter vector. Also note that neither `logL_arch` nor the optimizer enforces the regularity conditions that would guarantee a stationary volatility process. The standard errors are the square roots of the diagonal of the inverse Hessian of the negative log-likelihood at the optimum; `optim(..., hessian = TRUE)` approximates this Hessian with finite differences, and the small Python helper `numerical_hessian()` does the same with central differences (step size 0.001, as in R).
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -270,8 +270,22 @@ res = minimize(
 
 fitted_params = res.x
 
-hessian_inv = res.hess_inv.todense()
-se = np.sqrt(np.diag(hessian_inv))
+
+def numerical_hessian(f, x, args=(), h=1e-3):
+    """Central finite-difference Hessian of f at x (same scheme as R's optim)."""
+    steps = h * np.eye(len(x))
+    hessian = np.empty((len(x), len(x)))
+    for i, e_i in enumerate(steps):
+        for j, e_j in enumerate(steps):
+            hessian[i, j] = (
+                f(x + e_i + e_j, *args) - f(x + e_i - e_j, *args)
+                - f(x - e_i + e_j, *args) + f(x - e_i - e_j, *args)
+            ) / (4 * h**2)
+    return hessian
+
+
+hessian = numerical_hessian(logL_arch, fitted_params, args=(p, ret))
+se = np.sqrt(np.diag(np.linalg.inv(hessian)))
 
 pl.DataFrame({"param": fitted_params, "se": se}).with_columns(pl.all().round(2))
 ```
@@ -490,7 +504,8 @@ def compute_unconditional_volatility(returns):
         )
 
         fitted_params = res.x
-        se = np.sqrt(np.diag(res.hess_inv.todense()))
+        hessian = numerical_hessian(logL_arch, fitted_params, args=(p, ret))
+        se = np.sqrt(np.diag(np.linalg.inv(hessian)))
 
         omega = fitted_params[0]
         alpha_sum = np.sum(fitted_params[1:])

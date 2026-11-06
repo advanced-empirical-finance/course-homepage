@@ -23,6 +23,10 @@ if (dir.exists(dest_dir)) {
 }
 
 decks <- sort(list.files(source_dir, pattern = "\\.html$"))
+# Decks not taught this semester stay in the course repository but are left
+# off the homepage.
+skip <- c("aef-6-high-frequency-econometrics.html")
+decks <- setdiff(decks, skip)
 if (length(decks) == 0) stop(sprintf("No .html decks found in %s", source_dir))
 invisible(file.copy(file.path(source_dir, decks), file.path(dest_dir, decks), overwrite = TRUE))
 cat(sprintf("Copied %d deck(s) to %s\n", length(decks), dest_dir))

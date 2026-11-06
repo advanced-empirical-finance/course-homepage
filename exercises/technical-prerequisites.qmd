@@ -42,7 +42,7 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
         uvr sync
         uv sync
 
-    `uvr r install` installs R, `uvr sync` installs *all* R packages of the course, and `uv sync` installs Python and *all* Python packages of the course, including `aefsim`, the client for the [trading game](../simulation/index.qmd). Everyone gets exactly the same package versions, because they are recorded in the course repository (`uvr.lock` for R, `uv.lock` for Python). If Positron asks which R or Python to use, choose the one in the course repository (`.uvr` for R, `.venv` for Python).
+    `uvr r install` installs R, `uvr sync` installs *all* R packages of the course, and `uv sync` installs Python and *all* Python packages of the course, including `aefsim`, the client for the [trading game](../trading-game/index.qmd). Everyone gets exactly the same package versions, because they are recorded in the course repository (`uvr.lock` for R, `uv.lock` for Python). If Positron asks which R or Python to use, choose the one in the course repository (`.uvr` for R, `.venv` for Python).
 
     Adding a package works the same way in both: `uvr add tidymodels` for R, `uv add polars` for Python. To collaborate with your peers, commit the files `uvr.toml`, `uvr.lock`, `pyproject.toml` and `uv.lock`; your colleagues only have to run `uvr sync` and `uv sync` to replicate your exact package environment.
 

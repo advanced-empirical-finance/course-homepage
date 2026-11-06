@@ -165,8 +165,7 @@ crsp_monthly = (pl.read_parquet("data/crsp_monthly.parquet")
         month=pl.col("date").cast(pl.Date).dt.truncate("1mo"),
         permno=pl.col("permno").cast(pl.Int64),  # same type as in datashare.csv
     )
-    .select("month", "permno", "mktcap_lag", "ret")
-    .rename({"ret": "ret_excess"})
+    .select("month", "permno", "mktcap_lag", "ret_excess")
 )
 
 macro_predictors = (pl.read_parquet("data/macro_predictors.parquet")
@@ -184,7 +183,6 @@ characteristics = (characteristics
     .join(crsp_monthly, how="inner", on=["month", "permno"])
     .join(macro_predictors, how="inner", on="month")
     .sort("month", "permno")
-    .with_columns(macro_intercept=pl.lit(1))
     .select(
         "permno", "month", "ret_excess", "mktcap_lag", "sic2",
         cs.contains("macro"),
@@ -199,7 +197,9 @@ Before applying machine-learning models, the authors include interaction terms b
 
 > We include 74 industry dummies corresponding to the first two digits of Standard Industrial Classification (SIC) codes. [...] [The stock-level covariates also include] interactions between stock-level characteristics and macroeconomic state variables. The total number of covariates is 94×(8+1)+74=920. (p. 2249)
 
-The following recipe creates dummies for each `sic2` code and adds interaction terms between macro variables and stock characteristics. Note that the data is only required to identify the columns in the sample. No computations are performed at the first step: the recipe is just a list of polars expressions, one for each interaction term, which polars evaluates only when I apply them to the data in the next step.
+In the paper's notation, the covariates are $z_{i,t} = (1, x_t')' \otimes c_{i,t}$, where $c_{i,t}$ contains the 94 characteristics and $x_t$ the eight macroeconomic predictors. The interaction with the constant is the characteristic itself, so I keep the 94 characteristics, add their $94 \times 8 = 752$ interactions with the macro predictors, and drop the macro predictors themselves, which are not covariates on their own. Together with the 74 industry dummies, this gives $94 + 752 + 74 = 920$ covariates.
+
+The following recipe adds the interaction terms between macro variables and stock characteristics; the dummies for each `sic2` code follow in the next step. Note that the data is only required to identify the columns in the sample. No computations are performed at the first step: the recipe is just a list of polars expressions, one for each interaction term, which polars evaluates only when I apply them to the data in the next step.
 
 ```{python}
 # | label: recipe
@@ -216,7 +216,7 @@ interaction_terms = [
 ]
 ```
 
-Next, I create the full dataset containing 3,046,332 monthly observations and 920 covariates. `to_dummies()` replaces `sic2` with one dummy column per industry.
+Next, I create the full dataset containing 3,046,332 monthly observations and 920 covariates. After adding the interactions, I drop the macro predictors, and `to_dummies()` replaces `sic2` with one dummy column per industry.
 
 ```{python}
 # | label: bake
@@ -225,6 +225,7 @@ Next, I create the full dataset containing 3,046,332 monthly observations and 92
 
 characteristics_prepared = (characteristics
     .with_columns(interaction_terms)
+    .drop(macro_cols)
     .to_dummies("sic2")
     .with_columns(year=pl.col("month").dt.year())
 )
@@ -381,7 +382,9 @@ pred_file = Path(f"results/predictions_{oos_year}.parquet")
 id_cols = ["permno", "month", "mktcap_lag", "year"]
 
 training_data = characteristics_prepared.filter(
-    pl.col("year") < split_dates["training_end"]
+    pl.col("year").is_between(
+        split_dates["training_start"], split_dates["training_end"]
+    )
 )
 
 validation_data = characteristics_prepared.filter(

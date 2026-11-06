@@ -2,17 +2,17 @@
 title: Shrinkage Estimation
 ---
 
-In these exercises, you familiarize yourself with the details behind shrinkage regression methods such as Ridge and Lasso. Although *R* and *Python* provide amazing interfaces which perform the estimation flawlessly, you are first asked to implement Ridge and Lasso regression estimators from scratch before moving on to using the package *glmnet* next.
+In these exercises, you familiarize yourself with the details behind shrinkage regression methods such as Ridge and Lasso. Although *R* and *Python* provide amazing interfaces which perform the estimation flawlessly, you are first asked to implement Ridge and Lasso regression estimators from scratch before moving on to using the package *glmnet* (R) or *scikit-learn* (Python) next.
 
 ## Introduction to penalized regressions
 
 **Exercises:**
 
--   Load `macro_predictors.parquet` from the `data-r` / `data-python` folder. Create a variable `y`that contains the market excess returns from the Goyal-Welsh dataset (`rp_div`) and a matrix `X` that contains the remaining macroeconomic variables except for the column `month`. You will use `X` and `y` to perform penalized regressions. Try to run a simple linear regression of `X` on \`y´ to analyze the relationship between the macroeconomic variables and market returns. Which problems do you encounter?
+-   Load `macro_predictors.parquet` from the `data-r` / `data-python` folder. Create a variable `y` that contains the market excess returns from the Goyal-Welch dataset (`rp_div`) and a matrix `X` that contains the remaining macroeconomic variables except for the column `date`. You will use `X` and `y` to perform penalized regressions. Try to run a simple linear regression of `y` on `X` to analyze the relationship between the macroeconomic variables and market returns. Which problems do you encounter?
 -   Write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times K)$ matrix), and `lambda` and which returns the **Ridge** estimator (a $K$ vector) for given penalization parameter $\lambda$. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether $X$ contains a vector of ones as the first column which should be exempt from the $L_2$ penalty.
 -   Compute the $L_2$ norm ($\beta'\beta$) for the regression coefficients based on the predictive regression from the previous exercise for a range of $\lambda$'s and illustrate the effect of the penalization in a suitable figure.
--   Now, write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times K)$ matrix), and 'lambda\` and which returns the **Lasso** estimator (a $K$ vector) for given penalization parameter $\lambda$. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether $X$ contains a vector of ones as the first column which should be exempt from the $L_1$ penalty.
--   After you are sure you understand what Ridge and Lasso regression are doing, familiarize yourself with the documentation of the package `glmnet()`. It is a thoroughly tested and well-established package that provides efficient code to compute the penalized regression coefficients not only for Ridge and Lasso but also for combinations, therefore, commonly called *elastic nets*.
+-   Now, write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times K)$ matrix), and `lambda` and which returns the **Lasso** estimator (a $K$ vector) for given penalization parameter $\lambda$. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether $X$ contains a vector of ones as the first column which should be exempt from the $L_1$ penalty.
+-   After you are sure you understand what Ridge and Lasso regression are doing, familiarize yourself with the documentation of the package `glmnet()` (in Python: `ElasticNet()` and `enet_path()` from `scikit-learn`). It is a thoroughly tested and well-established package that provides efficient code to compute the penalized regression coefficients not only for Ridge and Lasso but also for combinations, therefore, commonly called *elastic nets*.
 
 **Solutions:**
 
@@ -30,10 +30,10 @@ macro_predictors <- read_parquet("data-r/macro_predictors.parquet")
 
 y <- macro_predictors$rp_div
 X <- macro_predictors |>
-  select(-month, -rp_div) |>
+  select(-date, -rp_div) |>
   as.matrix()
 
-# OLS for Welsh data fails because X is not of full rank
+# OLS for Welch-Goyal data fails because X is not of full rank
 c(ncol(X), Matrix::rankMatrix(X))
 ```
 
@@ -41,25 +41,22 @@ c(ncol(X), Matrix::rankMatrix(X))
 ## Python
 ```{python}
 #| label: py-load-libraries-and-data
-import pandas as pd
-import requests
+import polars as pl
 import numpy as np
-from io import BytesIO, StringIO
-import zipfile
-from plotnine import ggplot, aes, geom_line, labs
+
+from plotnine import *
 from scipy.optimize import minimize
 
-#Read the data
-macro_predictors = pd.read_parquet("data-python/macro_predictors.parquet")
+# Read the data
+macro_predictors = pl.read_parquet("data-python/macro_predictors.parquet")
 
+predictors = macro_predictors.drop("date", "rp_div").columns
 
-y = macro_predictors['rp_div'].values
-X = macro_predictors.drop(columns=['month', 'rp_div']).values
+y = macro_predictors["rp_div"].to_numpy()
+X = macro_predictors.select(predictors).to_numpy()
 
-# OLS for Welsh data fails because X is not of full rank
+# OLS for Welch-Goyal data fails because X is not of full rank
 print(X.shape[1], np.linalg.matrix_rank(X))
-
-
 ```
 :::
 
@@ -115,14 +112,17 @@ cbind(rc, rc_i)
 ## Python
 ```{python}
 #| label: py-apply-ridge
-rc = [np.nan] + list(ridge_regression(y, X, lambda_=1))
+rc = np.concatenate(([np.nan], ridge_regression(y, X, lambda_=1)))
 
 # Add an intercept term
 X_with_intercept = np.column_stack((np.ones(len(X)), X))
 rc_i = ridge_regression(y, X_with_intercept, lambda_=1, intercept=True)
 
-# Combine rc and rc_i into a single array
-np.column_stack((rc, rc_i))
+pl.DataFrame({
+    "term": ["(Intercept)"] + predictors,
+    "rc": rc,
+    "rc_i": rc_i,
+})
 ```
 :::
 Finally, the following code sequence computes the $L_2$ norm of the ridge regression coefficients for a given $\lambda$. Note that to implement this evaluation in a tidy manner, vectorized functions are important! `R` provides great ways to vectorize a function, to learn more, Hadley Wickham's book [Advanced R](https://adv-r.hadley.nz/) is a highly recommended read!
@@ -150,15 +150,17 @@ seq(from = 0.01, to = 20, by = 0.1) |>
 ```{python}
 #| label: py-ridge-l2-norm
 def l2_norm(lambda_):
-    return np.sum(ridge_regression(y, X, lambda_)**2)
+    return np.sum(ridge_regression(y, X, lambda_=lambda_) ** 2)
 
 l2_norm_vec = np.vectorize(l2_norm)
 
+lambdas = np.arange(0.01, 20, 0.1)
+ridge_norms = pl.DataFrame({"lambda": lambdas, "norm": l2_norm_vec(lambdas)})
 
-(pd.DataFrame({'value': np.arange(0.01, 20.1, 0.1)})
- .assign(norm=lambda df: l2_norm_vec(df['value']))
- .assign(gg=lambda df: ggplot(aes(x='value', y='norm'), df))
- .gg[0] + geom_line() + labs(x='Lambda', y='L2 norm')
+(
+    ggplot(ridge_norms, aes(x="lambda", y="norm"))
+    + geom_line()
+    + labs(x="Lambda", y="L2 norm")
 )
 ```
 :::
@@ -197,7 +199,7 @@ cbind(rc, rc_i)
 ```{python}
 #| label: py-define-lasso-regression
 def objective_lasso(beta, y, X, lambda_, intercept):
-    residuals = y - np.dot(X, beta)
+    residuals = y - X @ beta
     sse = np.sum(residuals**2)
     penalty = np.sum(np.abs(beta))
     if intercept:
@@ -210,13 +212,16 @@ def lasso_regression(y, X, lambda_=0, intercept=False):
     result = minimize(objective_lasso, beta_init, args=(y, X, lambda_, intercept))
     return result.x
 
-# Without intercept
 rc = np.concatenate(([np.nan], lasso_regression(y, X, lambda_=0.01)))
 
-# With intercept
-rc_i = lasso_regression(y, np.column_stack((np.ones(len(y)), X)), lambda_=0.01, intercept=True)
+# Add an intercept term
+rc_i = lasso_regression(y, X_with_intercept, lambda_=0.01, intercept=True)
 
-np.column_stack((rc, rc_i))
+pl.DataFrame({
+    "term": ["(Intercept)"] + predictors,
+    "rc": rc,
+    "rc_i": rc_i,
+})
 ```
 :::
 Finally, as in the previous example with Ridge regression, I illustrate how a larger penalization term $\lambda$ affects the $L_1$ norm of the regression coefficients.
@@ -242,21 +247,22 @@ seq(from = 0, to = 0.5, by = 0.05) |>
 ## Python
 ```{python}
 #| label: py-lasso-l1-norm
-def l1_norm(lambda_val):
-    return np.sum(np.abs(lasso_regression(y=y, X=X, lambda_=lambda_val)))
+def l1_norm(lambda_):
+    return np.sum(np.abs(lasso_regression(y, X, lambda_=lambda_)))
 
 l1_norm_vec = np.vectorize(l1_norm)
 
+lambdas = np.arange(0, 0.51, 0.05)
+lasso_norms = pl.DataFrame({"lambda": lambdas, "norm": l1_norm_vec(lambdas)})
 
-(pd.DataFrame({'value': np.arange(0, 0.51, 0.05)})
- .assign(norm=lambda df: l1_norm_vec(df['value']))
- .assign(gg=lambda df: ggplot(aes(x='value', y='norm'), df))
- .gg[0] + geom_line() + labs(x='Lambda', y='L1 norm')
+(
+    ggplot(lasso_norms, aes(x="lambda", y="norm"))
+    + geom_line()
+    + labs(x="Lambda", y="L1 norm")
 )
-
 ```
 :::
-While the code above should work, there are well-tested R packages available that provide a much more reliable and faster implementation. Thus, you can safely use the package `glmnet`. As a first step, the following code create the sequence of regressions coefficients for the Goyal-Welch dataset which should be identical to the example we discussed in the lecture slides.
+While the code above should work, there are well-tested packages available that provide a much more reliable and faster implementation. Thus, you can safely use the package `glmnet` in R or `scikit-learn` in Python. As a first step, the following code create the sequence of regressions coefficients for the Goyal-Welch dataset which should be identical to the example we discussed in the lecture slides.
 
 
 ::: {.panel-tabset group="language"}
@@ -287,33 +293,48 @@ broom::tidy(fit_ridge) |>
 ## Python
 ```{python}
 #| label: py-glmnet-ridge
-# import glmnet
-#
-# # Lasso and Ridge regression
-# fit_ridge = glmnet.elnet(X, y, alpha=0)
-# 
-# tidy_results = pd.DataFrame({
-#     'term': fit_ridge.get_vnames()[1:],
-#     'lambda': fit_ridge.lambda_,
-#     'estimate': fit_ridge.coef_[1:]
-# })
-# 
-# # Filtering out the intercept term
-# tidy_results = tidy_results[tidy_results['term'] != "(Intercept)"]
-# 
-# # Plotting
-# (ggplot(tidy_results, aes(x='lambda', y='estimate', color='term')) +
-#  geom_line() +
-#  geom_hline(data=tidy_results[tidy_results['lambda'] == min(tidy_results['lambda'])],
-#             aes(yintercept='estimate', color='term'), linetype='dotted') +
-#  theme_minimal() +
-#  scale_x_log10() +
-#  labs(x='Lambda', y='Estimate'))
+from sklearn.linear_model import enet_path
 
+# Like glmnet(), standardize X and y before fitting and report the
+# coefficients on the original scale of the data
+X_sd, y_sd = X.std(axis=0), y.std()
+X_std = (X - X.mean(axis=0)) / X_sd
+y_std = (y - y.mean()) / y_sd
 
+def tidy_elastic_net(lambdas, l1_ratio):
+    alphas, coefs, _ = enet_path(
+        X_std, y_std, l1_ratio=l1_ratio, alphas=lambdas / y_sd,
+        tol=1e-6,  # the default (1e-4) stops too early and gives step-shaped paths
+    )
+    return (pl.DataFrame(coefs.T * y_sd / X_sd, schema=predictors)
+        .with_columns(pl.Series("lambda", alphas * y_sd))
+        .unpivot(index="lambda", variable_name="term", value_name="estimate")
+    )
+
+# glmnet's default grid: 100 values of lambda from lambda_max, the smallest
+# penalty that sets all lasso coefficients to zero, down to lambda_max / 10,000.
+# For ridge, glmnet shifts the grid up by a factor of 1,000.
+lambda_max = np.max(np.abs(X_std.T @ y_std)) / len(y) * y_sd
+lambdas_lasso = lambda_max * np.logspace(0, -4, 100)
+lambdas_ridge = 1000 * lambdas_lasso
+
+fit_ridge = tidy_elastic_net(lambdas_ridge, l1_ratio=0)
+
+(
+    ggplot(fit_ridge, aes(x="lambda", y="estimate", color="term"))
+    + geom_line()
+    + geom_hline(
+        data=fit_ridge.filter(pl.col("lambda") == pl.col("lambda").min()),
+        mapping=aes(yintercept="estimate", color="term"),
+        linetype="dotted",
+    )
+    + theme_minimal()
+    + scale_x_log10()
+    + labs(x="Lambda", y="Estimate")
+)
 ```
 :::
-Note the function argument `alpha`. `glmnet()` allows a more flexible combination of $L_1$ and $L_2$ penalization on the regression coefficients. The *pure* ridge estimation is implemented with `alpha = 0`, lasso requires `alpha = 1`.
+Note the function argument `alpha`. `glmnet()` allows a more flexible combination of $L_1$ and $L_2$ penalization on the regression coefficients. The *pure* ridge estimation is implemented with `alpha = 0`, lasso requires `alpha = 1`. In `scikit-learn`, the same mixing parameter is called `l1_ratio`, while its argument `alpha` is the penalty $\lambda$.
 
 
 ::: {.panel-tabset group="language"}
@@ -329,7 +350,7 @@ broom::tidy(fit_lasso) |>
   filter(term != "(Intercept)") |>
   ggplot(aes(x = lambda, y = estimate, color = term)) +
   geom_line() +
-  geom_hline(data = broom::tidy(fit_ridge) |>
+  geom_hline(data = broom::tidy(fit_lasso) |>
                filter(lambda == min(lambda)),
              aes(yintercept = estimate, color = term), linetype = "dotted") +
   theme_minimal() +
@@ -341,31 +362,23 @@ broom::tidy(fit_lasso) |>
 ## Python
 ```{python}
 #| label: py-glmnet-lasso
-# import glmnet
-# # Lasso and Ridge regression
-# fit_lasso = glmnet.elnet(X, y, alpha=1)
-# 
-# # Using broom to tidy up the results
-# tidy_results = pd.DataFrame({
-#     'term': fit_lasso.get_vnames()[1:],
-#     'lambda': fit_lasso.lambda_,
-#     'estimate': fit_lasso.coef_[1:]
-# })
-# 
-# # Filtering out the intercept term
-# tidy_results = tidy_results[tidy_results['term'] != "(Intercept)"]
-# 
-# # Plotting
-# (ggplot(tidy_results, aes(x='lambda', y='estimate', color='term')) +
-#  geom_line() +
-#  geom_hline(data=tidy_results[tidy_results['lambda'] == min(tidy_results['lambda'])],
-#             aes(yintercept='estimate', color='term'), linetype='dotted') +
-#  theme_minimal() +
-#  scale_x_log10() +
-#  labs(x='Lambda', y='Estimate'))
+fit_lasso = tidy_elastic_net(lambdas_lasso, l1_ratio=1)
+
+(
+    ggplot(fit_lasso, aes(x="lambda", y="estimate", color="term"))
+    + geom_line()
+    + geom_hline(
+        data=fit_lasso.filter(pl.col("lambda") == pl.col("lambda").min()),
+        mapping=aes(yintercept="estimate", color="term"),
+        linetype="dotted",
+    )
+    + theme_minimal()
+    + scale_x_log10()
+    + labs(x="Lambda", y="Estimate")
+)
 ```
 :::
-Note in the figure how Lasso discards all variables for high values of $\lambda$ and then gradually incorporates more predictors. It seems like stock variance is selected first. As expected, for $\lambda \rightarrow 0$, the lasso coefficients converge towards the OLS estimates (illustrated with dotted lines).
+Note in the figure how Lasso discards all variables for high values of $\lambda$ and then gradually incorporates more predictors. Inflation (`infl`), the T-bill rate (`tbl`), and the long-term bond return (`ltr`) are selected first, followed by stock variance (`svar`). As expected, for $\lambda \rightarrow 0$, the lasso coefficients converge towards the OLS estimates (illustrated with dotted lines).
 
 ## Factor selection via machine learning
 

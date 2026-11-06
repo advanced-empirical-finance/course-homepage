@@ -29,18 +29,17 @@ library(archive)
 ## Python
 ```{python}
 #| label: py-load-libraries
-import pandas as pd
+import polars as pl
 import requests
-import numpy as np
-from io import BytesIO, StringIO
 import zipfile
+from io import BytesIO
 ```
 :::
 
 ::: {.panel-tabset group="language"}
 ## R
 
-First, we download the (large) dataset directly from within R. The data is stored as a .csv file within a zipped folder. For such purposes, the `archive` package is useful. Presumably, you want to store the output as a parquet file. Next, we set `options(timeout = 200)`, which allows the R session to download the dataset for 200 seconds. The default in R is 60 seconds which was too short on my machine.
+First, we download the (large) dataset directly from within R. The data is stored as a .csv file within a zipped folder. For such purposes, the `archive` package is useful. Presumably, you want to store the output as a parquet file. Next, we set `options(timeout = 1200)`, which allows the R session to download the dataset for 1200 seconds. The default in R is 60 seconds which was too short on my machine.
 
 ```{r}
 #| label: r-download-characteristics
@@ -52,31 +51,35 @@ characteristics <- characteristics |>
   rename("date" = "DATE") |>
   mutate(
     date = ymd(date),
-    date = floor_date(date, "date")
+    date = floor_date(date, "month")
   ) |>
   rename_with(~ paste0("characteristic_", .), -c(permno, date, sic2))
 ```
 
 ## Python
 
-First, we download the (large) dataset directly from within Python. The data is stored as a .csv file within a zipped folder. For such purposes, the `requests` library is useful. Presumably, you want to store the output as a parquet file. We set `timeout = 1200`, which allows the session to download the dataset for 1200 seconds. The default was too short on my machine.
+First, we download the (large) dataset directly from within Python. The data is stored as a .csv file within a zipped folder. For such purposes, the `requests` library is useful. Presumably, you want to store the output as a parquet file. We set `timeout = 1200`, which allows the session to download the dataset for 1200 seconds. The default was too short on my machine. Many characteristics are missing in the early years of the sample, so we let polars scan the whole file (`infer_schema_length=None`) before it decides on the column types. The column `DATE` stores dates as numbers such as `19570131`, which we convert to the first day of each month.
 
 ```{python}
 #| label: py-download-characteristics
 url = "https://dachxiu.chicagobooth.edu/download/datashare.zip"
-response = requests.get(url, timeout=1200, verify=False)
+response = requests.get(url, timeout=1200)
 
-# Extract the contents of the zip file
 with zipfile.ZipFile(BytesIO(response.content)) as z:
-    csv_file = z.open(z.namelist()[0])
-    # Read the CSV file
-    characteristics = pd.read_csv(csv_file)
+    characteristics = pl.read_csv(
+        z.read("datashare.csv"), infer_schema_length=None
+    )
 
 characteristics = (characteristics
-    .rename(columns={'DATE': 'date'})
-    .assign(date=lambda df: pd.to_datetime(df['date']).dt.to_period('M').dt.to_timestamp())
-    .rename(columns={col: 'characteristic_' + col for col in characteristics.columns if col not in ['permno', 'date', 'sic2']})
-)    
+    .rename({"DATE": "date"})
+    .with_columns(
+        date=pl.col("date").cast(pl.String).str.to_date("%Y%m%d").dt.truncate("1mo")
+    )
+    .select(
+        "permno", "date", "sic2",
+        pl.exclude("permno", "date", "sic2").name.prefix("characteristic_")
+    )
+)
 ```
 :::
 
@@ -104,15 +107,14 @@ characteristics <- characteristics |>
 ```{python}
 #| label: py-rank-transform
 def rank_transform(x):
-    rx = x.rank(na_option='keep')
-    non_nas = x.count()
-    rx[rx > non_nas] = np.nan
-    return 2 * ((rx - rx.min()) / (rx.max() - rx.min()) - 0.5)
+    rx = x.rank()  # missing values stay missing and get no rank
+    scaled = (rx - rx.min()) / (rx.max() - rx.min()) * 2 - 1
+    # if all values in a month are equal, 0 / 0 gives NaN: treat it as missing
+    return scaled.fill_nan(None)
 
 
 characteristics = (characteristics
-    .groupby('date', group_keys=False)
-    .apply(lambda group: group.apply(lambda x: rank_transform(x) if 'characteristic' in x.name and x.name != 'date' else x))
+    .with_columns(rank_transform(pl.col("^characteristic_.*$")).over("date"))
 )
 ```
 
@@ -142,23 +144,34 @@ characteristics <- characteristics |>
 ## Python
 ```{python}
 #| label: py-merge-crsp-macro
-crsp_monthly = (pd.read_parquet("data-python/crsp_monthly.parquet")
-  [["date", "permno", "mktcap_lag", "ret_excess"]])
-
-macro_predictors = (pd.read_parquet("data-python/macro_predictors.parquet")
-  .drop(columns=['rp_div'])
-  .rename(columns=lambda x: f'macro_{x}' if x != 'date' else x)
+# join keys need the same types in both tables: integer permno, plain dates
+crsp_monthly = (pl.read_parquet("data-python/crsp_monthly.parquet")
+    .select(
+        pl.col("permno").cast(pl.Int64),
+        pl.col("date").cast(pl.Date),
+        "mktcap_lag", "ret_excess"
+    )
 )
 
-characteristics = (
-    characteristics
-    .merge(crsp_monthly, on=['date', 'permno'], how='inner')
-    .merge(macro_predictors, on='date', how='inner')
-    .sort_values(by=['permno', 'date'])
-    .reset_index(drop=True)  
-    [['permno', 'date', 'ret_excess', 'mktcap_lag', 'sic2'] +
-     [col for col in characteristics.columns if 'macro_' in col] +
-     [col for col in characteristics.columns if 'characteristic_' in col]]
+# the Goyal-Welch predictors, without the equity premium rp_div
+macro_predictors = (pl.read_parquet("data-python/macro_predictors.parquet")
+    .select(
+        pl.col("date").cast(pl.Date),
+        pl.col(
+            "dp", "dy", "ep", "de", "svar", "bm", "ntis",
+            "tbl", "lty", "ltr", "tms", "dfy", "infl"
+        ).name.prefix("macro_")
+    )
+)
+
+characteristics = (characteristics
+    .join(crsp_monthly, how="inner", on=["date", "permno"])
+    .join(macro_predictors, how="inner", on="date")
+    .sort("permno", "date")
+    .select(
+        "permno", "date", "ret_excess", "mktcap_lag", "sic2",
+        pl.col("^macro_.*$"), pl.col("^characteristic_.*$")
+    )
 )
 ```
 
@@ -186,15 +199,15 @@ characteristics <- characteristics |>
 ```{python}
 #| label: py-impute-missing
 def replace_nas(x):
-    x[x.isna()] = x.median(skipna=True)
-    return x
+    return x.fill_null(x.median())
+
 
 characteristics = (characteristics
-    .groupby('date')
-    .apply(lambda group: group.apply(replace_nas) if group.select_dtypes(include='number').any().any() else group)
-    .reset_index(drop=True)
-    .dropna(subset=['sic2'])
-    .astype('category')
+    .with_columns(replace_nas(pl.col("^characteristic_.*$")).over("date"))
+    .drop_nulls("sic2")
+    .with_columns(
+        sic2=pl.col("sic2").cast(pl.Int64).cast(pl.String).cast(pl.Categorical)
+    )
 )
 ```
 :::
@@ -214,9 +227,8 @@ write_parquet(
 ## Python
 ```{python}
 #| label: py-write-parquet
-characteristics.to_parquet(
-  "data-python/stock_characteristics_monthly.parquet",
-  index=False
+characteristics.write_parquet(
+    "data-python/stock_characteristics_monthly.parquet"
 )
 ```
 
