@@ -39,9 +39,11 @@ library(tidyfinance)
 
 ```{python}
 #| label: py-load-libraries
-import pandas as pd
+import polars as pl
 import numpy as np
 import tidyfinance as tf
+
+from datetime import date
 from plotnine import *
 from scipy.optimize import minimize
 ```
@@ -59,14 +61,15 @@ As usual, I download daily prices for the 30 index constituents and compute (adj
 #| message: false
 
 ticker <- download_data(
-  type = "constituents",
+  "Index Constituents",
   index = "Dow Jones Industrial Average"
 ) |> pull(symbol)
 
 index_prices <- download_data(
-  type = "stock_prices",
+  "Stock Prices",
   symbols = ticker,
-  start_date = "2000-01-01"
+  start_date = "2000-01-01",
+  end_date = Sys.Date()
 )
 
 returns <- index_prices |>
@@ -82,25 +85,27 @@ returns <- index_prices |>
 ```{python}
 #| label: py-download-dj-returns
 tickers = (
-    tf.download_data(domain="constituents", index="Dow Jones Industrial Average")
-)["symbol"].tolist()
+    tf.download_data(domain="Index Constituents", index="Dow Jones Industrial Average")
+    ["symbol"].to_list()
+)
 
 index_prices = tf.download_data(
-    domain="stock_prices", symbols=tickers, start_date="2000-01-01"
+    domain="Stock Prices",
+    symbols=tickers,
+    start_date="2000-01-01",
+    end_date=date.today(),
 )
 
-returns = (
-    index_prices.sort_values(["symbol", "date"])
-    .groupby("symbol", group_keys=False)
-    .apply(
-        lambda df: df.assign(
-            ret=100 * (df["adjusted_close"] / df["adjusted_close"].shift(1) - 1)
-        )
-    )[["symbol", "date", "ret"]]
-    .dropna(subset=["ret"])
+returns = (index_prices
+    .sort("symbol", "date")
+    .with_columns(
+        ret=(100 * (pl.col("adjusted_close") / pl.col("adjusted_close").shift(1) - 1))
+            .over("symbol")
+    )
+    .select("symbol", "date", "ret")
+    .drop_nulls("ret")
+    .with_columns(ret=pl.col("ret") - pl.col("ret").mean().over("symbol"))
 )
-
-returns["ret"] = returns.groupby("symbol")["ret"].transform(lambda x: x - x.mean())
 ```
 
 :::
@@ -136,16 +141,13 @@ rolling_sd |>
 
 ```{python}
 #| label: py-rolling-sd
-rolling_sd = returns.groupby("symbol", group_keys=False).apply(
-    lambda df: df.assign(
-        rolling_sd=df["ret"].rolling(window=101, min_periods=101).std()
-    )
+rolling_sd = (returns
+    .with_columns(
+        rolling_sd=pl.col("ret").rolling_std(window_size=101).over("symbol")
+    )  # 100 day estimation window
+    .drop_nulls("rolling_sd")
+    .with_columns(annualized_sd=np.sqrt(250) * pl.col("rolling_sd"))
 )
-
-rolling_sd = rolling_sd.dropna(subset=["rolling_sd"]).assign(
-    annualized_sd=np.sqrt(250) * rolling_sd["rolling_sd"]
-)
-
 
 (
     ggplot(rolling_sd, aes(x="date", y="annualized_sd", color="symbol"))
@@ -204,6 +206,8 @@ def logL_arch(params, p, ret):
     ret_clean = ret[p:]
 
     sigma = X @ params
+    if np.any(sigma <= 0):
+        return 1e10
 
     return 0.5 * np.sum(np.log(sigma)) + 0.5 * np.sum((ret_clean**2) / sigma)
 ```
@@ -248,9 +252,12 @@ cbind(fitted_params, se) |> knitr::kable(digits = 2)
 ```{python}
 #| label: py-estimate-arch
 p = 2
-ret = returns.loc[returns["symbol"] == "AAPL", "ret"].values
+ret = returns.filter(pl.col("symbol") == "AAPL")["ret"].to_numpy()
 
 initial_params = np.concatenate(([np.var(ret, ddof=1)], np.ones(p)))
+
+# Defaults of R's optim(): finite-difference step ndeps = 1e-3, memory lmm = 5
+optim_options = {"eps": 1e-3, "maxcor": 5}
 
 res = minimize(
     logL_arch,
@@ -258,6 +265,7 @@ res = minimize(
     args=(p, ret),
     bounds=[(0, None)] * (p + 1),
     method="L-BFGS-B",
+    options=optim_options,
 )
 
 fitted_params = res.x
@@ -265,7 +273,7 @@ fitted_params = res.x
 hessian_inv = res.hess_inv.todense()
 se = np.sqrt(np.diag(hessian_inv))
 
-pd.DataFrame({"param": fitted_params.round(2), "se": se.round(2)})
+pl.DataFrame({"param": fitted_params, "se": se}).with_columns(pl.all().round(2))
 ```
 
 :::
@@ -350,6 +358,9 @@ def logL_garch(params, p, q, ret, return_only_loglik=True):
     sigma_sq = sigma_sq[mask]
     eps = eps[mask]
 
+    if np.any(sigma_sq <= 0):
+        return 1e10
+
     if return_only_loglik:
         return 0.5 * np.sum(np.log(sigma_sq)) + 0.5 * np.sum((eps**2) / sigma_sq)
     else:
@@ -366,6 +377,7 @@ result = minimize(
     args=(p, q, ret, True),
     method="L-BFGS-B",
     bounds=[(0, None)] * (p + q + 1),
+    options=optim_options,
 )
 
 fitted_garch_params = result.x
@@ -391,9 +403,13 @@ tibble(vola = logL_garch(fitted_garch_params, p, q, ret, FALSE)) |>
 
 ```{python}
 #| label: py-plot-garch-vol
-vola = logL_garch(fitted_garch_params, p, q, ret, False)
-vola_date = np.arange(0, len(vola))
-vola_df = pd.DataFrame({"date": vola_date, "vola": np.sqrt(vola)})
+vola_df = (
+    pl.DataFrame({"vola": logL_garch(fitted_garch_params, p, q, ret, False)})
+    .with_columns(
+        date=pl.int_range(1, pl.len() + 1),
+        vola=pl.col("vola").sqrt(),
+    )
+)
 
 (
     ggplot(vola_df, aes(x="date", y="vola"))
@@ -405,7 +421,7 @@ vola_df = pd.DataFrame({"date": vola_date, "vola": np.sqrt(vola)})
 
 :::
 
-Once we have implemented the workflow for one asset, we can apply it to all assets in the sample — using `mutate()` together with `map()` in R, or a `groupby` loop in Python. The lecture slides define the unconditional variance implied by the ARCH model.
+Once we have implemented the workflow for one asset, we can apply it to all assets in the sample — using `mutate()` together with `map()` in R, or a loop over `group_by()` in Python. The lecture slides define the unconditional variance implied by the ARCH model.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -456,8 +472,10 @@ unconditional_volatility |>
 def compute_unconditional_volatility(returns):
     results = []
 
-    for symbol, df in returns.sort_values(["symbol", "date"]).groupby("symbol"):
-        ret = df["ret"].values
+    for (symbol,), df in returns.sort("symbol", "date").group_by(
+        "symbol", maintain_order=True
+    ):
+        ret = df["ret"].to_numpy()
         p = 1
 
         initial_params = np.concatenate([[np.var(ret, ddof=1)], np.ones(p)])
@@ -468,16 +486,11 @@ def compute_unconditional_volatility(returns):
             args=(p, ret),
             method="L-BFGS-B",
             bounds=[(0, None)] * (p + 1),
+            options=optim_options,
         )
 
         fitted_params = res.x
-
-        try:
-            hess_inv = res.hess_inv.todense()
-        except:
-            hess_inv = res.hess_inv
-
-        se = np.sqrt(np.diag(hess_inv))
+        se = np.sqrt(np.diag(res.hess_inv.todense()))
 
         omega = fitted_params[0]
         alpha_sum = np.sum(fitted_params[1:])
@@ -485,25 +498,22 @@ def compute_unconditional_volatility(returns):
 
         results.append({"symbol": symbol, "uncond_var": uncond_var})
 
-    return pd.DataFrame(results)
+    return pl.DataFrame(results)
 
 
-unconditional_volatility = (
-    compute_unconditional_volatility(returns)
-    .assign(annualized_vol=lambda df: np.sqrt(250) * df["uncond_var"])
-    .sort_values("annualized_vol", ascending=False)
-    .assign(
-        symbol=lambda df: pd.Categorical(
-            df["symbol"], categories=df["symbol"][::-1], ordered=True
-        )
-    )
+unconditional_volatility = (compute_unconditional_volatility(returns)
+    .with_columns(annualized_vol=np.sqrt(250) * pl.col("uncond_var"))
+    .sort("annualized_vol")
 )
+
+symbol_order = unconditional_volatility["symbol"].to_list()
 
 (
     ggplot(unconditional_volatility)
     + geom_bar(aes(x="symbol", y="annualized_vol"), stat="identity")
     + coord_flip()
     + labs(x="Unconditional volatility (annualized)", y="")
+    + scale_x_discrete(limits=symbol_order)
 )
 ```
 
@@ -676,8 +686,8 @@ def compute_mvp_lw(mat):
     return w / np.sum(w)
 
 def eval_weight(w):
-    n = len(w)**2
-    return n * np.sum((w - 1 / n) ** 2)
+    n = len(w)
+    return n**2 * np.sum((w - 1 / n) ** 2)
 ```
 
 :::
@@ -737,16 +747,16 @@ def simulation(T=100, N=70):
         tmp[i, 0] = eval_weight(w_lw)
         tmp[i, 1] = eval_weight(w_sample)
 
-    return pd.DataFrame(
+    return pl.DataFrame(
         {
             "model": ["Shrinkage", "Sample"],
-            "error": np.nanmean(tmp, axis=0),
+            "error": tmp.mean(axis=0),
             "N": N,
             "T": T,
         }
     )
 
-result = pd.concat(
+result = pl.concat(
     [
         simulation(100, 60),
         simulation(100, 70),
@@ -754,13 +764,13 @@ result = pd.concat(
         simulation(100, 90),
         simulation(100, 100),
         simulation(100, 150),
-    ],
-    ignore_index=True,
+    ]
 )
 
-result_pivot = result.pivot(index=["N", "T"], columns="model", values="error")
-
-print(result_pivot.round(2))
+(result
+    .pivot(on="model", index=["N", "T"], values="error")
+    .with_columns(pl.col("Shrinkage", "Sample").round(2))
+)
 ```
 
 :::
