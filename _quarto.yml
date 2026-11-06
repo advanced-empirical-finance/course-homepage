@@ -59,9 +59,6 @@ website:
            contents:
              - exercises/covariance_estimation.qmd
              - exercises/portfolio_choice.qmd
-         - section: High-frequency data
-           contents:
-             - exercises/high-frequency-econometrics.qmd
      - title: trading game
        style: docked
        contents:
