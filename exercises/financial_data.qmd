@@ -6,7 +6,152 @@ title: Accessing & managing financial data
 
 1. Read the book chapters [Accessing and managing financial data](https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html) and [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) entirely; both show the R and the Python code side by side. They may contain some advanced concepts but also a description of almost every important dataset relevant to research in empirical finance. Since CRSP's update in July 2022, monthly returns already include delisting returns, so you no longer need to adjust for delistings yourself; the second chapter explains the details.
 
-2. Download the file `crsp_monthly.parquet` from Absalon. Store it in the folder `data` of the course repository, where R and Python both read it. Almost all exercises from now on will start with reading data out of this file, so make sure you familiarize yourself with this short *minimal setup to load data into your R or Python session memory from a fresh session* (you can consult it anytime again later during the course).
+2. Fill the `data` folder of your course repository. It starts empty; R and Python read the same files from it, as in the book. Git ignores everything in it, so none of the files ends up on GitHub.
+
+    a. *Public data:* download the Fama-French factors, the industry portfolios, the macroeconomic predictors, and the consumer price index with `tidyfinance`, and store them as parquet files. The code below does what the chapter *Accessing and managing financial data* does; run it once from the course repository.
+
+    b. *Proprietary data:* download `crsp_monthly.parquet` and `beta.parquet` from Absalon and store them in the `data` folder as well. Later in the course, `stock_characteristics_monthly.parquet` follows the same way.
+
+::: {.panel-tabset group="language"}
+## Python
+
+```{python}
+#| label: py-download-public-data
+#| eval: false
+import polars as pl
+import tidyfinance as tf
+
+start_date = "1960-01-01"
+end_date = "2024-12-31"
+
+factors_ff3_monthly = tf.download_data(
+    domain="Fama-French",
+    dataset="Fama/French 3 Factors",
+    start_date=start_date,
+    end_date=end_date,
+)
+
+factors_ff5_monthly = tf.download_data(
+    domain="Fama-French",
+    dataset="Fama/French 5 Factors (2x3)",
+    start_date=start_date,
+    end_date=end_date,
+)
+
+factors_ff3_daily = tf.download_data(
+    domain="Fama-French",
+    dataset="Fama/French 3 Factors [Daily]",
+    start_date=start_date,
+    end_date=end_date,
+)
+
+industries_ff_monthly = tf.download_data(
+    domain="Fama-French",
+    dataset="10 Industry Portfolios",
+    start_date=start_date,
+    end_date=end_date,
+)
+
+macro_predictors = tf.download_data(
+    domain="Goyal-Welch",
+    dataset="monthly",
+    start_date=start_date,
+    end_date=end_date,
+)
+
+cpi_monthly = (
+    tf.download_data(
+        domain="FRED",
+        series="CPIAUCNS",
+        start_date=start_date,
+        end_date=end_date,
+    )
+    .sort("date")
+    .with_columns(cpi=pl.col("value") / pl.col("value").last())
+)
+
+data_dict = {
+    "factors_ff3_monthly": factors_ff3_monthly,
+    "factors_ff5_monthly": factors_ff5_monthly,
+    "factors_ff3_daily": factors_ff3_daily,
+    "industries_ff_monthly": industries_ff_monthly,
+    "macro_predictors": macro_predictors,
+    "cpi_monthly": cpi_monthly,
+}
+
+for name, data in data_dict.items():
+    data.write_parquet(f"data/{name}.parquet")
+```
+
+## R
+
+```{r}
+#| label: r-download-public-data
+#| eval: false
+library(tidyverse)
+library(tidyfinance)
+library(nanoparquet)
+
+start_date <- "1960-01-01"
+end_date <- "2024-12-31"
+
+factors_ff3_monthly <- download_data(
+  domain = "Fama-French",
+  dataset = "Fama/French 3 Factors",
+  start_date = start_date,
+  end_date = end_date
+)
+
+factors_ff5_monthly <- download_data(
+  domain = "Fama-French",
+  dataset = "Fama/French 5 Factors (2x3)",
+  start_date = start_date,
+  end_date = end_date
+)
+
+factors_ff3_daily <- download_data(
+  domain = "Fama-French",
+  dataset = "Fama/French 3 Factors [Daily]",
+  start_date = start_date,
+  end_date = end_date
+)
+
+industries_ff_monthly <- download_data(
+  domain = "Fama-French",
+  dataset = "10 Industry Portfolios",
+  start_date = start_date,
+  end_date = end_date
+)
+
+macro_predictors <- download_data(
+  domain = "Goyal-Welch",
+  dataset = "monthly",
+  start_date = start_date,
+  end_date = end_date
+)
+
+cpi_monthly <- download_data(
+  domain = "FRED",
+  series = "CPIAUCNS",
+  start_date = start_date,
+  end_date = end_date
+) |>
+  mutate(cpi = value / value[date == max(date)])
+
+lst(
+  factors_ff3_monthly,
+  factors_ff5_monthly,
+  factors_ff3_daily,
+  industries_ff_monthly,
+  macro_predictors,
+  cpi_monthly
+) |>
+  iwalk(\(data, name) write_parquet(data, paste0("data/", name, ".parquet")))
+```
+
+:::
+
+3. Almost all exercises from now on start with reading data from these files, so make sure you familiarize yourself with this short *minimal setup to load data into your R or Python session memory from a fresh session* (you can consult it anytime again later during the course).
 
 ::: {.panel-tabset group="language"}
 ## Python
@@ -31,9 +176,9 @@ crsp_monthly <- read_parquet("data/crsp_monthly.parquet")
 
 :::
 
-3. If you need help with .parquet files, post your question on Absalon. Your TA, your peers, and I will help you!
+4. If you need help with .parquet files, post your question on Absalon. Your TA, your peers, and I will help you!
 
-4. Replicate the following two figures provided in the lecture slides: i) Create a time series of the number of stocks in the CRSP sample by listing exchange (NYSE, NYSE American, formerly AMEX, and Nasdaq). ii) Illustrate the time series of total market values (inflation-adjusted) by industry, based on CRSP's SIC codes (`siccd`). The book *Empirical Asset Pricing* (Bali, Murray, and Engle) provides a detailed walk-through if you need help.
+5. Replicate the following two figures provided in the lecture slides: i) Create a time series of the number of stocks in the CRSP sample by listing exchange (NYSE, NYSE American, formerly AMEX, and Nasdaq). ii) Illustrate the time series of total market values (inflation-adjusted) by industry, based on CRSP's SIC codes (`siccd`). The book *Empirical Asset Pricing* (Bali, Murray, and Engle) provides a detailed walk-through if you need help.
 
 **Solutions:**
 All solutions are provided in the book chapter [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html), in R and Python, and in the lecture slides.

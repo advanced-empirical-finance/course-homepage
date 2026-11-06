@@ -381,7 +381,7 @@ ul.task-list li input[type="checkbox"] {
 
 <p><strong>Exercises:</strong></p>
 <ol type="1">
-<li>Load the monthly CRSP file, the Fama-French Factors, and the estimated betas from <code>crsp_monthly.parquet</code>, <code>factors_ff3_monthly.parquet</code>, and <code>beta.parquet</code> in the <code>data</code> folder (<code>factors_ff3_monthly.parquet</code> comes from the Tidy Finance chapter <a href="https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html">Accessing and managing financial data</a>, <code>beta.parquet</code> from Absalon).</li>
+<li>Load the monthly CRSP file, the Fama-French Factors, and the estimated betas from <code>crsp_monthly.parquet</code>, <code>factors_ff3_monthly.parquet</code>, and <code>beta.parquet</code> in the <code>data</code> folder (see <a href="../exercises/financial_data.html">exercise 3</a>).</li>
 <li>Create portfolio sorts based on the <em>lagged</em> beta. Specifically, you compute the breakpoint as the median <em>lag</em> beta each month. Then, you compute the returns of a portfolio that invests only in the stocks with a higher beta than the breakpoint and a portfolio that invests only in the stocks with a lower beta than the breakpoints. The portfolio weights can either be equal or value-weighted.</li>
 <li>What are the monthly excess returns of both portfolios?</li>
 <li>Does a portfolio that goes long high beta stocks and short low beta stocks yield an excess return significantly different from zero?</li>
