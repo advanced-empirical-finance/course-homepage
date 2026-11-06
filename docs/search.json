@@ -874,7 +874,7 @@
     "href": "simulation/getting-started.html#install",
     "title": "Getting started",
     "section": "1. Install",
-    "text": "1. Install\nIn a terminal, in your project folder:\n\nRPython\n\n\nWith uvr, version 0.4.8 or later:\nuvr add advanced-empirical-finance/aefsim/r tidyfinance dplyr tidyr\n\n\nWith uv:\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\" tidyfinance",
+    "text": "1. Install\nIn a terminal, in your project folder:\n\nRPython\n\n\nWith uvr, version 0.4.8 or later (uvr --version shows yours, uvr upgrade updates it). The folder has to be a uvr project: if it has no uvr.toml yet, run uvr init first.\nuvr add advanced-empirical-finance/aefsim/r tidyfinance dplyr tidyr\nThen restart R, so it picks up the new packages.\n\n\nWith uv. The folder has to be a uv project: if it has no pyproject.toml yet, run uv init first.\nuv add \"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python\" tidyfinance",
     "crumbs": [
       "Getting started"
     ]

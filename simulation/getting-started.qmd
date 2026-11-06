@@ -12,15 +12,17 @@ In a terminal, in your project folder:
 ::: {.panel-tabset group="language"}
 ## R
 
-With [uvr](https://github.com/nbafrank/uvr), version 0.4.8 or later:
+With [uvr](https://github.com/nbafrank/uvr), version 0.4.8 or later (`uvr --version` shows yours, `uvr upgrade` updates it). The folder has to be a uvr project: if it has no `uvr.toml` yet, run `uvr init` first.
 
 ```sh
 uvr add advanced-empirical-finance/aefsim/r tidyfinance dplyr tidyr
 ```
 
+Then restart R, so it picks up the new packages.
+
 ## Python
 
-With [uv](https://docs.astral.sh/uv/):
+With [uv](https://docs.astral.sh/uv/). The folder has to be a uv project: if it has no `pyproject.toml` yet, run `uv init` first.
 
 ```sh
 uv add "git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python" tidyfinance

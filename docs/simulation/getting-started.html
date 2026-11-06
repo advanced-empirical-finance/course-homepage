@@ -262,11 +262,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content" data-group="language">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p>With <a href="https://github.com/nbafrank/uvr">uvr</a>, version 0.4.8 or later:</p>
+<p>With <a href="https://github.com/nbafrank/uvr">uvr</a>, version 0.4.8 or later (<code>uvr --version</code> shows yours, <code>uvr upgrade</code> updates it). The folder has to be a uvr project: if it has no <code>uvr.toml</code> yet, run <code>uvr init</code> first.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uvr</span> add advanced-empirical-finance/aefsim/r tidyfinance dplyr tidyr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then restart R, so it picks up the new packages.</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<p>With <a href="https://docs.astral.sh/uv/">uv</a>:</p>
+<p>With <a href="https://docs.astral.sh/uv/">uv</a>. The folder has to be a uv project: if it has no <code>pyproject.toml</code> yet, run <code>uv init</code> first.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add <span class="st">"git+https://github.com/advanced-empirical-finance/aefsim#subdirectory=python"</span> tidyfinance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
