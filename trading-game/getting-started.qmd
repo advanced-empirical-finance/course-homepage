@@ -99,8 +99,12 @@ For the example, tidyfinance downloads a year of prices from Yahoo Finance, the 
 
 ```r
 candidates <- universe |> filter(sp500) |> pull(ticker)
-prices <- download_data("Stock Prices", symbols = candidates,
-                        start_date = close_date - 365, end_date = close_date)
+prices <- download_data(
+  domain = "Stock Prices",
+  symbols = candidates,
+  start_date = close_date - 365,
+  end_date = close_date
+)
 ```
 
 ## Python
