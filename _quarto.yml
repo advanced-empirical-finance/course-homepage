@@ -53,34 +53,15 @@ website:
           - text: "portfolio choice under transaction costs"
             file: exercises/portfolio_choice.qmd
       - text: slides
-        menu:
-          - text: "all slides"
-            file: slides.qmd
-          - text: "---"
-          - text: "lecture 1 — introduction"
-            href: slides.qmd#aef-1-introduction
-          - text: "lecture 2 — portfolio choice"
-            href: slides.qmd#aef-2-portfolio-choice
-          - text: "lecture 3 — multifactor models and the reproducibility crisis"
-            href: slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis
-          - text: "lecture 4 — machine learning"
-            href: slides.qmd#aef-4-machine-learning
-          - text: "lecture 5 — volatility estimation and advanced portfolio choice"
-            href: slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice
-          - text: "lecture 6 — high frequency econometrics"
-            href: slides.qmd#aef-6-high-frequency-econometrics
-          - text: "mandatory assignment 1 — evaluation"
-            href: slides.qmd#aef-mandatory-assignment-1-evaluation
-          - text: "mandatory assignment 2 — evaluation"
-            href: slides.qmd#aef-mandatory-assignment-2-evaluation
+        file: slides.qmd
       - text: trading game
         menu:
           - text: the game
-            file: simulation/index.qmd
+            file: trading-game/index.qmd
           - text: getting started
-            file: simulation/getting-started.qmd
+            file: trading-game/getting-started.qmd
           - text: team dashboard
-            file: simulation/dashboard.qmd
+            file: trading-game/dashboard.qmd
       - text: more resources
         menu:
           - text: "overview"
@@ -97,12 +78,6 @@ website:
             file: additional-material/quarto-documentation.qmd
           - text: "collaboration with git and github"
             file: additional-material/github-collaboration.qmd
-          - text: "---"
-          - text: "ML workflows"
-          - text: "replicating Gu, Kelly & Xiu (2020)"
-            file: additional-material/ml-data-preparation-for-python.qmd
-          - text: "sharing trained models via Hugging Face Hub"
-            file: additional-material/hf_model_sharing_example.qmd
       - icon: github
         url:  https://github.com/advanced-empirical-finance/course-homepage
   sidebar:
@@ -131,9 +106,9 @@ website:
      - title: trading game
        style: docked
        contents:
-         - simulation/index.qmd
-         - simulation/getting-started.qmd
-         - simulation/dashboard.qmd
+         - trading-game/index.qmd
+         - trading-game/getting-started.qmd
+         - trading-game/dashboard.qmd
      - title: more resources
        style: docked
        contents:
@@ -146,10 +121,6 @@ website:
            contents:
              - additional-material/quarto-documentation.qmd
              - additional-material/github-collaboration.qmd
-         - section: ML workflows
-           contents:
-             - additional-material/ml-data-preparation-for-python.qmd
-             - additional-material/hf_model_sharing_example.qmd
 
 format:
   html:

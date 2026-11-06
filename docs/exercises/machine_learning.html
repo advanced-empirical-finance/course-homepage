@@ -221,65 +221,25 @@ window.Quarto = {
   </li>  
     </ul>
   </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-slides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">slides</span>
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-slides">    
-        <li>
-    <a class="dropdown-item" href="../slides.html">
- <span class="dropdown-text">all slides</span></a>
+  <li class="nav-item">
+    <a class="nav-link" href="../slides.html"> 
+<span class="menu-text">slides</span></a>
   </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-1-introduction">
- <span class="dropdown-text">lecture 1 — introduction</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-2-portfolio-choice">
- <span class="dropdown-text">lecture 2 — portfolio choice</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-3-multifactor-models-and-the-reproducibility-crisis">
- <span class="dropdown-text">lecture 3 — multifactor models and the reproducibility crisis</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-4-machine-learning">
- <span class="dropdown-text">lecture 4 — machine learning</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-5-volatility-estimation-and-advanced-portfolio-choice">
- <span class="dropdown-text">lecture 5 — volatility estimation and advanced portfolio choice</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-6-high-frequency-econometrics">
- <span class="dropdown-text">lecture 6 — high frequency econometrics</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-mandatory-assignment-1-evaluation">
- <span class="dropdown-text">mandatory assignment 1 — evaluation</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../slides.html#aef-mandatory-assignment-2-evaluation">
- <span class="dropdown-text">mandatory assignment 2 — evaluation</span></a>
-  </li>  
-    </ul>
-  </li>
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-trading-game" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">trading game</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-trading-game">    
         <li>
-    <a class="dropdown-item" href="../simulation/index.html">
+    <a class="dropdown-item" href="../trading-game/index.html">
  <span class="dropdown-text">the game</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/getting-started.html">
+    <a class="dropdown-item" href="../trading-game/getting-started.html">
  <span class="dropdown-text">getting started</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../simulation/dashboard.html">
+    <a class="dropdown-item" href="../trading-game/dashboard.html">
  <span class="dropdown-text">team dashboard</span></a>
   </li>  
     </ul>
@@ -312,16 +272,6 @@ window.Quarto = {
         <li>
     <a class="dropdown-item" href="../additional-material/github-collaboration.html">
  <span class="dropdown-text">collaboration with git and github</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">ML workflows</li>
-        <li>
-    <a class="dropdown-item" href="../additional-material/ml-data-preparation-for-python.html">
- <span class="dropdown-text">replicating Gu, Kelly &amp; Xiu (2020)</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../additional-material/hf_model_sharing_example.html">
- <span class="dropdown-text">sharing trained models via Hugging Face Hub</span></a>
   </li>  
     </ul>
   </li>
@@ -500,16 +450,16 @@ window.Quarto = {
 </header>
 
 
-<p>In these exercises, you familiarize yourself with the details behind shrinkage regression methods such as Ridge and Lasso. Although <em>R</em> and <em>Python</em> provide amazing interfaces which perform the estimation flawlessly, you are first asked to implement Ridge and Lasso regression estimators from scratch before moving on to using the package <em>glmnet</em> next.</p>
+<p>In these exercises, you familiarize yourself with the details behind shrinkage regression methods such as Ridge and Lasso. Although <em>R</em> and <em>Python</em> provide amazing interfaces which perform the estimation flawlessly, you are first asked to implement Ridge and Lasso regression estimators from scratch before moving on to using the package <em>glmnet</em> (R) or <em>scikit-learn</em> (Python) next.</p>
 <section id="introduction-to-penalized-regressions" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-penalized-regressions">Introduction to penalized regressions</h2>
 <p><strong>Exercises:</strong></p>
 <ul>
-<li>Load <code>macro_predictors.parquet</code> from the <code>data-r</code> / <code>data-python</code> folder. Create a variable <code>y</code>that contains the market excess returns from the Goyal-Welsh dataset (<code>rp_div</code>) and a matrix <code>X</code> that contains the remaining macroeconomic variables except for the column <code>month</code>. You will use <code>X</code> and <code>y</code> to perform penalized regressions. Try to run a simple linear regression of <code>X</code> on `y´ to analyze the relationship between the macroeconomic variables and market returns. Which problems do you encounter?</li>
+<li>Load <code>macro_predictors.parquet</code> from the <code>data-r</code> / <code>data-python</code> folder. Create a variable <code>y</code> that contains the market excess returns from the Goyal-Welch dataset (<code>rp_div</code>) and a matrix <code>X</code> that contains the remaining macroeconomic variables except for the column <code>date</code>. You will use <code>X</code> and <code>y</code> to perform penalized regressions. Try to run a simple linear regression of <code>y</code> on <code>X</code> to analyze the relationship between the macroeconomic variables and market returns. Which problems do you encounter?</li>
 <li>Write a function that requires three inputs, <code>y</code> (a <span class="math inline">\(T\)</span> vector), <code>X</code> (a <span class="math inline">\((T \times K)\)</span> matrix), and <code>lambda</code> and which returns the <strong>Ridge</strong> estimator (a <span class="math inline">\(K\)</span> vector) for given penalization parameter <span class="math inline">\(\lambda\)</span>. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether <span class="math inline">\(X\)</span> contains a vector of ones as the first column which should be exempt from the <span class="math inline">\(L_2\)</span> penalty.</li>
 <li>Compute the <span class="math inline">\(L_2\)</span> norm (<span class="math inline">\(\beta'\beta\)</span>) for the regression coefficients based on the predictive regression from the previous exercise for a range of <span class="math inline">\(\lambda\)</span>’s and illustrate the effect of the penalization in a suitable figure.</li>
-<li>Now, write a function that requires three inputs, <code>y</code> (a <span class="math inline">\(T\)</span> vector), <code>X</code> (a <span class="math inline">\((T \times K)\)</span> matrix), and ’lambda` and which returns the <strong>Lasso</strong> estimator (a <span class="math inline">\(K\)</span> vector) for given penalization parameter <span class="math inline">\(\lambda\)</span>. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether <span class="math inline">\(X\)</span> contains a vector of ones as the first column which should be exempt from the <span class="math inline">\(L_1\)</span> penalty.</li>
-<li>After you are sure you understand what Ridge and Lasso regression are doing, familiarize yourself with the documentation of the package <code>glmnet()</code>. It is a thoroughly tested and well-established package that provides efficient code to compute the penalized regression coefficients not only for Ridge and Lasso but also for combinations, therefore, commonly called <em>elastic nets</em>.</li>
+<li>Now, write a function that requires three inputs, <code>y</code> (a <span class="math inline">\(T\)</span> vector), <code>X</code> (a <span class="math inline">\((T \times K)\)</span> matrix), and <code>lambda</code> and which returns the <strong>Lasso</strong> estimator (a <span class="math inline">\(K\)</span> vector) for given penalization parameter <span class="math inline">\(\lambda\)</span>. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether <span class="math inline">\(X\)</span> contains a vector of ones as the first column which should be exempt from the <span class="math inline">\(L_1\)</span> penalty.</li>
+<li>After you are sure you understand what Ridge and Lasso regression are doing, familiarize yourself with the documentation of the package <code>glmnet()</code> (in Python: <code>ElasticNet()</code> and <code>enet_path()</code> from <code>scikit-learn</code>). It is a thoroughly tested and well-established package that provides efficient code to compute the penalized regression coefficients not only for Ridge and Lasso but also for combinations, therefore, commonly called <em>elastic nets</em>.</li>
 </ul>
 <p><strong>Solutions:</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
@@ -526,32 +476,31 @@ window.Quarto = {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> macro_predictors<span class="sc">$</span>rp_div</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> macro_predictors <span class="sc">|&gt;</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>month, <span class="sc">-</span>rp_div) <span class="sc">|&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>date, <span class="sc">-</span>rp_div) <span class="sc">|&gt;</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS for Welsh data fails because X is not of full rank</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS for Welch-Goyal data fails because X is not of full rank</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">ncol</span>(X), Matrix<span class="sc">::</span><span class="fu">rankMatrix</span>(X))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> BytesIO, StringIO</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> zipfile</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> ggplot, aes, geom_line, labs</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Read the data</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="op">=</span> pd.read_parquet(<span class="st">"data-python/macro_predictors.parquet"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the data</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>macro_predictors <span class="op">=</span> pl.read_parquet(<span class="st">"data-python/macro_predictors.parquet"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>predictors <span class="op">=</span> macro_predictors.drop(<span class="st">"date"</span>, <span class="st">"rp_div"</span>).columns</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> macro_predictors[<span class="st">'rp_div'</span>].values</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> macro_predictors.drop(columns<span class="op">=</span>[<span class="st">'month'</span>, <span class="st">'rp_div'</span>]).values</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS for Welsh data fails because X is not of full rank</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X.shape[<span class="dv">1</span>], np.linalg.matrix_rank(X))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> macro_predictors[<span class="st">"rp_div"</span>].to_numpy()</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> macro_predictors.select(predictors).to_numpy()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># OLS for Welch-Goyal data fails because X is not of full rank</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X.shape[<span class="dv">1</span>], np.linalg.matrix_rank(X))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -601,14 +550,17 @@ window.Quarto = {
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rc <span class="op">=</span> [np.nan] <span class="op">+</span> <span class="bu">list</span>(ridge_regression(y, X, lambda_<span class="op">=</span><span class="dv">1</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rc <span class="op">=</span> np.concatenate(([np.nan], ridge_regression(y, X, lambda_<span class="op">=</span><span class="dv">1</span>)))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Add an intercept term</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>X_with_intercept <span class="op">=</span> np.column_stack((np.ones(<span class="bu">len</span>(X)), X))</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>rc_i <span class="op">=</span> ridge_regression(y, X_with_intercept, lambda_<span class="op">=</span><span class="dv">1</span>, intercept<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine rc and rc_i into a single array</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>np.column_stack((rc, rc_i))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>pl.DataFrame({</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"term"</span>: [<span class="st">"(Intercept)"</span>] <span class="op">+</span> predictors,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rc"</span>: rc,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rc_i"</span>: rc_i,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -634,16 +586,18 @@ window.Quarto = {
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> l2_norm(lambda_):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">sum</span>(ridge_regression(y, X, lambda_)<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">sum</span>(ridge_regression(y, X, lambda_<span class="op">=</span>lambda_) <span class="op">**</span> <span class="dv">2</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>l2_norm_vec <span class="op">=</span> np.vectorize(l2_norm)</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>(pd.DataFrame({<span class="st">'value'</span>: np.arange(<span class="fl">0.01</span>, <span class="fl">20.1</span>, <span class="fl">0.1</span>)})</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a> .assign(norm<span class="op">=</span><span class="kw">lambda</span> df: l2_norm_vec(df[<span class="st">'value'</span>]))</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a> .assign(gg<span class="op">=</span><span class="kw">lambda</span> df: ggplot(aes(x<span class="op">=</span><span class="st">'value'</span>, y<span class="op">=</span><span class="st">'norm'</span>), df))</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a> .gg[<span class="dv">0</span>] <span class="op">+</span> geom_line() <span class="op">+</span> labs(x<span class="op">=</span><span class="st">'Lambda'</span>, y<span class="op">=</span><span class="st">'L2 norm'</span>)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>lambdas <span class="op">=</span> np.arange(<span class="fl">0.01</span>, <span class="dv">20</span>, <span class="fl">0.1</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ridge_norms <span class="op">=</span> pl.DataFrame({<span class="st">"lambda"</span>: lambdas, <span class="st">"norm"</span>: l2_norm_vec(lambdas)})</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    ggplot(ridge_norms, aes(x<span class="op">=</span><span class="st">"lambda"</span>, y<span class="op">=</span><span class="st">"norm"</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(x<span class="op">=</span><span class="st">"Lambda"</span>, y<span class="op">=</span><span class="st">"L2 norm"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -680,7 +634,7 @@ window.Quarto = {
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> objective_lasso(beta, y, X, lambda_, intercept):</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    residuals <span class="op">=</span> y <span class="op">-</span> np.dot(X, beta)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    residuals <span class="op">=</span> y <span class="op">-</span> X <span class="op">@</span> beta</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    sse <span class="op">=</span> np.<span class="bu">sum</span>(residuals<span class="op">**</span><span class="dv">2</span>)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    penalty <span class="op">=</span> np.<span class="bu">sum</span>(np.<span class="bu">abs</span>(beta))</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> intercept:</span>
@@ -693,13 +647,16 @@ window.Quarto = {
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> minimize(objective_lasso, beta_init, args<span class="op">=</span>(y, X, lambda_, intercept))</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result.x</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Without intercept</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>rc <span class="op">=</span> np.concatenate(([np.nan], lasso_regression(y, X, lambda_<span class="op">=</span><span class="fl">0.01</span>)))</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># With intercept</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>rc_i <span class="op">=</span> lasso_regression(y, np.column_stack((np.ones(<span class="bu">len</span>(y)), X)), lambda_<span class="op">=</span><span class="fl">0.01</span>, intercept<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>np.column_stack((rc, rc_i))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>rc <span class="op">=</span> np.concatenate(([np.nan], lasso_regression(y, X, lambda_<span class="op">=</span><span class="fl">0.01</span>)))</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Add an intercept term</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>rc_i <span class="op">=</span> lasso_regression(y, X_with_intercept, lambda_<span class="op">=</span><span class="fl">0.01</span>, intercept<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>pl.DataFrame({</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"term"</span>: [<span class="st">"(Intercept)"</span>] <span class="op">+</span> predictors,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rc"</span>: rc,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rc_i"</span>: rc_i,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -723,22 +680,24 @@ window.Quarto = {
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> l1_norm(lambda_val):</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">sum</span>(np.<span class="bu">abs</span>(lasso_regression(y<span class="op">=</span>y, X<span class="op">=</span>X, lambda_<span class="op">=</span>lambda_val)))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> l1_norm(lambda_):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.<span class="bu">sum</span>(np.<span class="bu">abs</span>(lasso_regression(y, X, lambda_<span class="op">=</span>lambda_)))</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>l1_norm_vec <span class="op">=</span> np.vectorize(l1_norm)</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>(pd.DataFrame({<span class="st">'value'</span>: np.arange(<span class="dv">0</span>, <span class="fl">0.51</span>, <span class="fl">0.05</span>)})</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a> .assign(norm<span class="op">=</span><span class="kw">lambda</span> df: l1_norm_vec(df[<span class="st">'value'</span>]))</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a> .assign(gg<span class="op">=</span><span class="kw">lambda</span> df: ggplot(aes(x<span class="op">=</span><span class="st">'value'</span>, y<span class="op">=</span><span class="st">'norm'</span>), df))</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a> .gg[<span class="dv">0</span>] <span class="op">+</span> geom_line() <span class="op">+</span> labs(x<span class="op">=</span><span class="st">'Lambda'</span>, y<span class="op">=</span><span class="st">'L1 norm'</span>)</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>lambdas <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="fl">0.51</span>, <span class="fl">0.05</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>lasso_norms <span class="op">=</span> pl.DataFrame({<span class="st">"lambda"</span>: lambdas, <span class="st">"norm"</span>: l1_norm_vec(lambdas)})</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    ggplot(lasso_norms, aes(x<span class="op">=</span><span class="st">"lambda"</span>, y<span class="op">=</span><span class="st">"norm"</span>))</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(x<span class="op">=</span><span class="st">"Lambda"</span>, y<span class="op">=</span><span class="st">"L1 norm"</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-<p>While the code above should work, there are well-tested R packages available that provide a much more reliable and faster implementation. Thus, you can safely use the package <code>glmnet</code>. As a first step, the following code create the sequence of regressions coefficients for the Goyal-Welch dataset which should be identical to the example we discussed in the lecture slides.</p>
+<p>While the code above should work, there are well-tested packages available that provide a much more reliable and faster implementation. Thus, you can safely use the package <code>glmnet</code> in R or <code>scikit-learn</code> in Python. As a first step, the following code create the sequence of regressions coefficients for the Goyal-Welch dataset which should be identical to the example we discussed in the lecture slides.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -765,33 +724,50 @@ window.Quarto = {
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import glmnet</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># # Lasso and Ridge regression</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_ridge = glmnet.elnet(X, y, alpha=0)</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy_results = pd.DataFrame({</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     'term': fit_ridge.get_vnames()[1:],</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     'lambda': fit_ridge.lambda_,</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     'estimate': fit_ridge.coef_[1:]</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># })</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># # Filtering out the intercept term</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy_results = tidy_results[tidy_results['term'] != "(Intercept)"]</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co"># # Plotting</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># (ggplot(tidy_results, aes(x='lambda', y='estimate', color='term')) +</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_line() +</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_hline(data=tidy_results[tidy_results['lambda'] == min(tidy_results['lambda'])],</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#             aes(yintercept='estimate', color='term'), linetype='dotted') +</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#  theme_minimal() +</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#  scale_x_log10() +</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#  labs(x='Lambda', y='Estimate'))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> enet_path</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Like glmnet(), standardize X and y before fitting and report the</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># coefficients on the original scale of the data</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>X_sd, y_sd <span class="op">=</span> X.std(axis<span class="op">=</span><span class="dv">0</span>), y.std()</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>X_std <span class="op">=</span> (X <span class="op">-</span> X.mean(axis<span class="op">=</span><span class="dv">0</span>)) <span class="op">/</span> X_sd</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>y_std <span class="op">=</span> (y <span class="op">-</span> y.mean()) <span class="op">/</span> y_sd</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tidy_elastic_net(lambdas, l1_ratio):</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    alphas, coefs, _ <span class="op">=</span> enet_path(</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        X_std, y_std, l1_ratio<span class="op">=</span>l1_ratio, alphas<span class="op">=</span>lambdas <span class="op">/</span> y_sd,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        tol<span class="op">=</span><span class="fl">1e-6</span>,  <span class="co"># the default (1e-4) stops too early and gives step-shaped paths</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (pl.DataFrame(coefs.T <span class="op">*</span> y_sd <span class="op">/</span> X_sd, schema<span class="op">=</span>predictors)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        .with_columns(pl.Series(<span class="st">"lambda"</span>, alphas <span class="op">*</span> y_sd))</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        .unpivot(index<span class="op">=</span><span class="st">"lambda"</span>, variable_name<span class="op">=</span><span class="st">"term"</span>, value_name<span class="op">=</span><span class="st">"estimate"</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co"># glmnet's default grid: 100 values of lambda from lambda_max, the smallest</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># penalty that sets all lasso coefficients to zero, down to lambda_max / 10,000.</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># For ridge, glmnet shifts the grid up by a factor of 1,000.</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>lambda_max <span class="op">=</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(X_std.T <span class="op">@</span> y_std)) <span class="op">/</span> <span class="bu">len</span>(y) <span class="op">*</span> y_sd</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>lambdas_lasso <span class="op">=</span> lambda_max <span class="op">*</span> np.logspace(<span class="dv">0</span>, <span class="op">-</span><span class="dv">4</span>, <span class="dv">100</span>)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>lambdas_ridge <span class="op">=</span> <span class="dv">1000</span> <span class="op">*</span> lambdas_lasso</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>fit_ridge <span class="op">=</span> tidy_elastic_net(lambdas_ridge, l1_ratio<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    ggplot(fit_ridge, aes(x<span class="op">=</span><span class="st">"lambda"</span>, y<span class="op">=</span><span class="st">"estimate"</span>, color<span class="op">=</span><span class="st">"term"</span>))</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_hline(</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>fit_ridge.<span class="bu">filter</span>(pl.col(<span class="st">"lambda"</span>) <span class="op">==</span> pl.col(<span class="st">"lambda"</span>).<span class="bu">min</span>()),</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>        mapping<span class="op">=</span>aes(yintercept<span class="op">=</span><span class="st">"estimate"</span>, color<span class="op">=</span><span class="st">"term"</span>),</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>        linetype<span class="op">=</span><span class="st">"dotted"</span>,</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_log10()</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(x<span class="op">=</span><span class="st">"Lambda"</span>, y<span class="op">=</span><span class="st">"Estimate"</span>)</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-<p>Note the function argument <code>alpha</code>. <code>glmnet()</code> allows a more flexible combination of <span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span> penalization on the regression coefficients. The <em>pure</em> ridge estimation is implemented with <code>alpha = 0</code>, lasso requires <code>alpha = 1</code>.</p>
+<p>Note the function argument <code>alpha</code>. <code>glmnet()</code> allows a more flexible combination of <span class="math inline">\(L_1\)</span> and <span class="math inline">\(L_2\)</span> penalization on the regression coefficients. The <em>pure</em> ridge estimation is implemented with <code>alpha = 0</code>, lasso requires <code>alpha = 1</code>. In <code>scikit-learn</code>, the same mixing parameter is called <code>l1_ratio</code>, while its argument <code>alpha</code> is the penalty <span class="math inline">\(\lambda\)</span>.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content" data-group="language">
@@ -805,7 +781,7 @@ window.Quarto = {
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">!=</span> <span class="st">"(Intercept)"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> lambda, <span class="at">y =</span> estimate, <span class="at">color =</span> term)) <span class="sc">+</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> broom<span class="sc">::</span><span class="fu">tidy</span>(fit_ridge) <span class="sc">|&gt;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> broom<span class="sc">::</span><span class="fu">tidy</span>(fit_lasso) <span class="sc">|&gt;</span></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>               <span class="fu">filter</span>(lambda <span class="sc">==</span> <span class="fu">min</span>(lambda)),</span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">yintercept =</span> estimate, <span class="at">color =</span> term), <span class="at">linetype =</span> <span class="st">"dotted"</span>) <span class="sc">+</span></span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
@@ -815,33 +791,25 @@ window.Quarto = {
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import glmnet</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># # Lasso and Ridge regression</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># fit_lasso = glmnet.elnet(X, y, alpha=1)</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># # Using broom to tidy up the results</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy_results = pd.DataFrame({</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     'term': fit_lasso.get_vnames()[1:],</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     'lambda': fit_lasso.lambda_,</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     'estimate': fit_lasso.coef_[1:]</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># })</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># # Filtering out the intercept term</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy_results = tidy_results[tidy_results['term'] != "(Intercept)"]</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co"># # Plotting</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co"># (ggplot(tidy_results, aes(x='lambda', y='estimate', color='term')) +</span></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_line() +</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#  geom_hline(data=tidy_results[tidy_results['lambda'] == min(tidy_results['lambda'])],</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#             aes(yintercept='estimate', color='term'), linetype='dotted') +</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#  theme_minimal() +</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#  scale_x_log10() +</span></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">#  labs(x='Lambda', y='Estimate'))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fit_lasso <span class="op">=</span> tidy_elastic_net(lambdas_lasso, l1_ratio<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    ggplot(fit_lasso, aes(x<span class="op">=</span><span class="st">"lambda"</span>, y<span class="op">=</span><span class="st">"estimate"</span>, color<span class="op">=</span><span class="st">"term"</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_hline(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>fit_lasso.<span class="bu">filter</span>(pl.col(<span class="st">"lambda"</span>) <span class="op">==</span> pl.col(<span class="st">"lambda"</span>).<span class="bu">min</span>()),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        mapping<span class="op">=</span>aes(yintercept<span class="op">=</span><span class="st">"estimate"</span>, color<span class="op">=</span><span class="st">"term"</span>),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        linetype<span class="op">=</span><span class="st">"dotted"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_log10()</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(x<span class="op">=</span><span class="st">"Lambda"</span>, y<span class="op">=</span><span class="st">"Estimate"</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
 </div>
-<p>Note in the figure how Lasso discards all variables for high values of <span class="math inline">\(\lambda\)</span> and then gradually incorporates more predictors. It seems like stock variance is selected first. As expected, for <span class="math inline">\(\lambda \rightarrow 0\)</span>, the lasso coefficients converge towards the OLS estimates (illustrated with dotted lines).</p>
+<p>Note in the figure how Lasso discards all variables for high values of <span class="math inline">\(\lambda\)</span> and then gradually incorporates more predictors. Inflation (<code>infl</code>), the T-bill rate (<code>tbl</code>), and the long-term bond return (<code>ltr</code>) are selected first, followed by stock variance (<code>svar</code>). As expected, for <span class="math inline">\(\lambda \rightarrow 0\)</span>, the lasso coefficients converge towards the OLS estimates (illustrated with dotted lines).</p>
 </section>
 <section id="factor-selection-via-machine-learning" class="level2">
 <h2 class="anchored" data-anchor-id="factor-selection-via-machine-learning">Factor selection via machine learning</h2>
