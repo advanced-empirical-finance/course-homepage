@@ -417,7 +417,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Exercises:</strong></p>
 <ol type="1">
 <li><p>Read the book chapters <a href="https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html">Accessing and managing financial data</a> and <a href="https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html">WRDS, CRSP, and Compustat</a> entirely; both show the R and the Python code side by side. They may contain some advanced concepts but also a description of almost every important dataset relevant to research in empirical finance. Since CRSP’s update in July 2022, monthly returns already include delisting returns, so you no longer need to adjust for delistings yourself; the second chapter explains the details.</p></li>
-<li><p>Download the file <code>crsp_monthly.parquet</code> from Absalon. Store it in the folder called <code>data-r</code> (<code>data-python</code>) within your standard working directory for the course. Almost all exercises from now on will start with reading data out of this file, so make sure you familiarize yourself with this short <em>minimal setup to load data into your R or Python session memory from a fresh session</em> (you can consult it anytime again later during the course).</p></li>
+<li><p>Download the file <code>crsp_monthly.parquet</code> from Absalon. Store it in the folder <code>data</code> of the course repository, where R and Python both read it. Almost all exercises from now on will start with reading data out of this file, so make sure you familiarize yourself with this short <em>minimal setup to load data into your R or Python session memory from a fresh session</em> (you can consult it anytime again later during the course).</p></li>
 </ol>
 <div class="tabset-margin-container"></div><div class="panel-tabset" data-group="language">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">R</a></li></ul>
@@ -426,14 +426,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="op">=</span> pl.read_parquet(<span class="st">"data-python/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="op">=</span> pl.read_parquet(<span class="st">"data/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nanoparquet)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data-r/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>crsp_monthly <span class="ot">&lt;-</span> <span class="fu">read_parquet</span>(<span class="st">"data/crsp_monthly.parquet"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
