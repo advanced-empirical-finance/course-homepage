@@ -114,7 +114,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -134,14 +134,109 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link" href="../slides-index.html"> 
 <span class="menu-text">lecture plan</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../exercises/index.html"> 
-<span class="menu-text">exercises</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-exercises" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">exercises</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-exercises">    
+        <li>
+    <a class="dropdown-item" href="../exercises/index.html">
+ <span class="dropdown-text">overview</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../slides.html"> 
-<span class="menu-text">slides</span></a>
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">introduction</li>
+        <li>
+    <a class="dropdown-item" href="../exercises/technical-prerequisites.html">
+ <span class="dropdown-text">technical prerequisites</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../exercises/introduction.html">
+ <span class="dropdown-text">introduction to tidy finance</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">asset pricing</li>
+        <li>
+    <a class="dropdown-item" href="../exercises/financial_data.html">
+ <span class="dropdown-text">accessing &amp; managing financial data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../exercises/beta_estimation.html">
+ <span class="dropdown-text">beta estimation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../exercises/portfolio_sorts.html">
+ <span class="dropdown-text">portfolio sorts</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">machine learning</li>
+        <li>
+    <a class="dropdown-item" href="../exercises/gu_kelly_xiu.html">
+ <span class="dropdown-text">empirical asset pricing via machine learning</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../exercises/machine_learning.html">
+ <span class="dropdown-text">shrinkage estimation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../exercises/machine_learning_nonlinear.html">
+ <span class="dropdown-text">neural networks</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">covariance estimation and portfolio choice</li>
+        <li>
+    <a class="dropdown-item" href="../exercises/covariance_estimation.html">
+ <span class="dropdown-text">(co)variance estimation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../exercises/portfolio_choice.html">
+ <span class="dropdown-text">portfolio choice under transaction costs</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-slides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">slides</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-slides">    
+        <li>
+    <a class="dropdown-item" href="../slides.html">
+ <span class="dropdown-text">all slides</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-1-introduction">
+ <span class="dropdown-text">lecture 1 — introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-2-portfolio-choice">
+ <span class="dropdown-text">lecture 2 — portfolio choice</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-3-multifactor-models-and-the-reproducibility-crisis">
+ <span class="dropdown-text">lecture 3 — multifactor models and the reproducibility crisis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-4-machine-learning">
+ <span class="dropdown-text">lecture 4 — machine learning</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-5-volatility-estimation-and-advanced-portfolio-choice">
+ <span class="dropdown-text">lecture 5 — volatility estimation and advanced portfolio choice</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-6-high-frequency-econometrics">
+ <span class="dropdown-text">lecture 6 — high frequency econometrics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-mandatory-assignment-1-evaluation">
+ <span class="dropdown-text">mandatory assignment 1 — evaluation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../slides.html#aef-mandatory-assignment-2-evaluation">
+ <span class="dropdown-text">mandatory assignment 2 — evaluation</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-trading-game" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">trading game</span>
@@ -161,10 +256,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
-  <li class="nav-item">
-    <a class="nav-link" href="../additional-material/index.html"> 
-<span class="menu-text">more resources</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">more resources</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more-resources">    
+        <li>
+    <a class="dropdown-item" href="../additional-material/index.html">
+ <span class="dropdown-text">overview</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">positron &amp; AI</li>
+        <li>
+    <a class="dropdown-item" href="../additional-material/positron-ai-assistant.html">
+ <span class="dropdown-text">positron AI assistant guide</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../additional-material/assignment-quality-criteria.html">
+ <span class="dropdown-text">assignment quality criteria</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">reproducible workflows</li>
+        <li>
+    <a class="dropdown-item" href="../additional-material/quarto-documentation.html">
+ <span class="dropdown-text">reproducible research with quarto</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../additional-material/github-collaboration.html">
+ <span class="dropdown-text">collaboration with git and github</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">ML workflows</li>
+        <li>
+    <a class="dropdown-item" href="../additional-material/ml-data-preparation-for-python.html">
+ <span class="dropdown-text">replicating Gu, Kelly &amp; Xiu (2020)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../additional-material/hf_model_sharing_example.html">
+ <span class="dropdown-text">sharing trained models via Hugging Face Hub</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/advanced-empirical-finance/course-homepage"> <i class="bi bi-github" role="img">
 </i> 
@@ -176,10 +308,102 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../additional-material/ml-data-preparation-for-python.html">ML workflows</a></li><li class="breadcrumb-item"><a href="../additional-material/hf_model_sharing_example.html">Sharing Trained Models via Hugging Face Hub</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../additional-material/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">More resources</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Positron and AI</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../additional-material/positron-ai-assistant.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Positron AI Assistant Guide</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../additional-material/assignment-quality-criteria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignment Quality Criteria</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Workflows</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../additional-material/quarto-documentation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reproducible Research with Quarto</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../additional-material/github-collaboration.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Collaboration with Git and GitHub</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">ML workflows</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../additional-material/ml-data-preparation-for-python.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Replicating Gu Kelly &amp; Xiu (2020)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../additional-material/hf_model_sharing_example.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Sharing Trained Models via Hugging Face Hub</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -209,7 +433,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../additional-material/ml-data-preparation-for-python.html">ML workflows</a></li><li class="breadcrumb-item"><a href="../additional-material/hf_model_sharing_example.html">Sharing Trained Models via Hugging Face Hub</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Sharing Trained Models via Hugging Face Hub</h1>
 <p class="subtitle lead">A workflow for fitting, shrinking, uploading, and retrieving model objects</p>
@@ -262,10 +486,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<p>We import six libraries. <code>tidyfinance</code> provides the same financial data as the R version. <code>pandas</code> and <code>numpy</code> handle data manipulation. <code>sklearn</code> covers preprocessing, modelling, and cross-validation. <code>joblib</code> serialises model objects to disk. <code>huggingface_hub</code> uploads and downloads files from Hugging Face.</p>
+<p>We import six libraries. <code>tidyfinance</code> provides the same financial data as the R version. <code>polars</code> and <code>numpy</code> handle data manipulation. <code>sklearn</code> covers preprocessing, modelling, and cross-validation. <code>joblib</code> serialises model objects to disk. <code>huggingface_hub</code> uploads and downloads files from Hugging Face.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tidyfinance <span class="im">as</span> tf</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> Ridge</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
@@ -288,14 +512,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p><code>download_data()</code> fetches monthly macro predictors directly into a tibble.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">download_data</span>(<span class="st">"macro_predictors"</span>, <span class="st">"monthly"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">download_data</span>(<span class="st">"Goyal-Welch"</span>, <span class="st">"monthly"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<p><code>tf.download_data()</code> returns the same dataset as a pandas DataFrame.</p>
+<p><code>tf.download_data()</code> returns the same dataset as a polars DataFrame.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> tf.download_data(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span><span class="st">"macro_predictors"</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span><span class="st">"Goyal-Welch"</span>,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    dataset<span class="op">=</span><span class="st">"monthly"</span>,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -319,20 +543,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<p>We sort by <code>date</code> first to guarantee chronological order, then slice at the 80% mark. We also separate the feature matrix <code>X</code> from the target vector <code>y</code> for both splits, dropping <code>date</code> from the features since it carries no predictive signal.</p>
+<p>We sort by <code>date</code> first to guarantee chronological order, then slice at the 80% mark. We also separate the feature matrix <code>X</code> from the target vector <code>y</code> for both splits, dropping <code>date</code> from the features since it carries no predictive signal. <code>.to_numpy()</code> turns both into the numpy arrays that sklearn works with.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data.sort_values(<span class="st">"date"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data.sort(<span class="st">"date"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>split_idx  <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(data) <span class="op">*</span> <span class="fl">0.8</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> data.iloc[:split_idx]</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>test_data  <span class="op">=</span> data.iloc[split_idx:]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>split_idx  <span class="op">=</span> <span class="bu">int</span>(data.height <span class="op">*</span> <span class="fl">0.8</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> data.head(split_idx)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>test_data  <span class="op">=</span> data.<span class="bu">slice</span>(split_idx)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>feature_cols <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> data.columns <span class="cf">if</span> c <span class="kw">not</span> <span class="kw">in</span> [<span class="st">"date"</span>, <span class="st">"rp_div"</span>]]</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train_data[feature_cols]</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_data[<span class="st">"rp_div"</span>]</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>X_test  <span class="op">=</span> test_data[feature_cols]</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>y_test  <span class="op">=</span> test_data[<span class="st">"rp_div"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train_data.select(pl.exclude(<span class="st">"date"</span>, <span class="st">"rp_div"</span>)).to_numpy()</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_data[<span class="st">"rp_div"</span>].to_numpy()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>X_test  <span class="op">=</span> test_data.select(pl.exclude(<span class="st">"date"</span>, <span class="st">"rp_div"</span>)).to_numpy()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>y_test  <span class="op">=</span> test_data[<span class="st">"rp_div"</span>].to_numpy()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
