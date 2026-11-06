@@ -2,4 +2,6 @@
 title: Exercises
 ---
 
-For each week I provide a set of exercises that help you to deepen your understanding of the covered topics. Try to solve the exercises on your own before reading the proposed solutions. Should there be any question, get in touch with your TA, post on Absalon, or discuss with your peers. You can also reach out to me during my office hours.
+For each week I provide a set of exercises that help you to deepen your understanding of the covered topics. Try to solve the exercises on your own before reading the proposed solutions, and discuss issues with your peers. Should there be any question, get in touch with your TA, post on Absalon, or reach out to me during my office hours. As an absolute minimum, make sure you are familiar with Grolemund and Wickham's [R for Data Science](https://r4ds.hadley.nz/) before starting.
+
+The exercise sets partially subsume work I created with my colleagues Christoph Scheuch and Patrick Weiss for the books *Tidy Finance with R* and *Tidy Finance with Python* ([tidy-finance.org](https://www.tidy-finance.org)). Feedback on *every* aspect is very welcome: if you spot typos, mistakes, or anything that deserves more attention, contact me or my colleagues at [contact@tidy-finance.org](mailto:contact@tidy-finance.org).

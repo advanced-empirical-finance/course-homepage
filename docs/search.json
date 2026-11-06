@@ -60,7 +60,7 @@
     "href": "index.html",
     "title": "Advanced Empirical Finance",
     "section": "",
-    "text": "The guiding question of this course: (How) can state-of-the-art methods improve financial decision-making? The lecture covers the theory and the recent papers — but most of your effort should go into actually doing empirical work."
+    "text": "The guiding question of this course: (How) can state-of-the-art methods improve financial decision-making? The lecture covers the theory and the recent papers — but most of your effort should go into actually doing empirical work.\n\n  \n    🚀 Start here\n    Get R, Python & Positron ready before the first lecture (Exercise 0).\n  \n  \n    🗓️ Lecture plan\n    Week-by-week schedule with readings and assignment deadlines.\n  \n  \n    📊 Slides\n    View and download every lecture deck, embedded on one page.\n  \n  \n    ✏️ Exercises\n    Hands-on problem sets that build the skills the lectures introduce.\n  \n  \n    📈 Trading game\n    Run a paper portfolio of US stocks from R or Python, with a team dashboard and leaderboard.\n  \n  \n    📚 More resources\n    Guides on Quarto, Git, Positron AI, and machine-learning workflows."
   },
   {
     "objectID": "index.html#about-the-exercises",
@@ -546,7 +546,7 @@
     "href": "exercises/index.html",
     "title": "Exercises",
     "section": "",
-    "text": "For each week I provide a set of exercises that help you to deepen your understanding of the covered topics. Try to solve the exercises on your own before reading the proposed solutions. Should there be any question, get in touch with your TA, post on Absalon, or discuss with your peers. You can also reach out to me during my office hours.",
+    "text": "For each week I provide a set of exercises that help you to deepen your understanding of the covered topics. Try to solve the exercises on your own before reading the proposed solutions, and discuss issues with your peers. Should there be any question, get in touch with your TA, post on Absalon, or reach out to me during my office hours. As an absolute minimum, make sure you are familiar with Grolemund and Wickham’s R for Data Science before starting.\nThe exercise sets partially subsume work I created with my colleagues Christoph Scheuch and Patrick Weiss for the books Tidy Finance with R and Tidy Finance with Python (tidy-finance.org). Feedback on every aspect is very welcome: if you spot typos, mistakes, or anything that deserves more attention, contact me or my colleagues at contact@tidy-finance.org.",
     "crumbs": [
       "Exercises"
     ]
