@@ -2,383 +2,386 @@
 title: Shrinkage Estimation
 ---
 
-In these exercises, you familiarize yourself with the details behind shrinkage regression methods such as Ridge and Lasso. Although *R* and *Python* provide amazing interfaces which perform the estimation flawlessly, you are first asked to implement Ridge and Lasso regression estimators from scratch before moving on to using the package *glmnet* (R) or *scikit-learn* (Python) next.
+In these exercises, you familiarize yourself with the details behind shrinkage regression methods such as Ridge and Lasso. Although *R* and *Python* provide amazing interfaces which perform the estimation flawlessly, you are first asked to implement Ridge and Lasso estimators from scratch before moving on to the package *glmnet* (R) or *scikit-learn* (Python).
 
-## Introduction to penalized regressions
+The application is the running example of the machine learning lectures: the *factor zoo*. Hundreds of published anomalies each come with a long-short portfolio. Which combination of them prices the cross-section of stock returns, and how much of it survives out of sample?
+
+## Shrinking the SDF: Ridge and Lasso on the factor zoo
 
 **Exercises:**
 
--   Load `macro_predictors.parquet` from the `data` folder (you stored it there in [exercise 3](financial_data.qmd)). Create a variable `y` that contains the market excess returns from the Goyal-Welch dataset (`rp_div`) and a matrix `X` that contains the remaining macroeconomic variables except for the column `date`. You will use `X` and `y` to perform penalized regressions. Try to run a simple linear regression of `y` on `X` to analyze the relationship between the macroeconomic variables and market returns. Which problems do you encounter?
--   Write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times K)$ matrix), and `lambda` and which returns the **Ridge** estimator (a $K$ vector) for given penalization parameter $\lambda$. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether $X$ contains a vector of ones as the first column which should be exempt from the $L_2$ penalty.
--   Compute the $L_2$ norm ($\beta'\beta$) for the regression coefficients based on the predictive regression from the previous exercise for a range of $\lambda$'s and illustrate the effect of the penalization in a suitable figure.
--   Now, write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times K)$ matrix), and `lambda` and which returns the **Lasso** estimator (a $K$ vector) for given penalization parameter $\lambda$. Recall that the intercept should not be penalized. Therefore, your function should allow you to indicate whether $X$ contains a vector of ones as the first column which should be exempt from the $L_1$ penalty.
--   After you are sure you understand what Ridge and Lasso regression are doing, familiarize yourself with the documentation of the package `glmnet()` (in Python: `ElasticNet()` and `enet_path()` from `scikit-learn`). It is a thoroughly tested and well-established package that provides efficient code to compute the penalized regression coefficients not only for Ridge and Lasso but also for combinations, therefore, commonly called *elastic nets*.
+-   Download the monthly long-short returns of the anomaly portfolios from [Open Source Asset Pricing](https://www.openassetpricing.com) (Chen and Zimmermann) and store them in the `data` folder. Keep the anomalies with a return in every month from January 1973 to December 2023. The years until 1999 are your *estimation sample*, the years from 2000 on your *test sample*. How many anomalies are left? Compute the annualized Sharpe ratio of the portfolio that holds all anomalies with equal weights, in both samples.
+-   The stochastic discount factor (SDF) is spanned by the mean-variance efficient (MVE) portfolio of the anomalies, with weights proportional to $\Sigma^{-1}\mu$. Britten-Jones (1999) shows that you get these weights from a regression: regress a vector of ones, `y`, on the excess returns, `X`, without an intercept. Run this regression in the estimation sample and compute the Sharpe ratio of the resulting portfolio in both samples. What do you find?
+-   Write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times N)$ matrix), and `lambda`, and which returns the **Ridge** estimator $\hat b = (X'X + T\lambda I)^{-1}X'y$. This scaling of the penalty is the one `glmnet()` uses, so you can compare your results with it later. Compute the $L_2$ norm ($b'b$) of the estimated weights and the Sharpe ratios in both samples for a range of $\lambda$'s, and illustrate the effect of the penalization in suitable figures. Which $\lambda$ would you choose, and why may you not use the test sample to choose it?
+-   Choose $\lambda$ by 5-fold cross-validation within the estimation sample: estimate the weights on four folds and compute the Sharpe ratio on the fifth. What is the Sharpe ratio of the chosen Ridge portfolio in the test sample?
+-   Now, write a function with the same three inputs which returns the **Lasso** estimator, the $b$ that minimizes $\frac{1}{2T}(y - Xb)'(y - Xb) + \lambda \sum_i |b_i|$. Use *coordinate descent*: go through the weights one by one and update each, keeping the others fixed, until nothing changes anymore. Check your function against `glmnet()` (in Python: `Lasso()` from `scikit-learn`).
+-   Compute the whole Lasso path with `glmnet()` (in Python: `lasso_path()`). How many anomalies does the Lasso select for each $\lambda$, and how does the Sharpe ratio in the test sample change? Choose $\lambda$ by cross-validation as for Ridge. How many anomalies does a good SDF need? Kozak, Nagel, and Santosh (2020) discuss whether the SDF is sparse.
 
 **Solutions:**
 
-::: {.panel-tabset group="language"}
+We read the long-short returns directly from the October 2026 data release of Open Source Asset Pricing; once `tidyfinance` supports this source, `download_data()` will do the same. The returns are in percent. `select(where(...))` (R) and the list of complete columns (Python) keep the anomalies without missing months.
 
+::: {.panel-tabset group="language"}
 ## R
 ```{r}
-#| label: r-load-libraries
-# Load required packages
-library(nanoparquet)
+#| label: r-load-anomalies
 library(tidyverse)
-
-# Read in the data
-macro_predictors <- read_parquet("data/macro_predictors.parquet")
-
-y <- macro_predictors$rp_div
-X <- macro_predictors |>
-  select(-date, -rp_div) |>
-  as.matrix()
-
-# OLS for Welch-Goyal data fails because X is not of full rank
-c(ncol(X), Matrix::rankMatrix(X))
-```
-
-
-## Python
-```{python}
-#| label: py-load-libraries-and-data
-import polars as pl
-import numpy as np
-
-from plotnine import *
-from scipy.optimize import minimize
-
-# Read the data
-macro_predictors = pl.read_parquet("data/macro_predictors.parquet")
-
-predictors = macro_predictors.drop("date", "rp_div").columns
-
-y = macro_predictors["rp_div"].to_numpy()
-X = macro_predictors.select(predictors).to_numpy()
-
-# OLS for Welch-Goyal data fails because X is not of full rank
-print(X.shape[1], np.linalg.matrix_rank(X))
-```
-:::
-
-
-As for OLS, the objective function is to minimize the sum of squared errors $(y - X\beta)'(y - X\beta)$ under the condition that $\sum\limits_{j=2}^K \beta_j \leq t(\lambda)$ **if** an intercept is present. This can be rewritten as $\beta'A\beta \leq t(\lambda)$ where $A = \begin{pmatrix}0&&\ldots&&0\\\vdots& 1&0&\ldots&0\\&\vdots&\ddots&&0\\0& &\ldots&&1\end{pmatrix}$. Otherwise, the condition is simply that $\beta'I_K\beta \leq t(\lambda)$ where $I_k$ is an identity matrix of size ($k \times k$).
-
-
-::: {.panel-tabset group="language"}
-
-## R
-
-```{r}
-#| label: r-define-ridge-regression
-ridge_regression <- function(y, X, lambda = 0, intercept = FALSE) {
-  K <- ncol(X)
-  A <- diag(K)
-  if (intercept) {
-    A[1, ] <- 0
-  }
-  coeffs <- solve(t(X) %*% X + lambda * A) %*% t(X) %*% y
-  return(coeffs)
-}
-```
-
-## Python
-```{python}
-#| label: py-define-ridge-regression
-def ridge_regression(y, X, lambda_=0, intercept=False):
-    K = X.shape[1]
-    A = np.eye(K)
-    if intercept:
-        A[0, :] = 0
-    coeffs = np.linalg.solve(X.T @ X + lambda_ * A, X.T @ y)
-    return coeffs
-```
-
-:::
-Below, I apply the function to the data set from the previous exercise to illustrate the output of the function `ridge_regression()`.
-
-::: {.panel-tabset group="language"}
-
-## R
-```{r}
-#| label: r-apply-ridge
-rc <- c(NA, ridge_regression(y, X, lambda = 1))
-
-# Add an intercept term
-rc_i <- ridge_regression(y, cbind(1, X), lambda = 1, intercept = TRUE)
-cbind(rc, rc_i)
-```
-
-
-## Python
-```{python}
-#| label: py-apply-ridge
-rc = np.concatenate(([np.nan], ridge_regression(y, X, lambda_=1)))
-
-# Add an intercept term
-X_with_intercept = np.column_stack((np.ones(len(X)), X))
-rc_i = ridge_regression(y, X_with_intercept, lambda_=1, intercept=True)
-
-pl.DataFrame({
-    "term": ["(Intercept)"] + predictors,
-    "rc": rc,
-    "rc_i": rc_i,
-})
-```
-:::
-Finally, the following code sequence computes the $L_2$ norm of the ridge regression coefficients for a given $\lambda$. Note that to implement this evaluation in a tidy manner, vectorized functions are important! `R` provides great ways to vectorize a function, to learn more, Hadley Wickham's book [Advanced R](https://adv-r.hadley.nz/) is a highly recommended read!
-
-
-::: {.panel-tabset group="language"}
-
-## R
-```{r}
-#| label: r-ridge-l2-norm
-
-l2_norm <- function(lambda) sum(ridge_regression(y = y, X = X, lambda = lambda)^2) # small helper function to extract the L_2 norm of the ridge regression coefficients
-
-l2_norm <- Vectorize(l2_norm) # To use the function within a `mutate` operation, it needs to be vectorized
-
-seq(from = 0.01, to = 20, by = 0.1) |>
-  as_tibble() |>
-  mutate(norm = l2_norm(value)) |>
-  ggplot(aes(x = value, y = norm)) +
-  geom_line() +
-  labs(x = "Lambda", y = " L2 norm")
-```
-
-## Python
-```{python}
-#| label: py-ridge-l2-norm
-def l2_norm(lambda_):
-    return np.sum(ridge_regression(y, X, lambda_=lambda_) ** 2)
-
-l2_norm_vec = np.vectorize(l2_norm)
-
-lambdas = np.arange(0.01, 20, 0.1)
-ridge_norms = pl.DataFrame({"lambda": lambdas, "norm": l2_norm_vec(lambdas)})
-
-(
-    ggplot(ridge_norms, aes(x="lambda", y="norm"))
-    + geom_line()
-    + labs(x="Lambda", y="L2 norm")
-)
-```
-:::
-To compute the coefficients of linear regression with a penalty on the sum of the absolute value of the regression coefficients, numerical optimization routines are required. Recall, the objective function is to minimize the sum of squared residuals, $\hat\varepsilon'\hat\varepsilon$ under the constraint that $\sum\limits_{j=2}^K\beta_j\leq t(\lambda)$. Make sure you familiarize yourself with the way, numerical optimization in R works: we first define the objective function (`objective_lasso()`) which has the parameter we aim to optimize as its first argument. The main function `lasso_regression()` then only calls this helper function.
-
-::: {.panel-tabset group="language"}
-
-## R
-```{r}
-#| label: r-define-lasso-regression
-objective_lasso <- function(beta, y, X, lambda, intercept) {
-  residuals <- y - X %*% beta
-  sse <- sum(residuals^2)
-  penalty <- sum(abs(beta))
-  if (intercept) {
-    penalty <- penalty - abs(beta[1])
-  }
-  return(sse + lambda * penalty)
-}
-
-lasso_regression <- function(y, X, lambda = 0, intercept = FALSE) {
-  K <- ncol(X)
-  beta_init <- rep(0, K)
-  return(optim(par = beta_init, fn = objective_lasso, y = y, X = X, lambda = lambda, intercept = intercept)$par)
-}
-
-rc <- c(NA, lasso_regression(y, X, lambda = 0.01))
-
-# Add an intercept term
-rc_i <- lasso_regression(y, cbind(1, X), lambda = 0.01, intercept = TRUE)
-cbind(rc, rc_i)
-```
-
-
-## Python
-```{python}
-#| label: py-define-lasso-regression
-def objective_lasso(beta, y, X, lambda_, intercept):
-    residuals = y - X @ beta
-    sse = np.sum(residuals**2)
-    penalty = np.sum(np.abs(beta))
-    if intercept:
-        penalty -= np.abs(beta[0])
-    return sse + lambda_ * penalty
-
-def lasso_regression(y, X, lambda_=0, intercept=False):
-    K = X.shape[1]
-    beta_init = np.zeros(K)
-    result = minimize(objective_lasso, beta_init, args=(y, X, lambda_, intercept))
-    return result.x
-
-rc = np.concatenate(([np.nan], lasso_regression(y, X, lambda_=0.01)))
-
-# Add an intercept term
-rc_i = lasso_regression(y, X_with_intercept, lambda_=0.01, intercept=True)
-
-pl.DataFrame({
-    "term": ["(Intercept)"] + predictors,
-    "rc": rc,
-    "rc_i": rc_i,
-})
-```
-:::
-Finally, as in the previous example with Ridge regression, I illustrate how a larger penalization term $\lambda$ affects the $L_1$ norm of the regression coefficients.
-
-
-::: {.panel-tabset group="language"}
-
-## R
-```{r}
-#| label: r-lasso-l1-norm
-
-l1_norm <- function(lambda) sum(abs(lasso_regression(y = y, X = X, lambda = lambda)))
-l1_norm <- Vectorize(l1_norm) # To use the function within a `mutate` operation, it needs to be vectorized
-
-seq(from = 0, to = 0.5, by = 0.05) |>
-  as_tibble() |>
-  mutate(norm = l1_norm(value)) |>
-  ggplot(aes(x = value, y = norm)) +
-  geom_line() +
-  labs(x = "Lambda", y = " L1 norm")
-```
-
-## Python
-```{python}
-#| label: py-lasso-l1-norm
-def l1_norm(lambda_):
-    return np.sum(np.abs(lasso_regression(y, X, lambda_=lambda_)))
-
-l1_norm_vec = np.vectorize(l1_norm)
-
-lambdas = np.arange(0, 0.51, 0.05)
-lasso_norms = pl.DataFrame({"lambda": lambdas, "norm": l1_norm_vec(lambdas)})
-
-(
-    ggplot(lasso_norms, aes(x="lambda", y="norm"))
-    + geom_line()
-    + labs(x="Lambda", y="L1 norm")
-)
-```
-:::
-While the code above should work, there are well-tested packages available that provide a much more reliable and faster implementation. Thus, you can safely use the package `glmnet` in R or `scikit-learn` in Python. As a first step, the following code create the sequence of regressions coefficients for the Goyal-Welch dataset which should be identical to the example we discussed in the lecture slides.
-
-
-::: {.panel-tabset group="language"}
-
-## R
-```{r}
-#| label: r-glmnet-ridge
+library(nanoparquet)
 library(glmnet)
-# Lasso and Ridge regression
 
-fit_ridge <- glmnet(X, y, # Model
-  alpha = 0
+osap_url <- paste0(
+  "https://huggingface.co/datasets/OpenSourceAP/CrossSection/resolve/",
+  "Data-Release-2026.10/Portfolios/Full%20Sets%20OP/PredictorLSretWide.parquet"
 )
+download.file(osap_url, "data/osap_long_short_returns.parquet", mode = "wb")
 
-broom::tidy(fit_ridge) |>
-  filter(term != "(Intercept)") |>
-  ggplot(aes(x = lambda, y = estimate, color = term)) +
-  geom_line() +
-  geom_hline(data = broom::tidy(fit_ridge) |>
-               filter(lambda == min(lambda)),
-             aes(yintercept = estimate, color = term), linetype = "dotted") +
-  theme_minimal() +
-  scale_x_log10() +
-  labs(x = "Lambda", y = "Estimate")
+anomalies <- read_parquet("data/osap_long_short_returns.parquet") |>
+  mutate(date = floor_date(as.Date(date), "month")) |>
+  filter(between(date, ymd("1973-01-01"), ymd("2023-12-31"))) |>
+  select(date, where(\(x) !anyNA(x)))
+
+returns <- anomalies |>
+  select(-date) |>
+  as.matrix() / 100
+estimation <- anomalies$date < ymd("2000-01-01")
+test <- !estimation
+ncol(returns)
+
+sharpe_ratio <- function(x) mean(x) / sd(x) * sqrt(12)
+
+portfolio_sharpe <- function(weights) {
+  c(
+    estimation = sharpe_ratio(returns[estimation, ] %*% weights),
+    test = sharpe_ratio(returns[test, ] %*% weights)
+  )
+}
+
+portfolio_sharpe(rep(1, ncol(returns)))
 ```
-
 
 ## Python
 ```{python}
-#| label: py-glmnet-ridge
-from sklearn.linear_model import enet_path
+#| label: py-load-anomalies
+from datetime import date
 
-# Like glmnet(), standardize X and y before fitting and report the
-# coefficients on the original scale of the data
-X_sd, y_sd = X.std(axis=0), y.std()
-X_std = (X - X.mean(axis=0)) / X_sd
-y_std = (y - y.mean()) / y_sd
+import numpy as np
+import polars as pl
+from plotnine import *
+from sklearn.linear_model import Lasso, lasso_path
 
-def tidy_elastic_net(lambdas, l1_ratio):
-    alphas, coefs, _ = enet_path(
-        X_std, y_std, l1_ratio=l1_ratio, alphas=lambdas / y_sd,
-        tol=1e-6,  # the default (1e-4) stops too early and gives step-shaped paths
-    )
-    return (pl.DataFrame(coefs.T * y_sd / X_sd, schema=predictors)
-        .with_columns(pl.Series("lambda", alphas * y_sd))
-        .unpivot(index="lambda", variable_name="term", value_name="estimate")
-    )
-
-# glmnet's default grid: 100 values of lambda from lambda_max, the smallest
-# penalty that sets all lasso coefficients to zero, down to lambda_max / 10,000.
-# For ridge, glmnet shifts the grid up by a factor of 1,000.
-lambda_max = np.max(np.abs(X_std.T @ y_std)) / len(y) * y_sd
-lambdas_lasso = lambda_max * np.logspace(0, -4, 100)
-lambdas_ridge = 1000 * lambdas_lasso
-
-fit_ridge = tidy_elastic_net(lambdas_ridge, l1_ratio=0)
-
-(
-    ggplot(fit_ridge, aes(x="lambda", y="estimate", color="term"))
-    + geom_line()
-    + geom_hline(
-        data=fit_ridge.filter(pl.col("lambda") == pl.col("lambda").min()),
-        mapping=aes(yintercept="estimate", color="term"),
-        linetype="dotted",
-    )
-    + theme_minimal()
-    + scale_x_log10()
-    + labs(x="Lambda", y="Estimate")
+osap_url = (
+    "https://huggingface.co/datasets/OpenSourceAP/CrossSection/resolve/"
+    "Data-Release-2026.10/Portfolios/Full%20Sets%20OP/PredictorLSretWide.parquet"
 )
+pl.read_parquet(osap_url).write_parquet("data/osap_long_short_returns.parquet")
+
+anomalies = (pl.read_parquet("data/osap_long_short_returns.parquet")
+    .with_columns(pl.col("date").dt.truncate("1mo"))
+    .filter(pl.col("date").is_between(date(1973, 1, 1), date(2023, 12, 31)))
+)
+complete = [c for c in anomalies.columns if c != "date" and anomalies[c].null_count() == 0]
+
+returns = anomalies.select(complete).to_numpy() / 100
+estimation = (anomalies["date"] < date(2000, 1, 1)).to_numpy()
+test = ~estimation
+print(returns.shape[1])
+
+
+def sharpe_ratio(x):
+    return np.mean(x) / np.std(x, ddof=1) * np.sqrt(12)
+
+
+def portfolio_sharpe(weights):
+    return {
+        "estimation": sharpe_ratio(returns[estimation] @ weights),
+        "test": sharpe_ratio(returns[test] @ weights),
+    }
+
+
+portfolio_sharpe(np.ones(returns.shape[1]))
 ```
 :::
-Note the function argument `alpha`. `glmnet()` allows a more flexible combination of $L_1$ and $L_2$ penalization on the regression coefficients. The *pure* ridge estimation is implemented with `alpha = 0`, lasso requires `alpha = 1`. In `scikit-learn`, the same mixing parameter is called `l1_ratio`, while its argument `alpha` is the penalty $\lambda$.
 
+158 anomalies have complete returns. The equal-weighted portfolio earns a Sharpe ratio of 2.8 until 1999, but only 1.4 afterwards: many anomalies weaken once they are published and traded on.
+
+The Britten-Jones regression has no intercept and a vector of ones as the dependent variable. Its coefficients are the weights of the MVE portfolio, up to a scaling factor that does not affect the Sharpe ratio.
 
 ::: {.panel-tabset group="language"}
-
 ## R
 ```{r}
-#| label: r-glmnet-lasso
-fit_lasso <- glmnet(X, y, # Model
-  alpha = 1
-)
+#| label: r-britten-jones
+X <- returns[estimation, ]
+y <- rep(1, nrow(X))
 
-broom::tidy(fit_lasso) |>
-  filter(term != "(Intercept)") |>
-  ggplot(aes(x = lambda, y = estimate, color = term)) +
-  geom_line() +
-  geom_hline(data = broom::tidy(fit_lasso) |>
-               filter(lambda == min(lambda)),
-             aes(yintercept = estimate, color = term), linetype = "dotted") +
-  theme_minimal() +
-  scale_x_log10() +
-  labs(x = "Lambda", y = "Estimate")
+b_ols <- solve(crossprod(X), crossprod(X, y))
+portfolio_sharpe(b_ols)
 ```
-
 
 ## Python
 ```{python}
-#| label: py-glmnet-lasso
-fit_lasso = tidy_elastic_net(lambdas_lasso, l1_ratio=1)
+#| label: py-britten-jones
+X = returns[estimation]
+y = np.ones(X.shape[0])
+
+b_ols = np.linalg.solve(X.T @ X, X.T @ y)
+portfolio_sharpe(b_ols)
+```
+:::
+
+In the estimation sample, the unrestricted MVE portfolio reaches a Sharpe ratio of about 15.7, an impossible number. In the test sample, it falls to 2.5: with 158 weights estimated from 324 months, the portfolio mostly fits noise.
+
+The Ridge estimator adds $T\lambda$ to the diagonal of $X'X$. We evaluate it on a grid of $\lambda$'s from almost no penalty to strong shrinkage.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-ridge
+ridge <- function(y, X, lambda) {
+  solve(crossprod(X) + nrow(X) * lambda * diag(ncol(X)), crossprod(X, y))
+}
+
+ridge_path <- tibble(lambda = 10^seq(-7, -2, length.out = 51)) |>
+  mutate(
+    weights = map(lambda, \(lambda) ridge(y, X, lambda)),
+    l2_norm = map_dbl(weights, \(b) sum(b^2)),
+    sharpe = map(weights, portfolio_sharpe)
+  ) |>
+  unnest_wider(sharpe)
+
+ridge_path |>
+  ggplot(aes(x = lambda, y = l2_norm)) +
+  geom_line() +
+  scale_x_log10() +
+  scale_y_log10() +
+  labs(x = "Lambda", y = "L2 norm of the weights")
+
+ridge_path |>
+  pivot_longer(c(estimation, test), names_to = "sample", values_to = "sharpe_ratio") |>
+  ggplot(aes(x = lambda, y = sharpe_ratio, color = sample)) +
+  geom_line() +
+  scale_x_log10() +
+  labs(x = "Lambda", y = "Sharpe ratio (annualized)", color = NULL)
+```
+
+## Python
+```{python}
+#| label: py-ridge
+def ridge(y, X, lambda_):
+    return np.linalg.solve(X.T @ X + X.shape[0] * lambda_ * np.eye(X.shape[1]), X.T @ y)
+
+
+lambdas = 10 ** np.linspace(-7, -2, 51)
+ridge_path = pl.DataFrame([
+    {"lambda": lambda_, "l2_norm": float(np.sum(b**2)), **portfolio_sharpe(b)}
+    for lambda_ in lambdas
+    for b in [ridge(y, X, lambda_)]
+])
 
 (
-    ggplot(fit_lasso, aes(x="lambda", y="estimate", color="term"))
+    ggplot(ridge_path, aes(x="lambda", y="l2_norm"))
     + geom_line()
-    + geom_hline(
-        data=fit_lasso.filter(pl.col("lambda") == pl.col("lambda").min()),
-        mapping=aes(yintercept="estimate", color="term"),
-        linetype="dotted",
-    )
-    + theme_minimal()
     + scale_x_log10()
-    + labs(x="Lambda", y="Estimate")
+    + scale_y_log10()
+    + labs(x="Lambda", y="L2 norm of the weights")
+)
+```
+
+```{python}
+#| label: py-ridge-sharpe
+(
+    ggplot(
+        ridge_path.unpivot(index="lambda", on=["estimation", "test"],
+                           variable_name="sample", value_name="sharpe_ratio"),
+        aes(x="lambda", y="sharpe_ratio", color="sample"),
+    )
+    + geom_line()
+    + scale_x_log10()
+    + labs(x="Lambda", y="Sharpe ratio (annualized)", color="")
 )
 ```
 :::
-Note in the figure how Lasso discards all variables for high values of $\lambda$ and then gradually incorporates more predictors. Inflation (`infl`), the T-bill rate (`tbl`), and the long-term bond return (`ltr`) are selected first, followed by stock variance (`svar`). As expected, for $\lambda \rightarrow 0$, the lasso coefficients converge towards the OLS estimates (illustrated with dotted lines).
+
+More shrinkage lowers the Sharpe ratio in the estimation sample, but raises it in the test sample, up to a point. Picking the $\lambda$ with the best test Sharpe ratio would use the test sample to build the portfolio, so its Sharpe ratio would no longer be out of sample. Instead, we choose $\lambda$ by cross-validation within the estimation sample. The folds are consecutive blocks of months, so each fold keeps the time series together. If a penalty sets all weights to zero, there is no portfolio, and the fold counts with a Sharpe ratio of zero.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-ridge-cv
+folds <- cut(seq_len(nrow(X)), 5, labels = FALSE)
+
+cv_sharpe <- function(estimator, lambda) {
+  map_dbl(1:5, \(k) {
+    b <- estimator(y[folds != k], X[folds != k, ], lambda)
+    if (all(b == 0)) 0 else sharpe_ratio(X[folds == k, ] %*% b)
+  }) |>
+    mean()
+}
+
+ridge_path <- ridge_path |>
+  mutate(cv = map_dbl(lambda, \(lambda) cv_sharpe(ridge, lambda)))
+
+ridge_path |>
+  slice_max(cv) |>
+  select(lambda, cv, estimation, test)
+```
+
+## Python
+```{python}
+#| label: py-ridge-cv
+folds = np.array_split(np.arange(X.shape[0]), 5)
+
+
+def cv_sharpe(estimator, lambda_):
+    sharpe = []
+    for fold in folds:
+        keep = np.ones(X.shape[0], dtype=bool)
+        keep[fold] = False
+        b = estimator(y[keep], X[keep], lambda_)
+        sharpe.append(sharpe_ratio(X[fold] @ b) if np.any(b) else 0.0)
+    return np.mean(sharpe)
+
+
+ridge_path = ridge_path.with_columns(
+    cv=pl.Series([cv_sharpe(ridge, lambda_) for lambda_ in lambdas])
+)
+
+ridge_path.sort("cv", descending=True).head(1).select("lambda", "cv", "estimation", "test")
+```
+:::
+
+Cross-validation picks $\lambda = 10^{-4}$. The Ridge portfolio reaches a Sharpe ratio of about 2.9 in the test sample, clearly above the 2.5 of the unrestricted MVE portfolio, while its Sharpe ratio in the estimation sample drops from 15.7 to 12.9.
+
+Coordinate descent updates one weight at a time. Given the other weights, the optimal $b_j$ has a closed form: compute the correlation of $X_j$ with the partial residual (the residual without $X_j$'s contribution), shrink it towards zero by $\lambda$ (*soft thresholding*), and divide by $X_j'X_j / T$. Weights whose correlation is smaller than $\lambda$ become exactly zero; this is how the Lasso selects.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-lasso
+soft_threshold <- function(z, gamma) sign(z) * pmax(abs(z) - gamma, 0)
+
+lasso <- function(y, X, lambda, tolerance = 1e-10, max_iterations = 10000) {
+  n <- nrow(X)
+  b <- rep(0, ncol(X))
+  x_squared <- colSums(X^2) / n
+  residual <- y
+  for (iteration in seq_len(max_iterations)) {
+    b_old <- b
+    for (j in seq_along(b)) {
+      residual <- residual + X[, j] * b[j]
+      b[j] <- soft_threshold(sum(X[, j] * residual) / n, lambda) / x_squared[j]
+      residual <- residual - X[, j] * b[j]
+    }
+    if (max(abs(b - b_old)) < tolerance) break
+  }
+  b
+}
+
+b_lasso <- lasso(y, X, lambda = 1e-3)
+b_glmnet <- glmnet(X, y,
+  alpha = 1, lambda = 1e-3, intercept = FALSE, standardize = FALSE,
+  control = list(thresh = 1e-14)
+) |>
+  coef() |>
+  as.numeric()
+
+c(selected = sum(b_lasso != 0), max_difference = max(abs(b_lasso - b_glmnet[-1])))
+```
+
+## Python
+```{python}
+#| label: py-lasso
+def soft_threshold(z, gamma):
+    return np.sign(z) * np.maximum(np.abs(z) - gamma, 0)
+
+
+def lasso(y, X, lambda_, tolerance=1e-10, max_iterations=10000):
+    n = X.shape[0]
+    b = np.zeros(X.shape[1])
+    x_squared = (X**2).sum(axis=0) / n
+    residual = y.copy()
+    for _ in range(max_iterations):
+        b_old = b.copy()
+        for j in range(len(b)):
+            residual += X[:, j] * b[j]
+            b[j] = soft_threshold(X[:, j] @ residual / n, lambda_) / x_squared[j]
+            residual -= X[:, j] * b[j]
+        if np.max(np.abs(b - b_old)) < tolerance:
+            break
+    return b
+
+
+b_lasso = lasso(y, X, 1e-3)
+b_sklearn = Lasso(alpha=1e-3, fit_intercept=False, tol=1e-14, max_iter=100000).fit(X, y).coef_
+
+{"selected": int((b_lasso != 0).sum()), "max_difference": float(np.max(np.abs(b_lasso - b_sklearn)))}
+```
+:::
+
+Both packages minimize exactly this objective when the intercept and the internal standardization are switched off, so the weights agree up to the numerical tolerance. For the whole path, we let `glmnet()` (`lasso_path()`) choose the grid of $\lambda$'s, from the smallest penalty that sets all weights to zero downwards.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-lasso-path
+lasso_fit <- glmnet(X, y, alpha = 1, intercept = FALSE, standardize = FALSE)
+
+lasso_path <- tibble(lambda = lasso_fit$lambda, selected = lasso_fit$df) |>
+  mutate(
+    weights = map(seq_along(lambda), \(i) as.numeric(coef(lasso_fit)[-1, i])),
+    sharpe = map(weights, portfolio_sharpe)
+  ) |>
+  filter(selected > 0) |>
+  unnest_wider(sharpe)
+
+lasso_path |>
+  ggplot(aes(x = selected, y = test)) +
+  geom_line() +
+  labs(x = "Number of selected anomalies", y = "Sharpe ratio in the test sample")
+
+lasso_glmnet <- function(y, X, lambda) {
+  as.numeric(coef(glmnet(X, y, alpha = 1, lambda = lambda, intercept = FALSE, standardize = FALSE))[-1])
+}
+
+lasso_path |>
+  mutate(cv = map_dbl(lambda, \(lambda) cv_sharpe(lasso_glmnet, lambda))) |>
+  slice_max(cv) |>
+  select(lambda, selected, cv, estimation, test)
+```
+
+## Python
+```{python}
+#| label: py-lasso-path
+alphas, coefs, _ = lasso_path(X, y, alphas=100, eps=1e-4)
+
+lasso_results = pl.DataFrame([
+    {"lambda": alpha, "selected": int((b != 0).sum()), **portfolio_sharpe(b)}
+    for alpha, b in zip(alphas, coefs.T)
+    if (b != 0).any()
+])
+
+(
+    ggplot(lasso_results, aes(x="selected", y="test"))
+    + geom_line()
+    + labs(x="Number of selected anomalies", y="Sharpe ratio in the test sample")
+)
+```
+
+```{python}
+#| label: py-lasso-cv
+def lasso_sklearn(y, X, lambda_):
+    return Lasso(alpha=lambda_, fit_intercept=False, max_iter=100000).fit(X, y).coef_
+
+
+(lasso_results
+    .with_columns(cv=pl.Series([cv_sharpe(lasso_sklearn, l) for l in lasso_results["lambda"]]))
+    .sort("cv", descending=True)
+    .head(1)
+    .select("lambda", "selected", "cv", "estimation", "test")
+)
+```
+:::
+
+Cross-validation keeps 76 anomalies, with a Sharpe ratio of about 3.0 in the test sample, as good as Ridge. A handful of anomalies is not enough: with five or fewer selected anomalies, the Sharpe ratio in the test sample stays far below that of the Ridge portfolio. The Lasso needs dozens of anomalies before it catches up, so the SDF is not sparse in the anomalies. Kozak, Nagel, and Santosh (2020) reach the same conclusion and show that the SDF is much sparser in the principal components of the anomaly returns, which is where the next lecture starts.
 
 ## Factor selection via machine learning
 
@@ -407,4 +410,4 @@ In this Chapter, you get to know `tidymodels` (R) and `scikit-learn` (Python), a
 -   Finally, write a function to parallelize the entire workflow. The function should split the data into a training and test set, create a cross-validation scheme, and tunes a lasso model for different penalty values. Finally, select the best model in terms of MSPE in the validation test set. Apply the function to every individual industry and illustrate for each industry which factor and macroeconomic variables are selected by the Lasso.
 :::
 
-**Solutions:** All solutions are provided in the book chapter *Factor selection via machine learning* ([R](https://www.tidy-finance.org/r/factor-selection-via-machine-learning.html) or [Python](https://www.tidy-finance.org/python/factor-selection-via-machine-learning.html) version).
+**Solutions:** All solutions are provided in the book chapter *Factor selection via machine learning* ([R and Python](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html)).
