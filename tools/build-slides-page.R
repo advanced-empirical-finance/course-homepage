@@ -27,6 +27,9 @@ decks <- sort(list.files(source_dir, pattern = "\\.html$"))
 # off the homepage.
 skip <- c("aef-6-high-frequency-econometrics.html")
 decks <- setdiff(decks, skip)
+# Live versions (<deck>.live.html, quarto ... --profile live) are for the
+# lecturer only and never published.
+decks <- decks[!grepl("\\.live\\.html$", decks)]
 if (length(decks) == 0) stop(sprintf("No .html decks found in %s", source_dir))
 invisible(file.copy(file.path(source_dir, decks), file.path(dest_dir, decks), overwrite = TRUE))
 cat(sprintf("Copied %d deck(s) to %s\n", length(decks), dest_dir))
