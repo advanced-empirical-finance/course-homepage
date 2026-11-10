@@ -1,343 +1,640 @@
 ---
 title: "Assignment Quality Criteria"
-date: "2026-03-08"
-categories: [assignments, workflow, reproducibility]
-description: "A reference guide to code and writing quality standards for empirical finance assignments — with concrete examples."
+date: "2026-11-10"
+categories: [assignments, workflow, reproducibility, AI]
+description: "What we expect from a submission when AI does the typing: the criteria with examples, and a roadmap to a reproducible project."
 ---
 
-You were encouraged to use all available tools, including AI assistants, to polish your submission to the highest possible standard. This page makes the evaluation criteria explicit. They are organised into five categories: code quality, reproducibility, communication, writing mechanics, and AI-specific pitfalls.
+## The deal
 
-The criteria are not a checklist to satisfy mechanically — they reflect habits of a careful empirical researcher. A well-structured document that renders cleanly, presents results honestly, and writes about them precisely will satisfy almost all of them naturally. The most common failure modes we observe are not conceptual errors but finishing touches: magic numbers left in place, captions that say "Figure 1", prose that describes results vaguely while the exact number sits in a table two lines above, and writing voice that shifts register mid-document.
+Use AI. You may, and you are expected to, use AI assistants for code, text, and review. In exchange, the bar is very high.
 
-Use the interactive table below to explore each criterion. Click any row to see a side-by-side example of a problematic and an improved version.
+Clean code, fluent prose, and a document that renders are what an AI assistant delivers in minutes. They are the floor, not what earns a good grade. What earns it is what AI cannot do for you: choosing a method that answers the question, checking that the results are right, reading them as an economist, and owning every line.
+
+The criteria on this page come in three tiers.
+
+- **The floor.** A submission below it has a serious flaw, however good the rest is. It renders without error from a clean session with the course environment (a hand-in that does not run does not count for the exam qualification, see the assignment text). Every number, table, and figure comes from the submitted code. Every reference exists and says what you cite it for. The report ends with a statement on your use of AI.
+- **Expected.** The criteria on code, reproducibility, communication, and writing below. With today's tools there is no reason to miss any of them, so we check them strictly.
+- **What makes a submission excellent.** Verification and judgment: you benchmark your results, know your data, avoid look-ahead bias, and read the results as an economist, with honest uncertainty and limitations.
+
+## The criteria
+
+Filter by category and open a criterion for a problematic and a better example.
 
 ```{=html}
-<div id="criteria-root"></div>
-
-<script type="module">
-import { useState, createElement as h } from 'https://esm.sh/react@18';
-import { createRoot } from 'https://esm.sh/react-dom@18/client';
-
-const criteria = [
-  {
-    category: "Code Quality", subcategory: "Style & Formatting", criterion: "Style guide followed",
-    description: "Code follows tidyverse conventions in R or PEP 8 in Python: consistent indentation, spacing around operators, and line length.",
-    bad: `x=mean(returns,na.rm=TRUE)\ndf %>% filter(date>as.Date("2020-01-01")) %>% mutate(ret=log(price/lag(price)))`,
-    good: `x <- mean(returns, na.rm = TRUE)\ndf |>\n  filter(date > as.Date("2020-01-01")) |>\n  mutate(ret = log(price / lag(price)))`, lang: "R"
-  },
-  {
-    category: "Code Quality", subcategory: "Style & Formatting", criterion: "Consistent pipe usage",
-    description: "The pipe operator is used consistently throughout — no mixing of |> and %>% in R, or inconsistent chaining in Python.",
-    bad: `df %>% filter(year == 2020) |> select(date, ret)`,
-    good: `df |> filter(year == 2020) |> select(date, ret)`, lang: "R"
-  },
-  {
-    category: "Code Quality", subcategory: "Style & Formatting", criterion: "No dead code",
-    description: "No unused variables, commented-out code blocks, or leftover debugging fragments remain in the submitted document.",
-    bad: `# results <- lm(ret ~ mkt + smb, data = df)\nresults2 <- lm(ret ~ mkt + smb + hml, data = df)`,
-    good: `results <- lm(ret ~ mkt + smb + hml, data = df)`, lang: "R"
-  },
-  {
-    category: "Code Quality", subcategory: "Style & Formatting", criterion: "DRY principle",
-    description: "Code is not copy-pasted across chunks; repeated logic is extracted into a named function.",
-    bad: `sharpe_a <- mean(returns_a) / sd(returns_a) * sqrt(252)\nsharpe_b <- mean(returns_b) / sd(returns_b) * sqrt(252)\nsharpe_c <- mean(returns_c) / sd(returns_c) * sqrt(252)`,
-    good: `annualised_sharpe <- function(x) mean(x) / sd(x) * sqrt(252)\nsharpe_a <- annualised_sharpe(returns_a)\nsharpe_b <- annualised_sharpe(returns_b)`, lang: "R"
-  },
-  {
-    category: "Code Quality", subcategory: "Naming", criterion: "Meaningful variable names",
-    description: "All variables and functions have descriptive names that communicate their content or purpose without needing a comment.",
-    bad: `df2 <- df %>% filter(!is.na(x))\ntmp <- lm(y ~ x + z, data = df2)`,
-    good: `returns_clean <- returns |> filter(!is.na(ret))\ncapm_fit <- lm(excess_ret ~ mkt_excess, data = returns_clean)`, lang: "R"
-  },
-  {
-    category: "Code Quality", subcategory: "Naming", criterion: "No magic numbers",
-    description: "Numeric constants are assigned a named variable at the top of the document rather than appearing inline without explanation.",
-    bad: `portfolio_vol <- sd(returns) * sqrt(252)\nrolling_mean  <- slider::slide_dbl(returns, mean, .before = 21)`,
-    good: `trading_days_per_year <- 252\nrolling_window_days  <- 21\n\nportfolio_vol <- sd(returns) * sqrt(trading_days_per_year)\nrolling_mean  <- slider::slide_dbl(returns, mean, .before = rolling_window_days)`, lang: "R"
-  },
-  {
-    category: "Code Quality", subcategory: "Structure", criterion: "Logical organisation",
-    description: "The document flows in a natural order: package loading → data ingestion → cleaning → analysis → output, with no back-references to objects defined later.",
-    bad: `# Results section\nmodel_fit <- lm(ret ~ beta, data = df_with_beta)  # df_with_beta defined 10 chunks later`,
-    good: `# 1. Packages\n# 2. Load data\n# 3. Clean and merge\n# 4. Estimate betas\n# 5. Run cross-sectional regression\n# 6. Report results`, lang: "R"
-  },
-  {
-    category: "Code Quality", subcategory: "Structure", criterion: "No debug output",
-    description: "No stray print(), cat(), or display() calls left from development remain visible in the rendered document.",
-    bad: `beta_estimates <- estimate_betas(returns, factors)\nprint(beta_estimates)  # check\ncat("done\\n")`,
-    good: `beta_estimates <- estimate_betas(returns, factors)`, lang: "R"
-  },
-  {
-    category: "Reproducibility", subcategory: "Environment & Paths", criterion: "No absolute paths",
-    description: "File paths are relative to the project root; no path contains a username, drive letter, or machine-specific directory.",
-    bad: `data <- read_csv("/Users/anna/Desktop/thesis/data/crsp.csv")`,
-    good: `data <- read_csv("data/crsp.csv")`, lang: "R"
-  },
-  {
-    category: "Reproducibility", subcategory: "Environment & Paths", criterion: "No setwd() calls",
-    description: "The working directory is never manually overridden; the document relies on the project root being set by the .Rproj or Quarto context.",
-    bad: `setwd("C:/Users/anna/Documents/project")`,
-    good: `# Working directory is managed by the .Rproj file — no setwd() needed`, lang: "R"
-  },
-  {
-    category: "Reproducibility", subcategory: "Environment & Paths", criterion: "Packages loaded at top",
-    description: "All library() or import calls appear in a single setup chunk at the top of the document, not scattered throughout.",
-    bad: `# ... middle of document ...\nlibrary(sandwich)  # forgot to load earlier\nvcov_robust <- vcovHC(fit, type = "HC3")`,
-    good: `# Setup chunk at top:\nlibrary(tidyverse)\nlibrary(sandwich)\nlibrary(lmtest)`, lang: "R"
-  },
-  {
-    category: "Reproducibility", subcategory: "Randomness", criterion: "Seed set explicitly",
-    description: "A seed is set before any stochastic operation (simulation, bootstrap, train/test split) so results are exactly reproducible.",
-    bad: `bootstrap_se <- replicate(1000, {\n  s <- sample(returns, replace = TRUE)\n  sd(s)\n})`,
-    good: `set.seed(2024)\nbootstrap_se <- replicate(1000, {\n  s <- sample(returns, replace = TRUE)\n  sd(s)\n})`, lang: "R"
-  },
-  {
-    category: "Reproducibility", subcategory: "Execution", criterion: "No implicit workspace dependencies",
-    description: "No object is used that was not created within the document itself; the document renders cleanly from a fresh R/Python session.",
-    bad: `# Assumes 'factors' was loaded in a previous interactive session\nmodel <- lm(ret ~ factors$mkt, data = returns)`,
-    good: `factors <- read_csv("data/ff3_factors.csv")\nmodel   <- lm(ret ~ mkt, data = left_join(returns, factors, by = "date"))`, lang: "R"
-  },
-  {
-    category: "Communication", subcategory: "Figures", criterion: "Figures have captions",
-    description: "Every figure produced in the document has a meaningful fig-cap that describes what the figure shows, not just a label.",
-    bad: `#| label: fig-ret\n#| fig-cap: "Figure 1"`,
-    good: `#| label: fig-ret\n#| fig-cap: "Monthly excess returns of the equally-weighted portfolio, 2010–2023. Shaded regions indicate NBER recession periods."`, lang: "R"
-  },
-  {
-    category: "Communication", subcategory: "Figures", criterion: "Axes are labelled",
-    description: "All figure axes carry descriptive labels including units where applicable; default variable names are not used as axis labels.",
-    bad: `ggplot(df, aes(x = date, y = ret)) + geom_line()`,
-    good: `ggplot(df, aes(x = date, y = ret)) +\n  geom_line() +\n  labs(x = "Date", y = "Excess return (%)")`, lang: "R"
-  },
-  {
-    category: "Communication", subcategory: "Tables", criterion: "Tables properly formatted",
-    description: "All tabular output is rendered with a formatting function such as knitr::kable(), gt(), or kableExtra — never as a raw printed data frame.",
-    bad: `summary_stats\n# A tibble: 5 × 3\n#   variable  mean    sd\n#   <chr>    <dbl> <dbl>\n# 1 ret       0.02  0.18 ...`,
-    good: `summary_stats |>\n  gt() |>\n  fmt_number(columns = c(mean, sd), decimals = 3) |>\n  tab_caption("Descriptive statistics for monthly portfolio returns, 2010–2023.")`, lang: "R"
-  },
-  {
-    category: "Communication", subcategory: "Tables", criterion: "Numeric columns formatted",
-    description: "Numbers in tables are rounded to a sensible number of decimal places, with units or percentage signs included where relevant.",
-    bad: `# t-stat shown as 2.3849302948, p-value as 0.0492039201`,
-    good: `# t-stat shown as 2.38, p-value as 0.049`, lang: "R"
-  },
-  {
-    category: "Communication", subcategory: "Prose", criterion: "Prose explains choices",
-    description: "Each analysis step is accompanied by text that explains why a particular method or specification was chosen, not just what the code does.",
-    bad: `We use the Fama-French three-factor model.`,
-    good: `We use the Fama-French three-factor model to control for the size and value effects documented by Fama and French (1993), which are known to explain a large share of the cross-sectional variation in equity returns.`, lang: "prose"
-  },
-  {
-    category: "Communication", subcategory: "Prose", criterion: "Findings discussed",
-    description: "Every table and figure is explicitly referenced in the prose and its key result is stated in words, including direction and magnitude.",
-    bad: `The regression results are presented in Table 2.`,
-    good: `Table 2 shows that the market beta is 0.94 (t = 12.3), confirming a strong positive relationship between portfolio excess returns and market risk. The SMB loading is small and insignificant (β = 0.08, t = 1.1), suggesting the portfolio has no meaningful size tilt.`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Mechanics", criterion: "No spelling errors",
-    description: "All words in prose sections are spelled correctly, including technical terms, author names in citations, and variable descriptions.",
-    bad: `The portfolo is rebalenced annualy using markert capitalisation weights.`,
-    good: `The portfolio is rebalanced annually using market capitalisation weights.`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Mechanics", criterion: "No informal language",
-    description: "Prose uses formal academic register throughout — no contractions, colloquialisms, or vague quantifiers.",
-    bad: `The results are basically what you'd expect. There's a lot of variation in the data and it doesn't really tell us much.`,
-    good: `The results are consistent with prior literature. The high cross-sectional dispersion in returns limits the precision of the estimates.`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Mechanics", criterion: "Consistent tense",
-    description: "The document uses a consistent tense throughout — typically present tense for methods and findings.",
-    bad: `We estimated the model using OLS. The results show a positive beta. We have found that the Sharpe ratio improved.`,
-    good: `We estimate the model using OLS. The results show a positive beta and an improved Sharpe ratio.`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Citations", criterion: "Claims are cited",
-    description: "All factual, empirical, and methodological claims that are not the student's own analysis are supported by a citation.",
-    bad: `The momentum premium is well documented and amounts to roughly 1% per month.`,
-    good: `The momentum premium is well documented and amounts to roughly 1% per month (Jegadeesh and Titman, 1993).`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Citations", criterion: "Consistent citation format",
-    description: "All citations follow the same format throughout — consistently author-year in text with a full reference list at the end.",
-    bad: `Fama (1970) and [FF93] both argue... see also footnote 3.`,
-    good: `Fama (1970) and Fama and French (1993) both argue...`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Citations", criterion: "References section complete",
-    description: "Every in-text citation has a corresponding full entry in the reference list, and every reference list entry is cited in the text.",
-    bad: `In-text: (Carhart, 1997) — not found in reference list.\nReference list: Black, F. (1972) — never cited in text.`,
-    good: `All in-text citations appear in the reference list and all reference list entries are cited at least once.`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Clarity", criterion: "No undefined acronyms",
-    description: "Every acronym is spelled out in full on its first occurrence, with the abbreviation following in parentheses.",
-    bad: `We use DGTW-adjusted returns and report NW standard errors throughout.`,
-    good: `We use Daniel, Grinblatt, Titman, and Wermers (DGTW) adjusted returns and report Newey-West (NW) standard errors throughout.`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Clarity", criterion: "No undefined notation",
-    description: "All mathematical symbols are defined before or upon first use; notation is not borrowed from slides without explanation.",
-    bad: `The portfolio weight is given by $w_i = \\sigma_i^{-2} / \\sum_j \\sigma_j^{-2}$.`,
-    good: `The weight assigned to asset $i$ is $w_i = \\sigma_i^{-2} / \\sum_j \\sigma_j^{-2}$, where $\\sigma_i^2$ is the estimated return variance of asset $i$.`, lang: "prose"
-  },
-  {
-    category: "Writing", subcategory: "Clarity", criterion: "Precise quantitative language",
-    description: "Quantitative claims in prose state direction, magnitude, and units — vague descriptors like 'large' or 'significant' are always accompanied by numbers.",
-    bad: `The Sharpe ratio improves considerably after including the momentum factor.`,
-    good: `The Sharpe ratio increases from 0.41 to 0.67 after including the momentum factor, a relative improvement of 63%.`, lang: "prose"
-  },
-  {
-    category: "AI Polish", subcategory: "AI Writing Patterns", criterion: "No AI filler phrases",
-    description: "Prose does not contain phrases characteristic of unedited AI output: 'it is important to note', 'delve into', 'it is worth mentioning', excessive 'robust' and 'nuanced'.",
-    bad: `It is important to note that the results are nuanced. It is worth mentioning that we delve into the robust patterns in the data.`,
-    good: `The results vary considerably across subperiods, which we document in Section 4.`, lang: "prose"
-  },
-  {
-    category: "AI Polish", subcategory: "AI Writing Patterns", criterion: "No list overuse",
-    description: "Findings and arguments are presented as continuous prose rather than bullet-point lists, which are a common artefact of unedited AI output.",
-    bad: `The main findings are:\n• The momentum premium is positive.\n• Transaction costs reduce net returns.\n• The effect is stronger in small caps.`,
-    good: `The momentum premium is positive on a gross basis but transaction costs substantially reduce net returns, particularly among small-cap stocks where bid-ask spreads are widest.`, lang: "prose"
-  },
-  {
-    category: "AI Polish", subcategory: "AI Writing Patterns", criterion: "Consistent voice",
-    description: "The writing register, vocabulary level, and style are consistent throughout — no jarring shifts that suggest sections were drafted by different tools.",
-    bad: `# Methods: "We employ a cross-sectional regression framework to identify..."\n# Results: "So basically the beta is positive which is what we expected lol"`,
-    good: `A consistent academic register is maintained from introduction through conclusion.`, lang: "prose"
-  },
-  {
-    category: "AI Polish", subcategory: "Internal Consistency", criterion: "Numbers match output",
-    description: "Every number quoted in prose exactly matches the corresponding value in the table or figure — no rounding discrepancies or references to earlier model runs.",
-    bad: `# Prose: "The alpha is 0.032..."\n# Table 3: alpha = 0.029`,
-    good: `# Prose: "The alpha is 0.029 (Table 3)..."\n# Table 3: alpha = 0.029`, lang: "prose"
-  },
-  {
-    category: "AI Polish", subcategory: "Internal Consistency", criterion: "No placeholder text",
-    description: "No template or placeholder text remains — no 'TODO', 'insert discussion here', '??', or unresolved cross-reference labels.",
-    bad: `The results are shown in @fig-?? and discussed in Section ??.`,
-    good: `The results are shown in @fig-rolling-sharpe and discussed in Section 4.2.`, lang: "prose"
-  },
-  {
-    category: "AI Polish", subcategory: "Internal Consistency", criterion: "Narrative matches output",
-    description: "Qualitative conclusions are consistent with the actual statistical output — no claiming significance where p > 0.05, or positive effects where the estimate is negative.",
-    bad: `The momentum strategy generates significant alpha (α = 0.41, t = 1.6, p = 0.11).`,
-    good: `The momentum strategy generates positive but statistically insignificant alpha (α = 0.41, t = 1.6, p = 0.11), suggesting limited evidence of outperformance in this sample.`, lang: "prose"
-  },
-];
-
-const CATEGORIES = ["All", "Code Quality", "Reproducibility", "Communication", "Writing", "AI Polish"];
-const LANG_COLORS = { R: "#2166AC", Python: "#E67E22", prose: "#27AE60" };
-
-function CriteriaTable() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [expanded, setExpanded] = useState(null);
-
-  const filtered = activeCategory === "All" ? criteria : criteria.filter(c => c.category === activeCategory);
-  const grouped = filtered.reduce((acc, c) => {
-    const key = c.category + " — " + c.subcategory;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(c);
-    return acc;
-  }, {});
-
-  return h("div", {
-    style: { fontFamily: "'Georgia', 'Times New Roman', serif", background: "#FAFAF7", padding: "1.5rem", color: "#1a1a1a", borderRadius: "4px" }
-  },
-    // Filter tabs
-    h("div", { style: { display: "flex", gap: "0.4rem", flexWrap: "wrap", marginBottom: "1.5rem" } },
-      CATEGORIES.map(cat =>
-        h("button", {
-          key: cat,
-          onClick: () => setActiveCategory(cat),
-          style: {
-            padding: "0.35rem 0.85rem",
-            border: "1.5px solid",
-            borderColor: activeCategory === cat ? "#1a1a1a" : "#ccc",
-            background: activeCategory === cat ? "#1a1a1a" : "transparent",
-            color: activeCategory === cat ? "#fff" : "#555",
-            borderRadius: "2px", cursor: "pointer",
-            fontSize: "0.78rem", letterSpacing: "0.05em",
-            fontFamily: "inherit", transition: "all 0.15s"
-          }
-        }, cat)
-      )
-    ),
-    // Groups
-    Object.entries(grouped).map(([group, items]) =>
-      h("div", { key: group, style: { marginBottom: "2rem" } },
-        h("div", {
-          style: {
-            fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase",
-            color: "#999", borderBottom: "1px solid #ddd", paddingBottom: "0.35rem", marginBottom: "0.15rem"
-          }
-        }, group),
-        items.map((item, i) => {
-          const key = group + "-" + i;
-          const isOpen = expanded === key;
-          return h("div", { key },
-            h("div", {
-              onClick: () => setExpanded(isOpen ? null : key),
-              style: {
-                display: "grid", gridTemplateColumns: "1fr 2fr 60px",
-                alignItems: "start", padding: "0.7rem 0.5rem",
-                borderBottom: "1px solid #eee", cursor: "pointer",
-                background: isOpen ? "#F5F4EF" : "transparent",
-                gap: "1rem", transition: "background 0.1s"
-              }
-            },
-              h("div", { style: { fontWeight: "600", fontSize: "0.875rem" } }, item.criterion),
-              h("div", { style: { fontSize: "0.84rem", color: "#444", lineHeight: 1.5 } }, item.description),
-              h("div", { style: { display: "flex", alignItems: "center", gap: "0.4rem", justifyContent: "flex-end" } },
-                h("span", {
-                  style: {
-                    fontSize: "0.65rem", padding: "0.15rem 0.4rem", borderRadius: "2px",
-                    background: LANG_COLORS[item.lang], color: "#fff",
-                    letterSpacing: "0.04em", fontFamily: "monospace"
-                  }
-                }, item.lang),
-                h("span", { style: { color: "#aaa", fontSize: "0.8rem" } }, isOpen ? "▲" : "▼")
-              )
-            ),
-            isOpen && h("div", {
-              style: {
-                background: "#F5F4EF", borderBottom: "1px solid #ddd",
-                padding: "1rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem"
-              }
-            },
-              h("div", null,
-                h("div", { style: { fontSize: "0.68rem", letterSpacing: "0.1em", color: "#c0392b", textTransform: "uppercase", marginBottom: "0.4rem", fontFamily: "sans-serif" } }, "✗ Problematic"),
-                h("pre", {
-                  style: {
-                    background: "#FDF0EE", border: "1px solid #f0c5be", borderRadius: "3px",
-                    padding: "0.7rem", fontSize: "0.75rem", lineHeight: 1.6, margin: 0,
-                    whiteSpace: "pre-wrap", wordBreak: "break-word",
-                    fontFamily: "'Courier New', monospace", color: "#c0392b"
-                  }
-                }, item.bad)
-              ),
-              h("div", null,
-                h("div", { style: { fontSize: "0.68rem", letterSpacing: "0.1em", color: "#27AE60", textTransform: "uppercase", marginBottom: "0.4rem", fontFamily: "sans-serif" } }, "✓ Better"),
-                h("pre", {
-                  style: {
-                    background: "#F0FDF4", border: "1px solid #b7e4c7", borderRadius: "3px",
-                    padding: "0.7rem", fontSize: "0.75rem", lineHeight: 1.6, margin: 0,
-                    whiteSpace: "pre-wrap", wordBreak: "break-word",
-                    fontFamily: "'Courier New', monospace", color: "#1e7e34"
-                  }
-                }, item.good)
-              )
-            )
-          );
-        })
-      )
-    ),
-    h("div", { style: { fontSize: "0.72rem", color: "#aaa", textAlign: "center", marginTop: "1.5rem" } },
-      criteria.length + " criteria across " + (CATEGORIES.length - 1) + " categories · Click any row to expand example"
-    )
-  );
+<style>
+.qc-filters { display: flex; flex-wrap: wrap; gap: 0.2rem 1.2rem; border-bottom: 1px solid #e6e3df; margin: 1rem 0 1.4rem; }
+.qc-filters button { background: none; border: none; padding: 0.4rem 0; font: inherit; font-size: 0.85rem; font-weight: 300; color: var(--jet); border-bottom: 3px solid transparent; cursor: pointer; }
+.qc-filters button:hover { color: var(--accent2); }
+.qc-filters button.active { border-bottom-color: var(--accent2); font-weight: 400; }
+.qc-group { margin-bottom: 1.6rem; }
+.qc-group-title { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #8a8a8e; border-bottom: 1px solid #e6e3df; padding-bottom: 0.3rem; }
+.qc-item { border-bottom: 1px solid #eeece9; }
+.qc-item summary { display: grid; grid-template-columns: 12rem 1fr 5.2rem; gap: 1rem; align-items: start; padding: 0.65rem 0.3rem; cursor: pointer; list-style: none; }
+.qc-item summary::-webkit-details-marker { display: none; }
+.qc-item summary:hover, .qc-item[open] summary { background: #f7f6f5; }
+.qc-name { font-weight: 400; font-size: 0.88rem; color: var(--jet); }
+.qc-desc { font-size: 0.84rem; line-height: 1.5; }
+.qc-tag { justify-self: end; font-size: 0.68rem; color: #8a8a8e; border: 1px solid #d3d1ce; border-radius: 3px; padding: 0 0.35rem; white-space: nowrap; }
+.qc-tag::after { content: " \25BE"; }
+.qc-item[open] .qc-tag::after { content: " \25B4"; }
+.qc-examples { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 0.8rem 0.3rem 1rem; background: #f7f6f5; }
+.qc-label { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.3rem; }
+.qc-label.bad { color: var(--accent2); }
+.qc-label.good { color: var(--jet); }
+.qc-examples pre { margin: 0; padding: 0.6rem 0.7rem; font-size: 0.74rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; background: #ffffff; border: none; border-left: 3px solid #b3b3b3; border-radius: 0; }
+.qc-examples .bad pre { border-left-color: var(--accent2); }
+.qc-examples > div { min-width: 0; }
+.qc-examples pre code { white-space: pre-wrap; word-break: break-word; font-size: inherit; background: none; padding: 0; }
+.qc-count { font-size: 0.75rem; color: #8a8a8e; text-align: center; margin-top: 1rem; }
+@media (max-width: 700px) {
+  .qc-item summary { grid-template-columns: 1fr auto; }
+  .qc-desc { grid-column: 1 / -1; grid-row: 2; }
+  .qc-examples { grid-template-columns: 1fr; }
 }
+</style>
+<div id="qc-root"></div>
+<script>
+(function () {
+  const criteria = [
+ {
+  "category": "Code",
+  "sub": "Style",
+  "criterion": "Formatted by a tool",
+  "description": "Code follows the tidyverse style guide (R) or PEP 8 (Python). Format it with Air (R) or Ruff (Python), both available in Positron: inconsistent spacing and indentation have no excuse.",
+  "lang": "R",
+  "bad": "x=mean(returns,na.rm=TRUE)\ndf %>% filter(date>as.Date(\"2020-01-01\")) %>% mutate(ret=log(price/lag(price)))",
+  "good": "mean_return <- mean(returns, na.rm = TRUE)\nprices |>\n  filter(date > as.Date(\"2020-01-01\")) |>\n  mutate(ret = log(price / lag(price)))"
+ },
+ {
+  "category": "Code",
+  "sub": "Style",
+  "criterion": "One toolkit per language",
+  "description": "R code uses the tidyverse with the native pipe |>; Python code uses polars, as in the course. Mixing |> and %>%, pandas and polars, or base R and tidyverse for the same task is a typical trace of code pasted together from different AI answers.",
+  "lang": "Python",
+  "bad": "import pandas as pd\nimport polars as pl\n\nprices = pl.read_parquet(\"data/prices_daily.parquet\")\nprices_pd = prices.to_pandas()\nreturns = prices_pd.groupby(\"symbol\")[\"adjusted_close\"].pct_change()",
+  "good": "returns = prices.sort(\"symbol\", \"date\").with_columns(\n    ret=pl.col(\"adjusted_close\").pct_change().over(\"symbol\")\n)"
+ },
+ {
+  "category": "Code",
+  "sub": "Style",
+  "criterion": "No leftovers",
+  "description": "No commented-out code, unused objects, or print(), head() and glimpse() calls from development remain in the submitted document.",
+  "lang": "R",
+  "bad": "# fit <- lm(ret ~ mkt + smb, data = returns)\nfit2 <- lm(ret ~ mkt + smb + hml, data = returns)\nprint(fit2)  # check\nhead(returns)",
+  "good": "fit_ff3 <- lm(ret ~ mkt + smb + hml, data = returns)"
+ },
+ {
+  "category": "Code",
+  "sub": "Structure",
+  "criterion": "Proportionate code",
+  "description": "The code is as simple as the task allows. No classes, configuration dictionaries, logging, or layers of wrapper functions for a one-off analysis. AI assistants tend to over-engineer, and every extra layer is something you must understand and defend.",
+  "lang": "Python",
+  "bad": "class PortfolioAnalyzer:\n    def __init__(self, returns, config=None):\n        self.returns = returns\n        self.config = config or {\"annualization\": 252}\n\n    def compute_sharpe(self):\n        factor = self.config[\"annualization\"]\n        return self.returns.mean() / self.returns.std() * factor**0.5\n\nsharpe = PortfolioAnalyzer(returns).compute_sharpe()",
+  "good": "def annualized_sharpe(returns, periods_per_year=252):\n    return returns.mean() / returns.std() * periods_per_year**0.5\n\nsharpe = annualized_sharpe(returns)"
+ },
+ {
+  "category": "Code",
+  "sub": "Structure",
+  "criterion": "No repetition",
+  "description": "Logic that appears more than twice becomes a named function; the same block is never copied with small changes.",
+  "lang": "R",
+  "bad": "sharpe_a <- mean(returns_a) / sd(returns_a) * sqrt(252)\nsharpe_b <- mean(returns_b) / sd(returns_b) * sqrt(252)\nsharpe_c <- mean(returns_c) / sd(returns_c) * sqrt(252)",
+  "good": "annualized_sharpe <- function(x) mean(x) / sd(x) * sqrt(252)\n\nreturns |>\n  group_by(portfolio) |>\n  summarize(sharpe = annualized_sharpe(ret))"
+ },
+ {
+  "category": "Code",
+  "sub": "Structure",
+  "criterion": "Logical order",
+  "description": "The document runs top to bottom: packages and parameters, data, cleaning, analysis, output. No chunk uses an object that a later chunk creates.",
+  "lang": "R",
+  "bad": "# Results section\nfit <- lm(ret ~ beta, data = returns_with_beta)  # created ten chunks later",
+  "good": "# 1. Packages and parameters\n# 2. Data\n# 3. Cleaning and merging\n# 4. Beta estimation\n# 5. Cross-sectional regressions\n# 6. Tables and figures"
+ },
+ {
+  "category": "Code",
+  "sub": "Naming",
+  "criterion": "Meaningful names",
+  "description": "Objects and functions have names that say what they contain or do, without a comment.",
+  "lang": "R",
+  "bad": "df2 <- df |> filter(!is.na(x))\ntmp <- lm(y ~ x + z, data = df2)",
+  "good": "returns_clean <- returns |> filter(!is.na(ret_excess))\ncapm_fit <- lm(ret_excess ~ mkt_excess, data = returns_clean)"
+ },
+ {
+  "category": "Code",
+  "sub": "Naming",
+  "criterion": "No magic numbers",
+  "description": "Parameters such as the sample period, window lengths, or the number of portfolios are defined once, with a name, in a setup chunk at the top.",
+  "lang": "R",
+  "bad": "portfolio_vol <- sd(returns) * sqrt(252)\nrolling_mean <- slider::slide_dbl(returns, mean, .before = 21)",
+  "good": "trading_days_per_year <- 252\nrolling_window_days <- 21\n\nportfolio_vol <- sd(returns) * sqrt(trading_days_per_year)\nrolling_mean <- slider::slide_dbl(returns, mean, .before = rolling_window_days)"
+ },
+ {
+  "category": "Code",
+  "sub": "Naming",
+  "criterion": "Comments explain why",
+  "description": "Comments say why a step is there or why it is done this way, not what the next line does. AI-generated code narrates every line; delete those comments and keep the ones a reader needs.",
+  "lang": "R",
+  "bad": "# Load the data\nprices <- read_parquet(\"data/prices_daily.parquet\")\n# Compute returns\nreturns <- prices |> mutate(ret = adjusted_close / lag(adjusted_close) - 1)",
+  "good": "prices <- read_parquet(\"data/prices_daily.parquet\")\n# Adjusted prices, so that returns include dividends and ignore splits\nreturns <- prices |> mutate(ret = adjusted_close / lag(adjusted_close) - 1)"
+ },
+ {
+  "category": "Code",
+  "sub": "Robustness",
+  "criterion": "Errors are not hidden",
+  "description": "No tryCatch(), try/except, or suppressWarnings() that silently swallows problems, and no fallback that quietly turns a failed step into NA or zero. A step that can fail should fail loudly; a warning you have not investigated is a bug you have not found.",
+  "lang": "R",
+  "bad": "beta <- tryCatch(\n  coef(lm(ret_excess ~ mkt_excess, data = window))[2],\n  error = function(e) NA\n)",
+  "good": "# Rule from Section 2: at least 24 monthly returns per estimation window\nestimate_beta <- function(window) {\n  if (nrow(window) < min_observations) return(NA_real_)\n  coef(lm(ret_excess ~ mkt_excess, data = window))[2]\n}"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Execution",
+  "criterion": "Renders from a clean session",
+  "description": "The document renders after a restart of R or Python, with nothing in memory: every object is created in the document itself. See step 5 of the roadmap.",
+  "lang": "R",
+  "bad": "# Assumes factors were loaded in an earlier interactive session\nfit <- lm(ret ~ mkt, data = left_join(returns, factors, by = \"date\"))",
+  "good": "factors <- read_parquet(\"data/factors_ff3_monthly.parquet\")\nfit <- lm(ret ~ mkt, data = left_join(returns, factors, by = \"date\"))"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Execution",
+  "criterion": "Fresh results, no stale cache",
+  "description": "If you use cache: true, delete the cache and render once from scratch before you submit. A cached chunk can show results of code that no longer exists.",
+  "lang": "workflow",
+  "bad": "Rendered with cache: true for weeks. The data chunk changed on Monday;\nthe cached model chunk still shows last week's estimates.",
+  "good": "Before submission: delete the *_cache folder\n(or run quarto render --cache-refresh) and render once from scratch."
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Environment",
+  "criterion": "Relative paths only",
+  "description": "Paths are relative to the project folder. No user names, drive letters, setwd(), or os.chdir().",
+  "lang": "R",
+  "bad": "setwd(\"C:/Users/anna/Documents/aef\")\ncrsp <- read_parquet(\"C:/Users/anna/Downloads/crsp_monthly.parquet\")",
+  "good": "crsp <- read_parquet(\"data/crsp_monthly.parquet\")"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Environment",
+  "criterion": "Pinned software",
+  "description": "The document runs with the course environment (uvr.lock for R, uv.lock for Python). Packages beyond it are added with uvr add or uv add and listed with their versions in the README block. No install.packages() or pip install inside the document.",
+  "lang": "R",
+  "bad": "install.packages(\"sandwich\")\nlibrary(sandwich)",
+  "good": "# README block: sandwich 3.1-1 added to the course environment (uvr add sandwich)\nlibrary(sandwich)"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Environment",
+  "criterion": "Packages loaded at the top",
+  "description": "All library() and import calls sit in one setup chunk at the top of the document.",
+  "lang": "Python",
+  "bad": "# ... halfway through the document ...\nfrom sklearn.linear_model import ElasticNetCV  # forgot earlier\nmodel = ElasticNetCV(l1_ratio=0.5).fit(X_train, y_train)",
+  "good": "# Setup chunk at the top\nimport numpy as np\nimport polars as pl\nfrom sklearn.linear_model import ElasticNetCV"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Data",
+  "criterion": "Fixed sample period",
+  "description": "Every data request has an explicit start and end date. Sys.Date(), date.today(), or \"the latest data\" make your results change every day.",
+  "lang": "R",
+  "bad": "prices <- download_data(\n  \"Stock Prices\",\n  symbols = symbols,\n  start_date = \"2000-01-01\",\n  end_date = Sys.Date()\n)",
+  "good": "start_date <- \"2000-01-01\"\nend_date <- \"2025-12-31\"\n\nprices <- download_data(\n  \"Stock Prices\",\n  symbols = symbols,\n  start_date = start_date,\n  end_date = end_date\n)"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Data",
+  "criterion": "Raw data stored once",
+  "description": "Download raw data once, store the file in data/, and let the analysis read that file. Providers revise past data (Yahoo, for instance, changes adjusted prices after dividends and splits), so a download months later can differ. The download code stays in the document and runs only when the file is missing.",
+  "lang": "R",
+  "bad": "# Every render downloads again, and the numbers move with each revision\nprices <- download_data(\"Stock Prices\", symbols = symbols,\n                        start_date = start_date, end_date = end_date)",
+  "good": "prices_file <- \"data/prices_daily.parquet\"\nif (!file.exists(prices_file)) {\n  download_data(\"Stock Prices\", symbols = symbols,\n                start_date = start_date, end_date = end_date) |>\n    write_parquet(prices_file)\n}\nprices <- read_parquet(prices_file)"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Data",
+  "criterion": "Licensed data stay private",
+  "description": "CRSP, Compustat, and other licensed files from Absalon are read from data/ under their Absalon file name. They are never committed, uploaded, or pasted into an AI tool that may store them.",
+  "lang": "workflow",
+  "bad": "git add data/crsp_monthly.parquet\ngit push   # now on GitHub",
+  "good": ".gitignore of the course repository:\ndata/*\n!data/.gitkeep"
+ },
+ {
+  "category": "Reproducibility",
+  "sub": "Randomness",
+  "criterion": "Seeds for everything random",
+  "description": "Every random step has a seed: sampling, bootstrap, train/validation splits, cross-validation folds, random forests, neural network initialization.",
+  "lang": "Python",
+  "bad": "model = RandomForestRegressor(n_estimators=500)\nfolds = KFold(n_splits=5, shuffle=True)",
+  "good": "seed = 2027\nmodel = RandomForestRegressor(n_estimators=500, random_state=seed)\nfolds = KFold(n_splits=5, shuffle=True, random_state=seed)"
+ },
+ {
+  "category": "Communication",
+  "sub": "Figures",
+  "criterion": "Figures explain themselves",
+  "description": "Every figure has a caption that says what it shows, the sample, and the units, so a reader understands it without the text or the code.",
+  "lang": "R",
+  "bad": "#| label: fig-ret\n#| fig-cap: \"Figure 1\"",
+  "good": "#| label: fig-ret\n#| fig-cap: \"Monthly excess returns of the value-weighted market portfolio, 1990-2025, in percent. Shaded areas are NBER recessions.\""
+ },
+ {
+  "category": "Communication",
+  "sub": "Figures",
+  "criterion": "Axes labeled with units",
+  "description": "Axes carry descriptive labels with units; default variable names never appear as labels.",
+  "lang": "R",
+  "bad": "ggplot(returns, aes(x = date, y = ret)) + geom_line()",
+  "good": "ggplot(returns, aes(x = date, y = ret)) +\n  geom_line() +\n  scale_y_continuous(labels = scales::percent) +\n  labs(x = NULL, y = \"Monthly excess return\")"
+ },
+ {
+  "category": "Communication",
+  "sub": "Tables",
+  "criterion": "Tables formatted",
+  "description": "Tables come from a table package (gt, modelsummary, or tinytable in R; great_tables in Python) with a caption, never as a printed data frame. Numbers are rounded sensibly and carry units.",
+  "lang": "Python",
+  "bad": "summary_stats\n# shape: (5, 3)\n# | variable | mean     | sd        |\n# | ret      | 0.012345 | 0.0598271 |",
+  "good": "from great_tables import GT\n\n(\n    GT(summary_stats)\n    .fmt_percent(columns=[\"mean\", \"sd\"], decimals=2)\n    .tab_header(title=\"Monthly returns, 1990-2025\")\n)"
+ },
+ {
+  "category": "Communication",
+  "sub": "Results",
+  "criterion": "Numbers in the text are computed",
+  "description": "Numbers in the prose come from inline code, not typed by hand, so text and tables cannot drift apart: `r ...` in R, `{python} ...` in Python.",
+  "lang": "prose",
+  "bad": "The annualized Sharpe ratio of the tangency portfolio is 0.67.",
+  "good": "The annualized Sharpe ratio of the tangency portfolio is `r round(sharpe_tangency, 2)`."
+ },
+ {
+  "category": "Communication",
+  "sub": "Results",
+  "criterion": "Uncertainty and magnitude reported",
+  "description": "Every estimate comes with its uncertainty (standard error, t-statistic, or confidence interval) and with its economic size (percent per year, basis points, dollars).",
+  "lang": "prose",
+  "bad": "The long-short portfolio has a significant alpha.",
+  "good": "The long-short portfolio earns a CAPM alpha of 0.42% per month (t = 2.9), about 5% per year."
+ },
+ {
+  "category": "Communication",
+  "sub": "Results",
+  "criterion": "Findings discussed",
+  "description": "Every table and figure is referenced in the text, and its key result is stated in words, with direction and size.",
+  "lang": "prose",
+  "bad": "The regression results are presented in Table 2.",
+  "good": "Table 2 shows a market beta of 0.94 (t = 12.3). The size loading is small and insignificant (0.08, t = 1.1): the portfolio has no meaningful size tilt."
+ },
+ {
+  "category": "Communication",
+  "sub": "Results",
+  "criterion": "Choices are explained",
+  "description": "The text says why a method, sample, or specification was chosen, not only what the code does.",
+  "lang": "prose",
+  "bad": "We use the Fama-French three-factor model.",
+  "good": "We use the Fama-French three-factor model because the strategy tilts toward small value stocks, and the size and value factors capture exactly these exposures (Fama and French, 1993)."
+ },
+ {
+  "category": "Communication",
+  "sub": "Structure",
+  "criterion": "Concise",
+  "description": "Every paragraph earns its place within the page limit. AI makes text cheap; we value the shortest version that says everything.",
+  "lang": "prose",
+  "bad": "In this section, we will now turn to the analysis of the results that we have obtained from the estimation procedure described in the previous section.",
+  "good": "Table 3 reports the estimates."
+ },
+ {
+  "category": "Communication",
+  "sub": "Structure",
+  "criterion": "Cross-references, no placeholders",
+  "description": "Figures, tables, and sections are referenced with labels (@fig-..., @tbl-..., @sec-...). No TODO, ??, or template text remains.",
+  "lang": "prose",
+  "bad": "The results are shown in Figure ?? and discussed in Section 4 (TODO: update).",
+  "good": "@fig-rolling-sharpe shows the results, and @sec-robustness discusses them."
+ },
+ {
+  "category": "Writing",
+  "sub": "Mechanics",
+  "criterion": "No spelling or grammar errors",
+  "description": "With today's tools there is no excuse, so we do not overlook them.",
+  "lang": "prose",
+  "bad": "The portfolo is rebalenced annualy using markert capitalisation weights.",
+  "good": "The portfolio is rebalanced annually using market capitalization weights."
+ },
+ {
+  "category": "Writing",
+  "sub": "Mechanics",
+  "criterion": "Formal register",
+  "description": "Academic register throughout: no contractions, colloquialisms, or vague quantifiers.",
+  "lang": "prose",
+  "bad": "The results are basically what you'd expect, and there's a lot of variation.",
+  "good": "The results are consistent with the literature; the cross-sectional dispersion of returns limits their precision."
+ },
+ {
+  "category": "Writing",
+  "sub": "Mechanics",
+  "criterion": "Active voice, present tense",
+  "description": "Write \"we estimate\", not \"it was estimated\", and keep the present tense for methods and results.",
+  "lang": "prose",
+  "bad": "The model was estimated using OLS. We have found that the Sharpe ratio improved.",
+  "good": "We estimate the model by OLS. The Sharpe ratio improves from 0.41 to 0.67."
+ },
+ {
+  "category": "Writing",
+  "sub": "Precision",
+  "criterion": "Precise quantitative language",
+  "description": "Quantitative claims state direction, size, and units. Words like \"large\" or \"significant\" always come with a number.",
+  "lang": "prose",
+  "bad": "The Sharpe ratio improves considerably after including the momentum factor.",
+  "good": "The Sharpe ratio rises from 0.41 to 0.67 after adding the momentum factor."
+ },
+ {
+  "category": "Writing",
+  "sub": "Precision",
+  "criterion": "No undefined acronyms or notation",
+  "description": "Every acronym is spelled out at first use, and every symbol is defined before or where it first appears.",
+  "lang": "prose",
+  "bad": "We report NW standard errors. The weight is $w_i = \\sigma_i^{-2} / \\sum_j \\sigma_j^{-2}$.",
+  "good": "We report Newey-West (NW) standard errors. The weight of asset $i$ is $w_i = \\sigma_i^{-2} / \\sum_j \\sigma_j^{-2}$, where $\\sigma_i^2$ is its estimated return variance."
+ },
+ {
+  "category": "Writing",
+  "sub": "Citations",
+  "criterion": "Claims are cited",
+  "description": "Every factual, empirical, or methodological claim that is not your own result has a citation.",
+  "lang": "prose",
+  "bad": "The momentum premium is well documented and amounts to roughly 1% per month.",
+  "good": "The momentum premium is well documented and amounts to roughly 1% per month (Jegadeesh and Titman, 1993)."
+ },
+ {
+  "category": "Writing",
+  "sub": "Citations",
+  "criterion": "Citations from a .bib file",
+  "description": "Citations use Quarto's @key syntax with a .bib file, so the format is consistent and the reference list complete: every citation listed, every listed reference cited.",
+  "lang": "prose",
+  "bad": "Fama (1970) and [FF93] both argue ... see also footnote 3.",
+  "good": "@Fama1970 and @Fama1993 both argue ..."
+ },
+ {
+  "category": "Verification",
+  "sub": "Checks",
+  "criterion": "Benchmark first",
+  "description": "Before you extend an analysis, reproduce a known number: a result from the lecture, the Tidy Finance book, or the paper you follow. If you cannot match it, say so and explain the gap.",
+  "lang": "prose",
+  "bad": "We implement the momentum strategy and find a premium of 2.3% per month.",
+  "good": "For 1965-1989, our momentum portfolio earns close to the premium in Table 1 of Jegadeesh and Titman (1993). We then extend the sample to 2025."
+ },
+ {
+  "category": "Verification",
+  "sub": "Checks",
+  "criterion": "You know your data",
+  "description": "Check observations, date range, missing values, duplicates, units (percent or decimals?), and outliers, and state the checks that matter in a sentence or two.",
+  "lang": "R",
+  "bad": "returns <- read_parquet(\"data/crsp_monthly.parquet\")\n# straight to the regressions",
+  "good": "returns |>\n  summarize(\n    observations = n(),\n    first_month = min(date),\n    last_month = max(date),\n    missing_returns = sum(is.na(ret)),\n    duplicates = sum(duplicated(pick(permno, date))),\n    largest_abs_return = max(abs(ret), na.rm = TRUE)\n  )"
+ },
+ {
+  "category": "Verification",
+  "sub": "Checks",
+  "criterion": "No look-ahead",
+  "description": "Every signal, weight, and model uses only information available at the time of the decision: lag characteristics and market capitalization, and never use test data for tuning or variable selection. The code runs either way, which is why AI assistants get this wrong so easily.",
+  "lang": "R",
+  "bad": "portfolios <- crsp |>\n  group_by(date) |>\n  mutate(weight = mktcap / sum(mktcap))  # this month's market cap",
+  "good": "portfolios <- crsp |>\n  group_by(date) |>\n  mutate(weight = mktcap_lag / sum(mktcap_lag))  # known at the start of the month"
+ },
+ {
+  "category": "Verification",
+  "sub": "Judgment",
+  "criterion": "Read results as an economist",
+  "description": "Ask whether a result is plausible in size, what mechanism could explain it, and whether it survives transaction costs. A Sharpe ratio of 3 is a reason to look for a bug, not a result.",
+  "lang": "prose",
+  "bad": "Our machine learning portfolio achieves an annualized Sharpe ratio of 3.4, which demonstrates the power of the approach.",
+  "good": "An annualized Sharpe ratio of 3.4 is implausible for a monthly equity strategy. We traced it to returns that entered the features without a lag; with lagged features, the Sharpe ratio is 0.8."
+ },
+ {
+  "category": "Verification",
+  "sub": "Judgment",
+  "criterion": "Robustness and limitations",
+  "description": "Results that hinge on one arbitrary choice (sample period, window length, number of portfolios) are shown to survive a reasonable alternative, or the dependence is stated. Limitations are named honestly.",
+  "lang": "prose",
+  "bad": "The strategy outperforms the market.",
+  "good": "The strategy outperforms the market with 10 portfolios and 60-month windows; with 36-month windows, the alpha halves and becomes insignificant (t = 1.2)."
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Ownership",
+  "criterion": "AI use is declared",
+  "description": "The report ends with a short statement of which AI tools you used, for what, and how you checked the output. KU's rules require it; text that an AI tool mainly wrote is quoted with the tool as source. See the template below.",
+  "lang": "prose",
+  "bad": "(no statement)",
+  "good": "Use of AI. We used Claude in Positron to draft the data cleaning code and to review our text for clarity, and GitHub Copilot for code completion. We checked every step against the summary statistics in Section 2, verified all references at the publishers' websites, and wrote the analysis and conclusions ourselves."
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Ownership",
+  "criterion": "You own every line",
+  "description": "You can explain every line of code and every sentence, and why it is there. Code you cannot explain does not belong in the submission, however well it runs.",
+  "lang": "prose",
+  "bad": "\"The AI suggested this transformation, and it made the error go away.\"",
+  "good": "\"We winsorize returns at the 1st and 99th percentiles because five delisting returns below -90% dominate the cross-sectional means.\""
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Ownership",
+  "criterion": "References are real",
+  "description": "Every reference exists and says what you cite it for. AI assistants invent plausible papers, page numbers, and quotes; check each one at the source (journal page, DOI).",
+  "lang": "prose",
+  "bad": "Smith and Jones (2019, Journal of Finance) show that momentum disappeared after 2010.\n# a paper that does not exist",
+  "good": "Every entry in references.bib was checked at its DOI, and every cited claim against the paper itself."
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Ownership",
+  "criterion": "Current functions only",
+  "description": "The code uses functions and arguments that exist in the course's package versions and raises no deprecation warnings. AI assistants often suggest outdated or invented ones.",
+  "lang": "R",
+  "bad": "prices <- download_data(type = \"stock_prices\", symbols = symbols)  # old tidyfinance interface",
+  "good": "prices <- download_data(\n  \"Stock Prices\",\n  symbols = symbols,\n  start_date = start_date,\n  end_date = end_date\n)"
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Consistency",
+  "criterion": "Narrative matches output",
+  "description": "Conclusions agree with the estimates: no significance claimed where p > 0.05, no positive effect where the estimate is negative, no result from an earlier run.",
+  "lang": "prose",
+  "bad": "The momentum strategy generates significant alpha (alpha = 0.41, t = 1.6).",
+  "good": "The momentum strategy has a positive but insignificant alpha (0.41% per month, t = 1.6)."
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Prose",
+  "criterion": "Specific prose, no filler",
+  "description": "Every sentence says something about your analysis. Delete generic openers and closers, stock phrases (\"it is important to note\", \"delve into\", \"plays a crucial role\", \"not only ... but also\"), and bold lead-ins. A sentence that would fit any report fits none.",
+  "lang": "prose",
+  "bad": "In today's data-driven financial landscape, it is important to note that our analysis delves into the nuanced and multifaceted relationship between risk and return.",
+  "good": "Portfolios sorted on past volatility earn lower returns than the CAPM predicts: the high-minus-low alpha is -0.6% per month (t = -2.4)."
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Prose",
+  "criterion": "Prose, not lists",
+  "description": "Arguments and findings are written as connected prose, not bullet points: lists hide how the findings relate to each other.",
+  "lang": "prose",
+  "bad": "The main findings are:\n- The momentum premium is positive.\n- Transaction costs reduce net returns.\n- The effect is stronger in small caps.",
+  "good": "The momentum premium is positive before costs, but transaction costs absorb most of it in small caps, where spreads are widest."
+ },
+ {
+  "category": "Working with AI",
+  "sub": "Prose",
+  "criterion": "One voice",
+  "description": "Register, vocabulary, and style stay the same throughout, with no shifts that reveal sections written by different people or tools.",
+  "lang": "prose",
+  "bad": "Methods: \"We employ a cross-sectional regression framework to identify ...\"\nResults: \"So basically the beta is positive, which is what we expected.\"",
+  "good": "The same precise, plain register from the introduction to the conclusion."
+ }
+];
+  const categories = ["All"].concat(["Code", "Reproducibility", "Communication", "Writing", "Verification", "Working with AI"]);
+  const root = document.getElementById("qc-root");
+  let active = "All";
 
-const root = createRoot(document.getElementById('criteria-root'));
-root.render(h(CriteriaTable));
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function example(kind, label, code) {
+    const box = el("div", kind);
+    box.appendChild(el("div", "qc-label " + kind, label));
+    const pre = el("pre");
+    pre.appendChild(el("code", null, code));
+    box.appendChild(pre);
+    return box;
+  }
+
+  function render() {
+    root.textContent = "";
+    const filters = el("div", "qc-filters");
+    categories.forEach(function (category) {
+      const button = el("button", category === active ? "active" : null, category);
+      button.type = "button";
+      button.addEventListener("click", function () { active = category; render(); });
+      filters.appendChild(button);
+    });
+    root.appendChild(filters);
+
+    const shown = criteria.filter(function (c) { return active === "All" || c.category === active; });
+    const groups = new Map();
+    shown.forEach(function (c) {
+      const key = c.category + " \u00b7 " + c.sub;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(c);
+    });
+    groups.forEach(function (items, key) {
+      const group = el("div", "qc-group");
+      group.appendChild(el("div", "qc-group-title", key));
+      items.forEach(function (c) {
+        const item = el("details", "qc-item");
+        const summary = el("summary");
+        summary.appendChild(el("span", "qc-name", c.criterion));
+        summary.appendChild(el("span", "qc-desc", c.description));
+        summary.appendChild(el("span", "qc-tag", c.lang));
+        item.appendChild(summary);
+        const examples = el("div", "qc-examples");
+        examples.appendChild(example("bad", "Problematic", c.bad));
+        examples.appendChild(example("good", "Better", c.good));
+        item.appendChild(examples);
+        group.appendChild(item);
+      });
+      root.appendChild(group);
+    });
+    root.appendChild(el("div", "qc-count",
+      shown.length + " of " + criteria.length + " criteria \u00b7 open a criterion for an example"));
+  }
+
+  render();
+})();
 </script>
 ```
+
+## A roadmap to a reproducible submission
+
+The test is simple. Someone else, a peer reviewer, a teaching assistant, or you a year from now, takes your submission, sets up the course environment, and gets the same document. Journals now demand exactly this: the [Review of Financial Studies](https://review-of-financial-studies.github.io/readme.html) checks every published paper against a detailed README template. An assignment needs less, but the logic is the same, and eight steps get you there.
+
+| Step | What it means for your submission |
+|---|---|
+| **1. Organize** | One project folder, ideally a Git repository, with the course files at its root (`uvr.toml`, `uvr.lock`, `pyproject.toml`, `uv.lock`, `_quarto.yml`) and data in `data/`. All paths are relative to that folder. |
+| **2. Pin the software** | Use the course environment: `uvr sync` (R) and `uv sync` (Python) install exactly the versions in the lockfiles. Add any extra package with `uvr add` or `uv add` and list it with its version in the README block. No installation commands in the document. |
+| **3. Document the data** | For every data source, state what it is, where it comes from, how you access it (a `tidyfinance` download, a file from Absalon), the sample period, and whether it may be shared. Licensed data (CRSP, Compustat) are never committed, uploaded, or shared. |
+| **4. Freeze the inputs** | Fixed start and end dates in every data request. Raw downloads stored once in `data/` and read from there. A seed for everything random. |
+| **5. Run from scratch** | One command produces the document: `quarto render` (or Preview in Positron) in a fresh session, after deleting caches. State the runtime and, if it is long, which step takes the time. |
+| **6. Trace every result** | Every table and figure comes from a labeled chunk, every number in the text from inline code. Nothing is copied by hand from the console. |
+| **7. Write the README block** | A short comment block at the top of your `.qmd`: what the document produces, how to run it, the data, the software, the runtime (template below). |
+| **8. Verify on another machine** | Before you submit, a teammate takes the submitted files to their own computer, runs `uvr sync` or `uv sync`, fills `data/`, and renders. Compare the key numbers. Your submission is reproducible when it works there, not when it works on your machine. |
+
+### The README block
+
+Put this comment at the top of your `.qmd`, right after the YAML header. It does not appear in the PDF, so it costs no page, but it tells every reader how to reproduce your results.
+
+```markdown
+<!--
+README
+Mandatory Assignment 2, group 14: Anna Jensen, Ben Olsen, Carla Diaz
+
+What it produces: every table and figure in the report, from the raw data.
+How to run: in the course repository, run uvr sync (or uv sync for Python),
+  put the Absalon file stock_characteristics_monthly.parquet into data/,
+  then quarto render MA_2_group_14.qmd.
+Data:
+  - stock_characteristics_monthly.parquet: Absalon, licensed, not shared
+  - Fama-French 3 factors, monthly, 1957-2021: tidyfinance download,
+    stored in data/factors_ff3_monthly.parquet on first render
+Software: course environment of 2 February 2027 (uvr.lock, uv.lock);
+  added: ranger 0.17.0 (uvr add ranger)
+Randomness: one seed, set in the setup chunk.
+Runtime: about 15 minutes on a laptop with 8 cores and 16 GB RAM;
+  the random forest takes 12 of them.
+-->
+```
+
+### The AI statement
+
+KU's exam rules state: *"Use of AI tools is permitted. You must explain how you have used the tools. When text is solely or mainly generated by an AI tool, the tool used must be quoted as a source."* End your report with a short paragraph, for instance:
+
+> **Use of AI.** We used Claude in Positron to draft the data cleaning code and to review our text for clarity, and GitHub Copilot for code completion. We checked every step against the summary statistics in Section 2, verified all references at the publishers' websites, and wrote the analysis and conclusions ourselves. The first paragraph of Section 3 is based on a draft by Claude, which we edited.
+
+Be specific: which tools, for which parts, and how you checked the output. A vague statement ("we used AI tools to assist us") does not meet the rule.
+
+## Let AI review your submission
+
+AI is also a demanding reviewer. Paste the prompt below into the assistant of your choice, together with your `.qmd` and the rendered PDF. Like the Review of Financial Studies, which offers the same kind of prompt for its README checks, we add a warning: an AI reviewer rarely says that a document is fine as it is, and it suggests changes whether or not they are needed. Use your judgment, and do not let it rewrite your submission. An AI review does not replace step 8: render your submission yourself on a second machine.
+
+::: {.callout-note collapse="true"}
+## Review prompt
+
+```text
+You are a demanding referee for a master's course in empirical finance at
+the University of Copenhagen. Review the attached Quarto document (.qmd) and
+its rendered PDF against the course's quality criteria:
+https://aef-course.ku.dk/additional-material/assignment-quality-criteria.html
+
+Work through six categories: code, reproducibility, communication, writing,
+verification, and working with AI. For each category:
+1. Say whether the submission meets the criteria (yes, partly, no).
+2. Quote the code lines or passages that fall short.
+3. Suggest a concrete fix.
+
+Check in particular:
+- Does every number in the text come from inline code, and does it match the
+  tables and figures?
+- Does any step use information before it would have been available
+  (look-ahead bias, test data used for tuning)?
+- Do all references exist, and do they say what the text claims? List every
+  reference you cannot verify.
+- Would the document render on another computer from a clean session
+  (paths, sample dates, seeds, packages, data files)?
+- Is there an AI statement that says which tools were used, for what, and
+  how the output was checked?
+
+End with the three changes that would improve the submission most. Do not
+rewrite the submission.
+```
+:::
