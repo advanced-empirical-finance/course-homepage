@@ -78,4 +78,4 @@ Three automatic portfolios trade under the same rules and pay the same costs:
 - **Buy and hold:** the same portfolio bought on the first day and never traded;
 - **Market:** the SPDR S&P 500 ETF (SPY), bought once.
 
-Statistics use daily returns net of costs. The Sharpe ratio is on returns in excess of the risk-free rate, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself.
+Statistics use daily returns net of costs. The Sharpe ratio is on returns in excess of the risk-free rate, with its standard error (Lo, 2002). Over a few weeks that standard error is large, which is a lesson in itself. The leaderboard ranks teams by Sharpe ratio and shows only positive ones; teams with a Sharpe ratio of zero or below follow, ranked by return.
