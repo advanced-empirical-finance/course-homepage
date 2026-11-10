@@ -39,7 +39,7 @@ Code appears in R and Python. Pick your language in any tab; all tabs on the pag
 **Before you start**, you need:
 
 - the [technical prerequisites](../exercises/technical-prerequisites.qmd): Positron, the course repository open in Positron, and `uvr sync` (R) or `uv sync` (Python) run in it;
-- TinyTeX for PDF output. Run `quarto check` in Positron's Terminal. If the output under "Checking LaTeX" says `Tex: (not detected)`, install TinyTeX once with `quarto install tinytex`.
+- TinyTeX for PDF output, a required step of the technical prerequisites. Run `quarto check` in Positron's Terminal: if the output under "Checking LaTeX" says `Tex: (not detected)`, install TinyTeX with `quarto install tinytex`.
 
 ## 1. Quick start: from zero to PDF (15 min) {#quick-start}
 
@@ -1122,7 +1122,7 @@ Still stuck? Post the full error message and the chunk that causes it on the Abs
 **Optional peer check (15 min).** Swap `.qmd` files with a fellow student. Render each other's file in your own course repository and give three pieces of feedback based on the quality criteria. Peer review of the mandatory assignments works the same way.
 
 ::: {.callout-tip collapse="true" title="Reference solution: stock-report.qmd after Tasks 1 to 8"}
-Your text will differ; your results should not. The `references.bib` file below the code sits next to the `.qmd`.
+Your text will differ; your results should not. The same files are in the course repository, in `quarto-practice/solution/` (`stock-report-r.qmd`, `stock-report-python.qmd`, and `references.bib`): fetch the latest version of the course repository and compare your file with the solution side by side in Positron. The `references.bib` file below the code sits next to the `.qmd`.
 
 ::: {.panel-tabset group="language"}
 ## R
