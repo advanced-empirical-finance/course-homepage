@@ -21,8 +21,3 @@ Your team's dashboard shows your portfolio next to the benchmarks and the cohort
   })();
 </script>
 ```
-
-::: {.callout-note}
-## Test run
-Until the semester starts, the dashboard shows the course team's test run, and only the course team can sign in. Your team's token arrives before the dry run on 25 January 2027.
-:::

@@ -196,7 +196,13 @@ Changed your mind? Submit again before the deadline: the new submission simply r
 
 ## 7. The next morning
 
-Trades happen at the US open; results appear after the nightly update.
+Trades happen at the US open; results appear after the nightly update. The `status` of a submission says where it stands:
+
+- **accepted:** it waits for the open of its trade date;
+- **executed:** it traded at the open; the official opening prices, and with them your new holdings and portfolio value, come with the nightly update after the US close (about 01:30 Copenhagen time);
+- **traded:** it is booked with the official opening prices;
+- **replaced:** a later submission for the same trade date trades instead;
+- **cancelled** or **rejected:** it never trades.
 
 ::: {.panel-tabset group="language"}
 ## R
