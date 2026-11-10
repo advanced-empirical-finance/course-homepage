@@ -43,7 +43,6 @@ import polars as pl
 import numpy as np
 import tidyfinance as tf
 
-from datetime import date
 from plotnine import *
 from scipy.optimize import minimize
 ```
@@ -69,7 +68,7 @@ index_prices <- download_data(
   "Stock Prices",
   symbols = ticker,
   start_date = "2000-01-01",
-  end_date = Sys.Date()
+  end_date = "2025-12-31"
 )
 
 returns <- index_prices |>
@@ -93,7 +92,7 @@ index_prices = tf.download_data(
     domain="Stock Prices",
     symbols=tickers,
     start_date="2000-01-01",
-    end_date=date.today(),
+    end_date="2025-12-31",
 )
 
 returns = (index_prices
@@ -312,7 +311,8 @@ logL_garch <- function(params, p, q, ret,
               params[(2+p):length(params)] %*% sigma.sqrd[(t-1):(t-q)]
   }
   sigma.sqrd <- sigma.sqrd[-(1:(max(p, q)))]
-  if(any(sigma.sqrd <= 0)) return(1e10)
+  # Parameters with alpha + beta > 1 let the variance explode to Inf
+  if(any(!is.finite(sigma.sqrd)) || any(sigma.sqrd <= 0)) return(1e10)
 
   if(return_only_loglik){
     0.5 * sum(log(sigma.sqrd)) + 0.5 * sum(eps_sqr_lagged[(1 + max(p, q)):nrow(eps_sqr_lagged),1]^2/sigma.sqrd)
@@ -372,7 +372,8 @@ def logL_garch(params, p, q, ret, return_only_loglik=True):
     sigma_sq = sigma_sq[mask]
     eps = eps[mask]
 
-    if np.any(sigma_sq <= 0):
+    # Parameters with alpha + beta > 1 let the variance explode to inf
+    if np.any(~np.isfinite(sigma_sq)) or np.any(sigma_sq <= 0):
         return 1e10
 
     if return_only_loglik:
