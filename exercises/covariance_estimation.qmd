@@ -43,7 +43,6 @@ import polars as pl
 import numpy as np
 import tidyfinance as tf
 
-from datetime import date
 from plotnine import *
 from scipy.optimize import minimize
 ```
@@ -69,7 +68,7 @@ index_prices <- download_data(
   "Stock Prices",
   symbols = ticker,
   start_date = "2000-01-01",
-  end_date = Sys.Date()
+  end_date = "2025-12-31"
 )
 
 returns <- index_prices |>
@@ -93,7 +92,7 @@ index_prices = tf.download_data(
     domain="Stock Prices",
     symbols=tickers,
     start_date="2000-01-01",
-    end_date=date.today(),
+    end_date="2025-12-31",
 )
 
 returns = (index_prices
