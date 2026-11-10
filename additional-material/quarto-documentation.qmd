@@ -1,475 +1,1428 @@
 ---
-title: Reproducible Research with Quarto
-description: "Literate programming with Quarto — keep code, output, and prose in one file that re-renders on every change."
+title: Reproducible research with Quarto
+description: "A hands-on fast track: build a short stock report in Quarto, from a first PDF in 15 minutes to a file that follows the assignment rules."
+toc-depth: 2
 ---
 
-## Why reproducible documents?
+You hand in every mandatory assignment as one Quarto file (`.qmd`) plus the PDF it produces. This page teaches Quarto by doing: you build a two-page report on three stocks, one section at a time, and finish with a PDF that follows the same rules as your hand-in. The quick start takes 15 minutes. The whole page takes about two and a half hours and splits into short sessions.
 
-Suppose you are asked to write a short report on the return characteristics of Apple stock (AAPL) — either for a research project or for a portfolio manager who wants a quick data-driven summary. The report should show the price history, the distribution of daily returns, and a table of summary statistics.
+## Why Quarto?
 
-You write the code in R or Python (or Julia), it works, and you copy the plot and the numbers into a Word document. You send it off. Your supervisor reads it and asks two things: can you extend the sample back to 2015, and can you add a line in the histogram that marks the 1% quantile instead of the 5%? Small changes — but now you have to re-run the code, find the right figure in the output, replace it in the document, locate the numbers in the table, update them by hand, and hope you did not miss anything. If this happens three times across a two-week revision cycle, the manual overhead adds up fast and the risk of inconsistencies grows.
+You send your supervisor a report on Apple's stock returns, with a figure and a table pasted into Word. She asks you to start the sample in 2015 and to mark the 1% instead of the 5% quantile. Now you re-run the code, find the new figure, paste it, retype the table, and hope that the numbers in your sentences still match. After three rounds of revisions, one of them won't.
 
-**Literate programming** solves such issues by putting code, output, and explanation into a single file. When you render it, the code runs and the results flow into the document automatically. Changing the start date or the quantile threshold is a one-line edit; re-rendering takes care of the rest. Nothing is copied by hand; nothing can fall out of sync.
+Quarto removes the copying. One file holds your text and your code. When you *render* the file, Quarto runs the code and puts every figure, table and number into the document. A new sample period is a one-line edit and a new render. This is also the rule for your assignments: *"The source code has to create every figure, table, and number used for your report."* Your peer reviewers get the `.qmd` next to the PDF, so they can check that each result follows from your code.
 
-Here is what the core of such a report looks like in Quarto. Do not worry about the details yet — we will cover each piece carefully in the sections below. For now, just notice that the code, the plot, and the prose all live in the same file
+![A single .qmd file holds text and code in R, Python or other languages; Quarto turns it into HTML, PDF, Word and more. Artwork by [Allison Horst](https://allisonhorst.com).](https://cdn.myportfolio.com/45214904-6a61-4e23-98d6-b140f8654a40/c2ef45f1-4a68-4c7a-a43f-bdcf0f90e104_rw_3840.png?h=783eba914284e5adfb9feadcf4ba5f1e)
 
+Quarto is free, open source and comes with Positron. It runs R code with knitr and Python code with Jupyter.
 
-````{verbatim}
-#| filename: "aapl-report.qmd"
+## How this page works
+
+| Section | After it, you can | Time |
+|---|---|---|
+| [1. Quick start](#quick-start) | render a PDF from a `.qmd` file | 15 min |
+| [2. How a Quarto file works](#anatomy) | write the header, Markdown text and math | 10 min |
+| [3. Chunk options](#chunk-options) | decide what the reader sees | 15 min |
+| [4. Inline code](#inline-code) | put computed numbers into sentences | 10 min |
+| [5. Figures and cross-references](#cross-references) | number and reference figures, equations and sections | 15 min |
+| [6. Tables](#tables) | show results in a formatted table | 10 min |
+| [7. Citations](#citations) | cite papers from a `.bib` file | 10 min |
+| [8. Reproducibility](#reproducibility) | render like a reviewer and avoid cache traps | 15 min |
+| [9. AI assistants](#ai) | let an assistant draft code, then check it | 15 min |
+| [10. Assignment template](#template) | switch your report to the hand-in format | 10 min |
+| [Final challenge](#final-challenge) | check a report like a hand-in | 30 min |
+
+Every section has the same rhythm: a **goal**, a short explanation, a **task** with a time estimate, and a **checkpoint** that tells you what your PDF should show. **Self-checks** are questions with hidden answers: answer in your head first, then click.
+
+Code appears in R and Python. Pick your language in any tab; all tabs on the page follow. Keep the suggested tickers and dates until the final challenge, so your numbers match the checkpoints.
+
+**Before you start**, you need:
+
+- the [technical prerequisites](../exercises/technical-prerequisites.qmd): Positron, the course repository open in Positron, and `uvr sync` (R) or `uv sync` (Python) run in it;
+- TinyTeX for PDF output, a required step of the technical prerequisites. Run `quarto check` in Positron's Terminal: if the output under "Checking LaTeX" says `Tex: (not detected)`, install TinyTeX with `quarto install tinytex`.
+
+## 1. Quick start: from zero to PDF (15 min) {#quick-start}
+
+**Goal:** a PDF with real stock data and a figure, made from a `.qmd` file you wrote.
+
+### Step 1: create the file (2 min)
+
+In Positron's Explorer, inside the course repository, create a folder `quarto-practice` and in it a file `stock-report.qmd`. Keep the folder inside the course repository: Quarto then uses the course's R and Python packages.
+
+### Step 2: paste the code (3 min)
+
+Copy the file for your language into `stock-report.qmd`, put your name into `author`, and save.
+
+::: {.panel-tabset group="language"}
+## R
+
+````{.markdown filename="quarto-practice/stock-report.qmd"}
 ---
-title: "Return Characteristics of AAPL"
+title: "Risk and return of three US stocks"
+author: "Your Name"
+format: pdf
+---
+
+## Data
+
+```{{r}}
+library(tidyverse)
+library(tidyfinance)
+
+prices <- download_data(
+  "Stock Prices",
+  symbols = c("AAPL", "JPM", "XOM"),
+  start_date = "2015-01-01",
+  end_date = "2025-12-31"
+)
+```
+
+## Prices
+
+```{{r}}
+ggplot(prices, aes(x = date, y = adjusted_close, color = symbol)) +
+  geom_line()
+```
+````
+
+## Python
+
+````{.markdown filename="quarto-practice/stock-report.qmd"}
+---
+title: "Risk and return of three US stocks"
+author: "Your Name"
+format: pdf
+---
+
+## Data
+
+```{{python}}
+import tidyfinance as tf
+from plotnine import aes, geom_line, ggplot
+
+prices = tf.download_data(
+    domain="Stock Prices",
+    symbols=["AAPL", "JPM", "XOM"],
+    start_date="2015-01-01",
+    end_date="2025-12-31",
+)
+```
+
+## Prices
+
+```{{python}}
+ggplot(prices, aes(x="date", y="adjusted_close", color="symbol")) + geom_line()
+```
+````
+
+:::
+
+### Step 3: render (5 min)
+
+Check the interpreter at the top right of Positron: R 4.6.1 for R, the course repository's `.venv` for Python. Then click **Preview** at the top right of the editor, or press Ctrl+Shift+K (Cmd+Shift+K on macOS). The first render downloads the prices and can take a minute. Positron shows the PDF in the Viewer.
+
+### Step 4: change something (5 min)
+
+Replace `"JPM"` with `"MSFT"`, save, and preview again. Then change it back. This is the loop you use from now on: edit, render, look.
+
+While you write, you can also run code without rendering: click **Run Cell** above a chunk, or select lines and press Ctrl+Enter. The results appear in the Console, so you can look at `prices` there or in the Variables pane. Rendering is different: it starts a fresh R or Python session and runs the whole file from top to bottom.
+
+**Checkpoint.** `quarto-practice/stock-report.pdf` sits next to your `.qmd`. It shows the title, your name, two headings, the code and a chart with three price series. In R it also shows package messages; [Section 3](#chunk-options) hides them. If the render fails, look up the message in [Troubleshooting](#troubleshooting).
+
+::: {.callout-tip collapse="true" title="Self-check: you fix a typo directly in the PDF. What happens at the next render?"}
+Your fix is gone. Quarto overwrites the PDF at every render. The `.qmd` file is the source; the PDF is only its output. Make every change in the `.qmd`.
+:::
+
+## 2. How a Quarto file works (10 min) {#anatomy}
+
+**Goal:** name the three parts of a `.qmd` file and format text with Markdown and math.
+
+Your file has three parts:
+
+- The **header** between the two `---` lines at the top. It holds document settings as `key: value` pairs, written in a format called YAML.
+- **Markdown text**: everything outside the code chunks. Markdown is plain text with a few formatting marks.
+- **Code chunks** that start with ```` ```{r} ```` or ```` ```{python} ```` and end with ```` ``` ````. Quarto runs them when it renders. Chunk options go at the top of a chunk, on lines that start with `#|`. Ctrl+Shift+I inserts a new chunk.
+
+### The header
+
+```yaml
+---
+title: "Risk and return of three US stocks"
 author: "Your Name"
 date: today
+format: pdf
+---
+```
+
+YAML is strict: put a space after every colon, indent with spaces (never tabs), and indent options under the key they belong to. You will nest PDF options under `format:` in [Section 5](#cross-references).
+
+| Key | What it does | Example |
+|---|---|---|
+| `title`, `author` | Title block of the document | `"Your Name"` |
+| `date` | Date in the title block; `today` inserts the render date | `today` |
+| `format` | Output format and its options | `pdf`, `html` |
+| `execute` | Defaults for all code chunks ([Section 3](#chunk-options)) | `echo: false` |
+| `bibliography` | File with your references ([Section 7](#citations)) | `references.bib` |
+
+### Markdown
+
+| You write | You get |
+|---|---|
+| `## Results` | A section heading; `###` for a subsection |
+| `*italic*` and `**bold**` | *italic* and **bold** |
+| `- Apple` on a new line, after an empty line | A bullet list; `1.` gives a numbered list |
+| `[Tidy Finance](https://www.tidy-finance.org)` | A link: [Tidy Finance](https://www.tidy-finance.org) |
+| `` `download_data()` `` | Code font for function and package names: `download_data()` |
+| `Yahoo Finance^[Via tidyfinance.]` | A footnote |
+| `$r_t = p_t / p_{t-1} - 1$` | Inline math: $r_t = p_t / p_{t-1} - 1$ |
+| `$$ \bar r = \frac{1}{T} \sum_{t=1}^T r_t $$` | Display math, on its own line |
+
+Math uses LaTeX notation. Quarto shows a live preview of an equation when your cursor is inside it.
+
+### Output formats
+
+One line in the header switches the output format. You hand in PDF; HTML renders faster and is handy for a quick look.
+
+::: {.panel-tabset}
+## PDF
+
+```yaml
+format: pdf
+```
+
+![](figures/output-pdf.png)
+
+## HTML
+
+```yaml
 format: html
+```
+
+![](figures/output-html.png)
+
+## Word
+
+```yaml
+format: docx
+```
+
+![](figures/output-word.png)
+
+## PowerPoint
+
+```yaml
+format: pptx
+```
+
+![](figures/output-powerpoint.png)
+
+:::
+
+::: {.callout-note title="Task 2 (8 min)"}
+Between the header and `## Data`, add:
+
+1. a heading `## Introduction` and two sentences on what the report does, with one key term in bold;
+2. a bullet list of the three companies: Apple (AAPL), JPMorgan Chase (JPM), ExxonMobil (XOM);
+3. a footnote that says where the data come from (Yahoo Finance, downloaded with tidyfinance);
+4. the definition of the daily net return as inline math: `$r_{i,t} = p_{i,t} / p_{i,t-1} - 1$`.
+
+Render and compare with the example below.
+:::
+
+::: {.callout-tip collapse="true" title="Example: one way to write the introduction"}
+```markdown
+## Introduction
+
+This report compares the **risk and return** of three large US stocks
+from 2015 to 2025:
+
+- Apple (AAPL)
+- JPMorgan Chase (JPM)
+- ExxonMobil (XOM)
+
+We use daily prices from Yahoo Finance^[Downloaded with the tidyfinance
+package.] and compute the daily net return of stock $i$ on day $t$ as
+$r_{i,t} = p_{i,t} / p_{i,t-1} - 1$, where $p_{i,t}$ is the adjusted
+closing price.
+```
+:::
+
+**Checkpoint.** Your PDF has an introduction with a bullet list, a typeset formula and a footnote at the bottom of the page.
+
+::: {.callout-tip collapse="true" title="Self-check: you type the bullet list directly below a sentence, without an empty line. What do you get?"}
+One paragraph: "... from 2015 to 2025: - Apple (AAPL) - JPMorgan Chase (JPM) - ExxonMobil (XOM)". Markdown needs an empty line before a list.
+:::
+
+::: {.callout-tip collapse="true" title="Self-check: you edit the header and the render stops with a YAMLException. Where do you look?"}
+The message shows the header with a marker. The mistake is on the marked line or the line above it, for example `author:"Your Name"` without a space after the colon, a tab instead of spaces, or an option that is indented differently from its neighbors.
+:::
+
+## 3. Control what the reader sees: chunk options (15 min) {#chunk-options}
+
+**Goal:** decide for each chunk whether the reader sees the code, the output, both or nothing, and keep all settings in one place.
+
+Your quick-start PDF shows every line of code and, in R, package messages. Readers of your assignment want results. The assignment rules say: *"The reader will not consult your code."* Chunk options control what appears. They go at the top of a chunk, one per line:
+
+````markdown
+```{{r}}
+#| label: download
+#| echo: true
+prices <- download_data(...)
+```
+````
+
+Defaults for the whole document go under `execute:` in the header. An option in a chunk overrides the default for that chunk.
+
+::: {.panel-tabset group="language"}
+## R
+
+```yaml
+execute:
+  echo: false     # hide code
+  warning: false  # hide warnings
+  message: false  # hide messages, e.g. from loading packages
+```
+
+## Python
+
+```yaml
+execute:
+  echo: false     # hide code
+  warning: false  # hide warnings
+```
+
+:::
+
+| Option | What it does |
+|---|---|
+| `label: download` | Names the chunk. Labels that start with `fig-` or `tbl-` create numbered figures and tables ([Section 5](#cross-references)). |
+| `echo: false` | Runs the code and shows its output, but not the code. |
+| `eval: false` | Shows the code, does not run it. |
+| `include: false` | Runs the code and shows nothing. Later chunks can still use the results. |
+| `output: false` | Runs the code and hides its output. |
+| `output: asis` | Passes printed text straight into the document, e.g. a LaTeX table ([Section 6](#tables)). |
+| `warning: false` | Hides warnings. |
+| `message: false` | Hides messages (R only). |
+| `error: true` | Shows errors in the document instead of stopping the render. Never use it in a hand-in. |
+| `fig-cap`, `tbl-cap` | Caption of a figure or table. |
+| `fig-width`, `fig-height` | Figure size in inches. |
+| `cache: true` | Stores results and skips the chunk at the next render. Read the risks in [Section 8](#reproducibility) first. |
+
+**One setup chunk.** Load all packages and define every constant (tickers, dates, 252 trading days per year) in the first chunk. The assignment rules ask that the code *"loads all required packages at the beginning"*, and a constant that you define once cannot get out of sync. The [quality criteria](assignment-quality-criteria.qmd) call the alternative "magic numbers".
+
+::: {.callout-tip title="Old syntax from tutorials and AI assistants"}
+You will often see R Markdown syntax such as ```` ```{r, echo=FALSE} ```` or `fig.cap`. Use Quarto's `#| echo: false` and `fig-cap` instead: they work the same way in R and Python.
+:::
+
+::: {.callout-note title="Task 3 (10 min)"}
+Restructure your file as shown below:
+
+1. add `date: today` and the `execute` defaults to the header;
+2. add a `setup` chunk at the top with all packages and constants;
+3. give the download chunk the label `download` and `echo: true`, because assignments often ask you to show how you got the data; it now also computes daily returns;
+4. label the plot chunk `prices-plot`.
+
+Render.
+:::
+
+::: {.panel-tabset group="language"}
+## R
+
+````{.markdown filename="quarto-practice/stock-report.qmd"}
+---
+title: "Risk and return of three US stocks"
+author: "Your Name"
+date: today
+format: pdf
 execute:
   echo: false
   warning: false
   message: false
 ---
 
-This report summarises the daily return characteristics of Apple Inc. (AAPL)
-over the period 2020–2023.
-
-```{r}
-#| include: false
-
+```{{r}}
+#| label: setup
+# Packages
+library(tidyverse)
 library(tidyfinance)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
 
+# Sample and constants: change them here, nowhere else
+symbols <- c("AAPL", "JPM", "XOM")
+start_date <- "2015-01-01"
+end_date <- "2025-12-31"
+trading_days_per_year <- 252
+```
+
+## Introduction
+
+<!-- your introduction from Task 2 -->
+
+## Data
+
+```{{r}}
+#| label: download
+#| echo: true
+# Daily prices from Yahoo Finance, adjusted for splits and dividends
 prices <- download_data(
-  type       = "stock_prices",
-  symbols    = "AAPL",
-  start_date = "2020-01-01",
-  end_date   = "2023-12-31"
+  "Stock Prices",
+  symbols = symbols,
+  start_date = start_date,
+  end_date = end_date
 )
 
+# Daily net returns per stock
 returns <- prices |>
+  arrange(symbol, date) |>
+  group_by(symbol) |>
   mutate(ret = adjusted_close / lag(adjusted_close) - 1) |>
+  ungroup() |>
   drop_na(ret)
 ```
 
-The dataset covers `{r} nrow(returns)` trading days from
-`{r} min(prices$date)` to `{r} max(prices$date)`.
+## Prices
 
-```{r}
-#| label: fig-returns
-#| fig-cap: "Distribution of daily net returns for AAPL. The dashed line marks the 5th percentile."
-
-ggplot(returns, aes(x = ret)) +
-  geom_histogram(bins = 80, fill = "steelblue", color = "white") +
-  geom_vline(
-    xintercept = quantile(returns$ret, 0.05),
-    linetype = "dashed", color = "red"
-  ) +
-  labs(x = "Daily net return", y = "Count") +
-  theme_minimal()
+```{{r}}
+#| label: prices-plot
+ggplot(prices, aes(x = date, y = adjusted_close, color = symbol)) +
+  geom_line()
 ```
 ````
 
-A few things to notice even before we explain the syntax:
+## Python
 
-- The **date range** (`2020-01-01` to `2023-12-31`) appears in one place — in the `download_data()` call. To extend the sample, you change that one line and re-render.
-- The **quantile threshold** (`0.05`) appears in one place — inside `geom_vline()`. Switching to the 1% quantile means changing `0.05` to `0.01`.
-- The **sentence** *"The dataset covers ..."* is not typed manually. It is computed at render time, so it always matches the data.
-
-This is the promise of literate programming, and this report is what we will build step by step throughout this tutorial.
-
-A reproducible document serves three audiences:
-
-- **Decision-makers** — they see polished results without any code.
-- **Collaborators and your future self** — they can follow both the analysis and the reasoning behind it.
-- **Reviewers and replicators** — they can verify that the results actually follow from the data and code.
-
-In this course, your mandatory assignment must be submitted as a reproducible document. Everything you learn here applies directly to that task.
-
-## What is Quarto?
-
-**Quarto** is an open-source publishing system made by Posit (the team behind Positron). A Quarto file has the extension `.qmd` and contains three things: a metadata header, prose in Markdown, and executable code in R or Python. When you *render* it, Quarto runs the code, collects the output, and hands everything to **pandoc** to produce a final document — HTML, PDF, Word, and more.
-
-![The Quarto rendering pipeline: a single .qmd source file produces HTML, PDF, and Word output via the knitr/Jupyter execution engine and pandoc. Artwork by [Allison Horst](https://allisonhorst.com).](https://cdn.myportfolio.com/45214904-6a61-4e23-98d6-b140f8654a40/c2ef45f1-4a68-4c7a-a43f-bdcf0f90e104_rw_3840.png?h=783eba914284e5adfb9feadcf4ba5f1e)
-
-You already have everything installed: Positron ships with Quarto, and TinyTeX (installed during the technical prerequisites) enables PDF output.
-
-## The Anatomy of a Quarto file
-
-A `.qmd` file has three parts: a YAML header, Markdown prose, and code chunks.
-
-### The YAML Header
-
-The YAML header sits at the very top of the file, enclosed between two `---` lines. It uses `key: value` pairs to set document metadata and options.
-
-````yaml
+````{.markdown filename="quarto-practice/stock-report.qmd"}
 ---
-title: "Stock Market Analysis"
+title: "Risk and return of three US stocks"
 author: "Your Name"
 date: today
-format: html
----
-````
-
-The most common fields:
-
-| Key | What it does | Example |
-|---|---|---|
-| `title` | Document title | `"Stock Market Analysis"` |
-| `author` | Author name | `"Your Name"` |
-| `date` | Date shown in output; `today` inserts automatically | `today` |
-| `format` | Output format | `html`, `pdf`, `docx` |
-
-You can also set *document-wide code defaults* under `execute`. These apply to every chunk unless a chunk overrides them:
-
-```yaml
----
-title: "Stock Market Analysis"
 format: pdf
 execute:
   echo: false
   warning: false
 ---
+
+```{{python}}
+#| label: setup
+# Packages
+import polars as pl
+import tidyfinance as tf
+from plotnine import aes, geom_line, ggplot
+
+# Sample and constants: change them here, nowhere else
+symbols = ["AAPL", "JPM", "XOM"]
+start_date = "2015-01-01"
+end_date = "2025-12-31"
+trading_days_per_year = 252
 ```
 
-#### Output formats
+## Introduction
 
-Changing a single line in the YAML header switches the entire output format. The three formats you will use most are shown below.
+<!-- your introduction from Task 2 -->
 
-::: {.panel-tabset}
+## Data
 
-## HTML
+```{{python}}
+#| label: download
+#| echo: true
+# Daily prices from Yahoo Finance, adjusted for splits and dividends
+prices = tf.download_data(
+    domain="Stock Prices",
+    symbols=symbols,
+    start_date=start_date,
+    end_date=end_date,
+)
 
-```yaml
----
-title: "Stock Market Analysis"
-author: "Your Name"
-date: today
-format: html
----
+# Daily net returns per stock
+returns = (
+    prices
+    .sort("symbol", "date")
+    .with_columns(ret=pl.col("adjusted_close").pct_change().over("symbol"))
+    .drop_nulls("ret")
+)
 ```
 
-*Rendered output:*
+## Prices
 
-![](figures/output-html.png)
-
-## PDF
-
-```yaml
----
-title: "Stock Market Analysis"
-author: "Your Name"
-date: today
-format: pdf
----
+```{{python}}
+#| label: prices-plot
+ggplot(prices, aes(x="date", y="adjusted_close", color="symbol")) + geom_line()
 ```
-
-*Rendered output:*
-
-![](figures/output-pdf.png)
-
-## Word
-
-```yaml
----
-title: "Stock Market Analysis"
-author: "Your Name"
-date: today
-format: docx
----
-```
-
-*Rendered output:*
-
-![](figures/output-word.png)
-
-## Powerpoint
-
-```yaml
----
-title: "Stock Market Analysis"
-author: "Your Name"
-date: today
-format: pptx
----
-```
-
-*Rendered output:*
-
-![](figures/output-powerpoint.png)
+````
 
 :::
 
-### Narrative in Markdown
+**Checkpoint.** Your PDF shows no package messages. The only code in it is the download chunk.
 
-Everything outside code chunks is **Markdown** — a simple syntax for formatting plain text. The most important elements:
+::: {.callout-tip collapse="true" title="Self-check: what is the difference between echo: false and include: false?"}
+Both run the code. `echo: false` hides the code but shows the output, such as a figure or a table. `include: false` hides both. With `echo: false` as the document default, a chunk that only computes shows nothing anyway; you need `include: false` only for chunks that would print something you don't want to show.
+:::
 
-**Headings** — use `#` signs, one per level:
+::: {.callout-tip collapse="true" title="Self-check: a chunk with include: false contains an error. Does the document still render?"}
+No. The chunk still runs, and the error stops the render. `include: false` only hides results; it does not skip the code. To skip a chunk, use `eval: false`.
+:::
 
-```markdown
-# Section
-## Subsection
-### Sub-subsection
-```
+## 4. Numbers in the text: inline code (10 min) {#inline-code}
 
-**Emphasis**:
+**Goal:** every number in your sentences comes from code and updates when the data change.
 
-```markdown
-*italic*    **bold**
-```
+Inline code runs a short expression inside a sentence:
 
-**Lists** — bullet with `-`, numbered with `1.`:
-
-```markdown
-- Download prices for AAPL
-- Compute daily net returns
-- Plot the return distribution
-```
-
-**Links** — `[display text](url)`:
+::: {.panel-tabset group="language"}
+## R
 
 ```markdown
-We follow [Tidy Finance with R](https://www.tidy-finance.org/r/introduction-to-tidy-finance.html).
+The sample contains `{r} n_days` trading days.
 ```
 
-**Images** — same as links but with a leading `!`:
+## Python
 
 ```markdown
-![Daily return distribution for AAPL](figures/aapl_returns.png)
+The sample contains `{python} n_days` trading days.
 ```
 
-**Inline code** — backticks render text in a monospaced font, useful for function and package names:
+:::
 
-```markdown
-Use `download_data()` from the `tidyfinance` package.
+At render time, Quarto replaces the expression with its value. Inline code does not run when you run chunks in the Console: you see the number only in the rendered document.
+
+Two habits keep inline code readable and correct:
+
+1. Compute and name the value in a chunk. The sentence only refers to the name.
+2. Round and format in code. The assignment rules ask for *"a meaningful rounding scheme"*: report as many digits as the reader needs, usually two or three.
+
+| Goal | R | Python |
+|---|---|---|
+| Two decimals | `round(x, 2)` | `f"{x:.2f}"` |
+| Percent with one decimal | `scales::percent(x, accuracy = 0.1)` | `f"{x:.1%}"` |
+| Thousands separator | `format(n, big.mark = ",")` | `f"{n:,}"` |
+| Date as text | `format(d, "%B %d, %Y")` | `d.strftime("%B %d, %Y")` |
+
+::: {.callout-warning title="Python shows the raw value"}
+Without formatting, inline Python prints what the Python console would print: `0.9081095248760654`, `np.float64(0.776)` or `datetime.date(2015, 1, 5)`. The last two appear when a value comes from numpy or is a date. Wrap numbers in an f-string and dates in `str()`.
+:::
+
+::: {.callout-note title="Task 4 (8 min)"}
+1. Below the download chunk, add a chunk `sample-info` that computes `n_days`, `first_day` and `last_day` (code below).
+2. Below it, write: "The sample contains ... trading days from ... to ...", with inline code for the three values.
+3. Render. Then set `end_date` to `"2020-12-31"` in the setup chunk, render again and watch the sentence change. Set it back.
+:::
+
+::: {.panel-tabset group="language"}
+## R
+
+````markdown
+```{{r}}
+#| label: sample-info
+n_days <- n_distinct(returns$date)
+first_day <- min(returns$date)
+last_day <- max(returns$date)
 ```
 
+The sample contains `{r} n_days` trading days from `{r} first_day` to `{r} last_day`.
+````
 
-**Math** — use LaTeX notation. Inline math goes between single `$`; display math between `$$`:
+## Python
 
-```markdown
-The daily net return is $r_t = (p_t - p_{t-1})\,/\,p_{t-1}$.
-
-$$
-\min_\omega \; \omega^\top \Sigma\, \omega
-\quad \text{s.t.} \quad
-\iota^\top \omega = 1
-$$
+````markdown
+```{{python}}
+#| label: sample-info
+n_days = returns["date"].n_unique()
+first_day = str(returns["date"].min())
+last_day = str(returns["date"].max())
 ```
 
-**Citations** — Quarto uses Pandoc's citation syntax. Write `[@key]` in your prose, where `key` matches an entry in a `.bib` file, and point to that file in the YAML header under `bibliography`:
+The sample contains `{python} n_days` trading days from `{python} first_day` to `{python} last_day`.
+````
 
-```markdown
-We follow the approach of @fama1993 and construct monthly factor returns [@carhart1997].
-```
+:::
+
+**Checkpoint.** Your PDF says: "The sample contains 2765 trading days from 2015-01-05 to 2025-12-31."
+
+::: {.callout-tip collapse="true" title="Self-check: why does the sample start on January 5, 2015, and not on January 1?"}
+January 1 is a holiday, and January 2 was the first trading day of 2015. A return needs the price of the day before, so the first return falls on the next trading day, January 5. `drop_na(ret)` in R and `drop_nulls("ret")` in Python remove the missing first return of each stock. Checking details like this is how you catch data errors early.
+:::
+
+::: {.callout-tip collapse="true" title="Self-check: you type “AAPL has the highest Sharpe ratio” by hand. What can go wrong?"}
+When you change tickers or dates, the table updates but your sentence does not, and the two contradict each other. Words that depend on results (the name of the best stock, "higher", "positive") should come from code as well. You will do this in [Section 6](#tables).
+:::
+
+## 5. Figures, equations and cross-references (15 min) {#cross-references}
+
+**Goal:** numbered figures, equations and sections with self-explanatory captions, referenced from the text.
+
+Write "`@fig-growth` shows ..." and Quarto prints "Figure 1 shows ...", with a link to the figure. The numbers update when you add or move figures. Each element needs a label with the right prefix:
+
+| Element | Label | Reference | Output |
+|---|---|---|---|
+| Figure | `#| label: fig-growth` in the chunk | `@fig-growth` | Figure 1 |
+| Table | `#| label: tbl-summary` in the chunk | `@tbl-summary` | Table 1 |
+| Equation | `$$ ... $$ {#eq-sharpe}` | `@eq-sharpe` | Equation 1 |
+| Section | `## Data {#sec-data}` | `@sec-data` | Section 2 |
+
+Section references need `number-sections: true` in the header.
+
+**Captions.** The assignment rules say: *"make sure that tables and figures are self-explanatory by providing meaningful captions and variable names."* A good caption says what the figure shows, for which sample and in which units, and mentions anything unusual, such as a log scale. "Figure 1: Returns" fails this test.
+
+**Size.** `fig-width` and `fig-height` set the size in inches. With 20 mm margins, the text is about 6.9 inches wide, so `fig-width: 6` fills most of it.
+
+::: {.callout-note title="Task 5 (12 min)"}
+1. In the header, replace `format: pdf` with the nested version below. It adds section numbers and the 12 pt font size you need for the hand-in.
+2. Give the data section a label, `## Data {#sec-data}`, and refer to it from the introduction ("... as described in `@sec-data`").
+3. Rename `## Prices` to `## Results` and replace the price plot with a chart of the growth of one dollar (code below). In Python, extend the plotnine import in the setup chunk.
+4. Below the figure, add the Sharpe ratio equation with a label, and a sentence that refers to `@fig-growth` and `@eq-sharpe`.
+
+Render.
+:::
 
 ```yaml
----
-title: "Stock Market Analysis"
-bibliography: references.bib
----
+format:
+  pdf:
+    number-sections: true
+    fontsize: 12pt
 ```
 
-Quarto inserts a formatted reference list at the end of the document automatically. The citation style defaults to Chicago author-date; you can switch it by adding `csl: apa.csl` (or any other CSL file) to the YAML header. For a full reference on citation syntax — including page numbers, suppressing author names, and supported bibliography formats — see the [Quarto citations documentation](https://quarto.org/docs/authoring/citations.html).
+::: {.panel-tabset group="language"}
+## R
 
-### Code Chunks
+````markdown
+## Results
 
-Code chunks are enclosed in triple backticks with the language in curly braces. Quarto executes the chunk when rendering and inserts the output below it.
-
-**R chunk:**
-
-````{verbatim}
-```{r}
-library(tidyfinance)
-
-prices <- download_data(
-  type       = "stock_prices",
-  symbols    = "AAPL",
-  start_date = "2020-01-01",
-  end_date   = "2023-12-31"
-)
-```
-````
-
-**Python chunk:**
-
-````{verbatim}
-```{python}
-import tidyfinance as tf
-
-prices = tf.download_data(
-    domain     = "stock_prices",
-    symbols    = "AAPL",
-    start_date = "2020-01-01",
-    end_date   = "2023-12-31"
-)
-```
-````
-
-You can also run a chunk interactively — without rendering the full document — by selecting the code and pressing **Ctrl + Enter**, exactly as in a plain script.
-
-#### Chunk Labels
-
-Add a label with `#|` to name the chunk. Labels appear in Positron's document outline and make it easier to navigate long files. Plot chunks that start with `fig-` get automatic figure numbering.
-
-````{verbatim}
-```{r}
-#| label: fig-prices
-
-ggplot(prices, aes(x = date, y = adjusted)) +
-  geom_line()
-```
-````
-
-#### Execution Options
-
-Options prefixed with `#|` control what appears in the rendered output. Place them at the top of the chunk, one per line.
-
-| Option | What it does |
-|---|---|
-| `echo: false` | Run the code, show the output, hide the code |
-| `eval: false` | Show the code, do not run it |
-| `include: false` | Run the code silently — no code, no output shown |
-| `warning: false` | Suppress warnings |
-| `message: false` | Suppress package loading messages |
-| `cache: true` | Save the result and skip re-running if the chunk is unchanged |
-| `fig-cap: "..."` | Caption for a plot |
-| `fig-width: 7` | Figure width in inches |
-
-#### Caching Slow Chunks
-
-When a chunk takes a long time to run — downloading data, fitting a model, running a simulation — you can add `cache: true`. Quarto saves the result to disk the first time the chunk runs. On every subsequent render, if the chunk code has not changed, Quarto loads the saved result instead of re-running the code. This can cut render times from minutes to seconds.
-
-````{verbatim}
-```{r}
-#| label: download-prices
-#| cache: true
-
-prices <- download_data(
-  type       = "stock_prices",
-  symbols    = c("AAPL", "MSFT", "GOOGL"),
-  start_date = "2000-01-01",
-  end_date   = "2023-12-31"
-)
-```
-````
-
-Two things to keep in mind:
-
-- **The label is required.** Quarto uses the chunk label as the cache file name. A chunk without a label cannot be cached reliably — always add `#| label:` when using `cache: true`.
-- **The cache is invalidated when the chunk code changes.** If you edit the chunk, Quarto detects the change and re-runs it automatically. However, it does *not* detect changes in upstream objects (e.g. if a helper function defined in an earlier chunk changes). In that case, delete the `<filename>_cache/` folder (e.g. `my-analysis_cache/`) and re-render from scratch.
-
-A typical pattern: one silent setup chunk that loads packages and data, followed by a display chunk that shows only the plot:
-
-````{verbatim}
-```{r}
-#| label: ex-sec3-load-data
-#| include: false
-
-library(tidyfinance)
-library(dplyr)
-library(ggplot2)
-
-prices <- download_data(
-  type       = "stock_prices",
-  symbols    = "AAPL",
-  start_date = "2020-01-01",
-  end_date   = "2023-12-31"
-)
-
-returns <- prices |>
-  arrange(date) |>
-  mutate(ret = adjusted_close / lag(adjusted_close) - 1) |>
-  drop_na(ret)
-```
-
-```{r}
-#| label: ex-sec3-fig-return-hist
-#| echo: false
-#| fig-cap: "Daily return distribution for AAPL, 2020–2023. The dashed line marks the 5th percentile."
-#| fig-width: 7
-#| fig-height: 4
-
-ggplot(returns, aes(x = ret)) +
-  geom_histogram(bins = 80, fill = "steelblue", color = "white") +
-  geom_vline(
-    xintercept = quantile(returns$ret, 0.05),
-    linetype   = "dashed",
-    color      = "red"
-  ) +
-  labs(x = "Daily net return", y = "Count") +
+```{{r}}
+#| label: fig-growth
+#| fig-cap: "Growth of one dollar invested in each stock at the start of the sample, based on daily adjusted closing prices. Log scale."
+#| fig-width: 6
+#| fig-height: 3.5
+returns |>
+  group_by(symbol) |>
+  mutate(wealth = cumprod(1 + ret)) |>
+  ggplot(aes(x = date, y = wealth, color = symbol)) +
+  geom_line() +
+  scale_y_log10() +
+  labs(x = NULL, y = "Value of $1 (log scale)", color = NULL) +
   theme_minimal()
 ```
 ````
 
-## Rendering Your Document
+## Python
 
-### From Positron
+````markdown
+## Results
 
-Two options:
+```{{python}}
+#| label: fig-growth
+#| fig-cap: "Growth of one dollar invested in each stock at the start of the sample, based on daily adjusted closing prices. Log scale."
+#| fig-width: 6
+#| fig-height: 3.5
+growth = returns.with_columns(
+    wealth=(1 + pl.col("ret")).cum_prod().over("symbol")
+)
 
-1. **Command palette** (**Ctrl + Shift + P**) → type `Quarto: Preview` → press Enter. Quarto renders the document and shows a live preview in the Viewer pane.
-2. **Render on Save**: enable `Quarto: Render on Save` in the command palette. Every **Ctrl + S** then triggers a re-render automatically.
+(
+    ggplot(growth, aes(x="date", y="wealth", color="symbol"))
+    + geom_line()
+    + scale_y_log10()
+    + labs(x="", y="Value of $1 (log scale)", color="")
+    + theme_minimal()
+)
+```
+````
 
-The output file is saved in the same folder as your `.qmd` file.
+The setup chunk now imports more from plotnine:
 
-### From the Terminal
-
-Open the Terminal tab in Positron (not the Console) and run:
-
-```bash
-# Render using the format set in the YAML header
-quarto render my-analysis.qmd
-
-# Override the output format
-quarto render my-analysis.qmd --to pdf
-quarto render my-analysis.qmd --to html
+```python
+from plotnine import aes, geom_line, ggplot, labs, scale_y_log10, theme_minimal
 ```
 
-This is useful for rendering without opening a preview, or as part of an automated workflow.
+:::
 
-### The Rendering Pipeline
+The equation and the sentence below the figure:
 
-Knowing the steps helps when something goes wrong:
+```markdown
+@fig-growth shows how one dollar invested in each stock evolves over the
+sample. We measure risk-adjusted performance with the annualized Sharpe
+ratio, setting the risk-free rate to zero:
 
-1. Quarto reads the `.qmd` file.
-2. Code chunks are sent to the execution engine — **knitr** for R, **Jupyter** for Python.
-3. The engine runs the code and returns all output (text, tables, plots).
-4. Quarto assembles code, output, and Markdown into a single `.md` file.
-5. **pandoc** converts that file into the final output format.
+$$
+\text{SR}_i = \sqrt{252}\,\frac{\bar r_i}{s_i},
+$$ {#eq-sharpe}
 
-If rendering fails, Quarto tells you which step broke and why. The most common causes are a missing package, a code error, or a LaTeX issue when rendering to PDF.
+where $\bar r_i$ and $s_i$ are the mean and the standard deviation of the
+daily returns of stock $i$.
+```
 
-![A schematic representing rendering of Quarto documents from .qmd, to knitr or jupyter, to plain text markdown, then converted by pandoc into any number of output types including html, PDF, or Word document. Artwork by [Allison Horst](https://allisonhorst.com).](https://cdn.myportfolio.com/45214904-6a61-4e23-98d6-b140f8654a40/b5217f2a-f129-4bf9-90dc-c5b9783d0ea8_rw_3840.png?h=a41d29d8ce363dbc153f3bcc1abe085a)
+**Checkpoint.** Sections are numbered. "Figure 1" appears below the chart and as a link in your text, the equation carries the number (1), and the introduction says "Section 2".
 
-## Checklist
+::: {.callout-tip collapse="true" title="Self-check: you write `@fig-growth`, but the chunk label is `growth`. What does the PDF show?"}
+A bold `?@fig-growth` instead of "Figure 1", and the render output warns `Unable to resolve crossref @fig-growth`. Quarto only numbers figures whose label starts with `fig-`. Before a hand-in, search the render output for "Unable to resolve".
+:::
 
-Work through the tasks below in order. By the time you reach the last item you will have all the skills needed to focus on the mandatory assignment.
+::: {.callout-tip collapse="true" title="Self-check: why plot the growth of one dollar on a log scale?"}
+On a log scale, equal percentage changes have equal heights: a fall from 20 to 10 dollars looks as large as a fall from 2 to 1. Stocks whose cumulative returns differ by a factor of ten stay comparable. Because readers may not notice the scale, the caption says so.
+:::
 
-### Step 1 — Write a plain script
+## 6. Tables (10 min) {#tables}
 
-- [ ] Create a new R or Python script (`.R` or `.py`) in your project folder. The script should contain some computations, optimally creating a plot and a table. For example, you could download stock prices, compute returns, and plot the return distribution.
-- [ ] Run the script from top to bottom without errors.
+**Goal:** a formatted table of summary statistics with a caption, referenced in the text.
 
-### Step 2 — Turn your script into a Quarto document
+A printed data frame shows raw column names such as `sharpe_ratio`, too many digits and no caption. Use **gt** in R and **great_tables** in Python. Both rename columns, format numbers and work with Quarto's table captions.
 
-- [ ] Create a new file `my-analysis.qmd` with a YAML header (title, author, `date: today`, `format: html`).
-- [ ] Set `echo: false` and `warning: false` globally under `execute`.
-- [ ] Add a short introductory paragraph in Markdown explaining what the document does.
-- [ ] Include at least one display-math formula (e.g. the definition of net return).
-- [ ] Add a silent setup chunk (`#| include: false`) that loads packages and downloads data.
-- [ ] Add a labelled figure chunk (`#| label: fig-...`) that plots the return distribution with a caption.
-- [ ] Add a table of summary statistics (mean, standard deviation, min, max of daily returns). I recommand using `gt::gt()` (R) or `great_tables` (Python).
-- [ ] Write one sentence in prose that uses inline code execution, for instance to report the number of trading days covered.
-- [ ] Render to HTML and check that all output appears correctly.
+::: {.callout-note title="Task 6 (10 min)"}
+1. Load the table package in the setup chunk: `library(gt)` in R, `from great_tables import GT` in Python.
+2. After the equation, add a chunk `summary-stats` that computes annualized statistics per stock and the stock with the highest Sharpe ratio.
+3. Add a table chunk with the label `tbl-summary` and a caption.
+4. Extend your text: refer to `@tbl-summary`, and report the best stock and its Sharpe ratio and volatility with inline code.
 
-### Step 3 — Experiment with output formats
+Render.
+:::
 
-- [ ] Replace `format: html` with `format: pdf` to the YAML header and render to PDF. Fix any LaTeX errors that appear.
-- [ ] Switch to `format: docx` and render to Word. Check that tables and figures transfer cleanly.
+::: {.panel-tabset group="language"}
+## R
 
-### Step 4 — Render the mandatory assignment template
+````markdown
+```{{r}}
+#| label: summary-stats
+# Annualized moments and Sharpe ratio (risk-free rate set to zero)
+summary_stats <- returns |>
+  group_by(symbol) |>
+  summarize(
+    mean_return = mean(ret) * trading_days_per_year,
+    volatility = sd(ret) * sqrt(trading_days_per_year)
+  ) |>
+  mutate(sharpe_ratio = mean_return / volatility)
 
-- [ ] Open the mandatory assignment template from the course repository.
-- [ ] Read the YAML header and the instructions in the template carefully.
-- [ ] Render the unmodified template to pdf to confirm your environment is set up correctly.
-- [ ] Fill in your name in the `author` field and add your solutions chunk by chunk.
-- [ ] In case you get stuck, refer to the template's comments and the Quarto documentation. You can also ask for help in the discussion forum on Absalon.  
+best <- summary_stats |> slice_max(sharpe_ratio, n = 1)
+```
+
+@tbl-summary reports the results of @eq-sharpe together with the annualized
+mean return and volatility. `{r} best$symbol` has the highest Sharpe ratio
+(`{r} round(best$sharpe_ratio, 2)`), with an annualized volatility of
+`{r} scales::percent(best$volatility, accuracy = 0.1)`.
+
+```{{r}}
+#| label: tbl-summary
+#| tbl-cap: "Annualized mean return, volatility and Sharpe ratio, based on daily returns. The risk-free rate is set to zero."
+summary_stats |>
+  gt() |>
+  cols_label(
+    symbol = "Stock",
+    mean_return = "Mean return",
+    volatility = "Volatility",
+    sharpe_ratio = "Sharpe ratio"
+  ) |>
+  fmt_percent(columns = c(mean_return, volatility), decimals = 1) |>
+  fmt_number(columns = sharpe_ratio, decimals = 2)
+```
+````
+
+gt notices that you render to PDF and produces a LaTeX table by itself.
+
+## Python
+
+````markdown
+```{{python}}
+#| label: summary-stats
+# Annualized moments and Sharpe ratio (risk-free rate set to zero)
+summary_stats = (
+    returns
+    .group_by("symbol")
+    .agg(
+        mean_return=pl.col("ret").mean() * trading_days_per_year,
+        volatility=pl.col("ret").std() * trading_days_per_year**0.5,
+    )
+    .with_columns(sharpe_ratio=pl.col("mean_return") / pl.col("volatility"))
+    .sort("symbol")
+)
+
+best = summary_stats.sort("sharpe_ratio", descending=True).row(0, named=True)
+```
+
+@tbl-summary reports the results of @eq-sharpe together with the annualized
+mean return and volatility. `{python} best["symbol"]` has the highest Sharpe
+ratio (`{python} f"{best['sharpe_ratio']:.2f}"`), with an annualized
+volatility of `{python} f"{best['volatility']:.1%}"`.
+
+```{{python}}
+#| label: tbl-summary
+#| tbl-cap: "Annualized mean return, volatility and Sharpe ratio, based on daily returns. The risk-free rate is set to zero."
+#| output: asis
+table = (
+    GT(summary_stats)
+    .cols_label(
+        symbol="Stock",
+        mean_return="Mean return",
+        volatility="Volatility",
+        sharpe_ratio="Sharpe ratio",
+    )
+    .fmt_percent(columns=["mean_return", "volatility"], decimals=1)
+    .fmt_number(columns="sharpe_ratio", decimals=2)
+)
+print(table.as_latex())
+```
+````
+
+For PDF output, great_tables needs `as_latex()`, printed with `output: asis`. For HTML output, end the chunk with `table` instead.
+
+:::
+
+**Checkpoint.** Table 1 has three rows, percentages with one decimal and Sharpe ratios with two. Your text names AAPL as the stock with the highest Sharpe ratio, about 0.91.
+
+::: {.callout-tip collapse="true" title="Self-check: why multiply the mean by 252, but the standard deviation by the square root of 252?"}
+If daily returns are uncorrelated over time, both means and variances add up over days: the annual mean is about 252 times the daily mean, and the annual variance about 252 times the daily variance. The annual standard deviation is therefore $\sqrt{252} \approx 15.9$ times the daily one. `sd(ret) * 252` overstates volatility by a factor of almost 16, a common slip, also in AI-written code.
+:::
+
+::: {.callout-tip collapse="true" title="Self-check: you add a fourth ticker to symbols. What else do you have to change?"}
+In the code: nothing. The table gets a fourth row, and the best stock and its numbers in the text come from code. Only words you typed yourself, such as "three stocks" or the company list in the introduction, need an update. Inline code like `` `{r} length(symbols)` `` removes even that.
+:::
+
+## 7. Citations (10 min) {#citations}
+
+**Goal:** cite papers from a `.bib` file and get a formatted reference list.
+
+A `.bib` file is a plain text file with one BibTeX entry per source. Each entry starts with a key, here `Markowitz1952`:
+
+```bibtex
+@article{Markowitz1952,
+  title   = {Portfolio Selection},
+  author  = {Markowitz, Harry},
+  year    = {1952},
+  journal = {The Journal of Finance},
+  volume  = {7},
+  number  = {1},
+  pages   = {77--91},
+  doi     = {10.1111/j.1540-6261.1952.tb01525.x}
+}
+```
+
+Point to the file in the header with `bibliography: references.bib`, and cite with the key:
+
+| You write | You get |
+|---|---|
+| `[@Markowitz1952]` | (Markowitz 1952) |
+| `@Markowitz1952` | Markowitz (1952) |
+| `[@Markowitz1952; @Sharpe1966]` | (Markowitz 1952; Sharpe 1966) |
+
+Quarto adds the reference list at the end of the document, or wherever you put this block:
+
+```markdown
+## References {.unnumbered}
+
+::: {#refs}
+:::
+```
+
+**Where to get BibTeX entries:** paste the DOI into [doi2bib.org](https://doi2bib.org), use "Cite" and then "BibTeX" in Google Scholar, or the journal's "Export citation" link. Positron's visual editor (Command Palette: "Quarto: Edit in Visual Mode") can do this for you: its Insert menu has a Citation item that looks up a DOI and adds the entry to your `.bib` file.
+
+::: {.callout-warning title="Check every reference"}
+AI assistants invent references that look real: plausible authors, journal and year, but the paper does not exist or says something else. Automatic exports need a check as well: Crossref's entry for Markowitz (1952) has the title "PORTFOLIO SELECTION*", and its entry for Sharpe (1966) lists only the first page. Open the DOI and compare.
+:::
+
+::: {.callout-note title="Task 7 (8 min)"}
+1. Copy `mandatory-assignments/references.bib` from the course repository into `quarto-practice/`, and add `bibliography: references.bib` to your header.
+2. Cite Markowitz (1952) in your introduction.
+3. Get the BibTeX entry for Sharpe (1966), "Mutual Fund Performance", from its DOI `10.1086/294846`. Add it to `references.bib` with the key `Sharpe1966`, check it against the DOI page, and cite it where you introduce the Sharpe ratio.
+4. Add the references block at the end of your file. Render.
+:::
+
+**Checkpoint.** Your text shows "(Markowitz 1952)" and "(Sharpe 1966)", and the PDF ends with a reference list of both papers.
+
+::: {.callout-tip collapse="true" title="Self-check: you cite `[@sharpe1966]`, but the key in the .bib file is `Sharpe1966`. What happens?"}
+The PDF shows a bold **(sharpe1966?)**, and the render output warns `Citeproc: citation sharpe1966 not found`. Citation keys are case-sensitive.
+:::
+
+## 8. Reproducibility: render like a reviewer (15 min) {#reproducibility}
+
+**Goal:** your `.qmd` renders on someone else's computer, today and next year, with the same results.
+
+Your peer reviewers render your `.qmd` on their own computers, and the minimum requirement for every hand-in is that *"the code must run without error or interruption."* Five habits get you there.
+
+**1. Render from a clean session.** Quarto starts a fresh R or Python session for every render. Objects you created in the Console, and packages you loaded there, do not exist in it. Before a hand-in, restart R or Python (the restart button in the Console), then render once from Positron's Terminal (not the Console), in the course repository folder:
+
+::: {.panel-tabset group="language"}
+## R
+
+```sh
+source .uvr/activate      # Windows: .uvr\activate.ps1
+quarto render quarto-practice/stock-report.qmd
+```
+
+## Python
+
+```sh
+uv run quarto render quarto-practice/stock-report.qmd
+```
+
+:::
+
+**2. Fix the sample.** Always pass both `start_date` and `end_date`. With an open end, or with today's date as the end, your numbers change every day.
+
+**3. Use relative paths.** Quarto runs the code in the folder of the `.qmd` file. The course repository's `data/` folder is one level up from `quarto-practice/` and from `mandatory-assignments/`:
+
+::: {.panel-tabset group="language"}
+## R
+
+```r
+library(nanoparquet)
+crsp_monthly <- read_parquet("../data/crsp_monthly.parquet")
+```
+
+## Python
+
+```python
+crsp_monthly = pl.read_parquet("../data/crsp_monthly.parquet")
+```
+
+:::
+
+A path like `C:/Users/anna/Desktop/data/crsp_monthly.parquet` exists only on Anna's laptop. The CRSP files from Absalon are licensed: keep them in `data/`, which the course repository's `.gitignore` keeps out of Git, and never push them to GitHub.
+
+**4. Set seeds.** Whenever randomness enters (simulations, cross-validation folds, random forests), set a seed once in the setup chunk: `set.seed(2027)` in R; in Python, `rng = np.random.default_rng(2027)` and `random_state=2027` in scikit-learn. Without a seed, each render gives slightly different results from the ones you describe.
+
+**5. Keep the environment.** The course repository pins every package version in `uvr.lock` and `uv.lock`, and everything you need for the assignments is in it. Load packages in the setup chunk, and never put `install.packages()`, `pip install` or `uv add` into the document.
+
+### Caching and its risks
+
+In R, you can cache a slow chunk, such as a large download or a model fit:
+
+````markdown
+```{{r}}
+#| label: download
+#| cache: true
+prices <- download_data(...)
+```
+````
+
+knitr stores the results in `stock-report_cache/` and skips the chunk at the next render, as long as the code of the chunk itself is unchanged. That is also the risk: knitr does not notice when something the chunk uses changes elsewhere, for example `end_date` in the setup chunk. The chunk keeps its old results, and your figures, tables and numbers describe the old sample, without any warning. Give cached chunks a label, so the cache files have stable names.
+
+In Python documents, `#| cache: true` on a chunk has no effect. Quarto's Jupyter cache works only for whole documents and needs the jupyter-cache package, which is not part of the course environment.
+
+The safer pattern in both languages: download once in a separate script, save the data to `data/` as in [exercise 3](../exercises/financial_data.qmd), and read the file in your report. Reading a parquet file takes a second. If you do cache, delete the `_cache` folder and render once more before you hand in.
+
+::: {.callout-note title="Task 8 (12 min): break it on purpose"}
+1. **Console-only object (4 min).** In the Console, run `my_number <- 42` (R) or `my_number = 42` (Python). Add the sentence "My number is `` `{r} my_number` ``." (Python: `` `{python} my_number` ``) to your file and render. Read the error, then delete the sentence.
+2. **Stale cache (5 min).** R: add `#| cache: true` to the download chunk and render. Change `end_date` in the setup chunk to `"2020-12-31"` and render again: the sample sentence still ends in 2025. Delete `quarto-practice/stock-report_cache/`, render, then set `end_date` back. Python: add `#| cache: true` to the download chunk and render twice; the second render takes as long as the first, because nothing is cached. Remove the option.
+3. **Reviewer render (3 min).** Restart R or Python, run the Terminal command above, and compare the new PDF with the one from Preview.
+:::
+
+**Checkpoint.** You have seen both failure modes, no `_cache` folder is left, and the Terminal render gives the same PDF as Preview.
+
+::: {.callout-tip collapse="true" title="Self-check: your teammate's render stops because it cannot find C:/Users/anna/Desktop/data/crsp_monthly.parquet. What is wrong?"}
+The code uses an absolute path that exists only on Anna's laptop. Use the relative path `../data/crsp_monthly.parquet`, and keep the same folder structure, the course repository with its `data/` folder, on every computer.
+:::
+
+::: {.callout-tip collapse="true" title="Self-check: why is today's date as end_date wrong in a hand-in, but fine for the trading game?"}
+A hand-in must give your reviewer the same numbers you describe, so the sample has to be fixed. In the trading game you want the latest prices every day, so the end date moves on purpose. Reproducible means: same code, same data, same results.
+:::
+
+## 9. Use an AI assistant, then verify (15 min) {#ai}
+
+**Goal:** let an assistant draft Quarto code, and catch its typical mistakes before your reviewer does.
+
+AI assistants are allowed and expected in this course (see the [Positron Assistant guide](positron-ai-assistant.qmd)). They write Quarto syntax quickly, but they often mix in old or wrong details: R Markdown syntax, pandas, `%>%`, outdated tidyfinance calls, typed numbers and invented references. You hand in the result, so you answer for every line.
+
+::: {.callout-note title="Task 9a (7 min): spot the bugs"}
+You asked an assistant: "Add a table with annualized summary statistics to my report, with a caption, and refer to it in the text." Its answer is below. The code runs, and the PDF looks fine at first sight. Find at least six problems before you open the answer.
+:::
+
+::: {.panel-tabset group="language"}
+## R
+
+````markdown
+```{{r}}
+#| label: summary-table
+#| fig.cap: "Summary statistics"
+library(dplyr)
+
+prices <- download_data(type = "stock_prices", symbols = c("AAPL", "JPM", "XOM"),
+                        start_date = "2015-01-01")
+
+summary_stats <- prices %>%
+  group_by(symbol) %>%
+  mutate(ret = adjusted_close / lag(adjusted_close) - 1) %>%
+  summarize(mean_return = mean(ret, na.rm = TRUE) * 252,
+            volatility = sd(ret, na.rm = TRUE) * 252)
+
+summary_stats
+```
+
+As @tbl-summary shows, AAPL has the highest Sharpe ratio (0.91).
+````
+
+## Python
+
+````markdown
+```{{python}}
+#| label: summary-table
+import pandas as pd
+
+prices = tf.download_data(domain="stock_prices", symbols=["AAPL", "JPM", "XOM"],
+                          start_date="2015-01-01")
+prices = prices.to_pandas()
+prices["ret"] = prices.groupby("symbol")["adjusted_close"].pct_change()
+summary_stats = prices.groupby("symbol")["ret"].agg(["mean", "std"]) * 252
+summary_stats
+```
+
+As @tbl-summary shows, AAPL has the highest Sharpe ratio (0.91).
+````
+
+:::
+
+::: {.callout-tip collapse="true" title="Answer: the problems"}
+::: {.panel-tabset group="language"}
+## R
+
+1. It downloads the data a second time, with typed tickers, instead of using `returns` and `symbols` from the earlier chunks.
+2. `type = "stock_prices"` is the old tidyfinance name; it still works but warns. Use `"Stock Prices"`.
+3. There is no `end_date`, so the sample depends on the day you render.
+4. `library(dplyr)` belongs in the setup chunk; here it adds nothing, because the tidyverse already loads dplyr.
+5. `%>%` instead of the native pipe `|>` that the rest of the file uses.
+6. `sd(ret) * 252` instead of `sd(ret) * sqrt(252)`, and `252` is typed instead of `trading_days_per_year`.
+7. The table has no Sharpe ratio, yet the text reports one, and "AAPL" and "0.91" are typed by hand.
+8. The label `summary-table` lacks the `tbl-` prefix, so `@tbl-summary` prints as `?@tbl-summary`. `fig.cap` is R Markdown syntax, and for figures; tables use `tbl-cap`.
+9. The raw tibble has no formatting and no caption. Use gt.
+
+## Python
+
+1. pandas (`import pandas`, `.to_pandas()`): the course uses polars only.
+2. It downloads the data a second time, with typed tickers, instead of using `returns` and `symbols` from the earlier chunks.
+3. `domain="stock_prices"` is the old tidyfinance name; use `"Stock Prices"`.
+4. There is no `end_date`, so the sample depends on the day you render.
+5. Multiplying both columns by 252 annualizes the mean correctly, but not the standard deviation, which needs `trading_days_per_year**0.5`. And `252` is typed instead of `trading_days_per_year`.
+6. The table has no Sharpe ratio, yet the text reports one, and "AAPL" and "0.91" are typed by hand.
+7. The label `summary-table` lacks the `tbl-` prefix and there is no `tbl-cap`, so `@tbl-summary` prints as `?@tbl-summary`.
+8. The raw data frame has no formatting and no caption. Use great_tables with `as_latex()` for PDF.
+
+:::
+:::
+
+::: {.callout-note title="Task 9b (8 min): prompt, then verify"}
+Open Positron Assistant, add `stock-report.qmd` as context, and send this prompt (keep the part for your language):
+
+> In stock-report.qmd, add a table with the correlation matrix of the daily returns in `returns`. Use the tidyverse with the native pipe and gt (R) / polars and great_tables (Python). Give the chunk the label tbl-correlations and a caption, and refer to the table in the text. Do not type numbers into the text; use inline code.
+
+Before you accept the answer, check it:
+
+- [ ] It renders from the Terminal after a restart, with no warnings about cross-references or citations.
+- [ ] It uses the course tools: tidyverse with `|>` in R, polars and no pandas in Python, and the objects that already exist (`returns`, `symbols`) instead of a second download.
+- [ ] Every number in the text is inline code and sensibly rounded.
+- [ ] The label starts with `tbl-`, the caption explains the table on its own, and the text refers to `@tbl-correlations`.
+- [ ] The finance is right: correlations of returns, not prices, over the sample from the setup chunk.
+- [ ] You can explain each line. If you can't, ask the assistant to explain it, then check the explanation in the package documentation.
+:::
+
+**Checkpoint.** Your PDF has a Table 2 with the correlation matrix, referenced in the text, and you have a short list of what you had to fix.
+
+::: {.callout-tip collapse="true" title="Self-check: the assistant computes correlations of adjusted prices instead of returns. Why does that matter?"}
+Prices trend, so two stocks that both rose over the sample show a price correlation close to one, even if their daily moves are unrelated. Diversification depends on how returns move together, day by day. Correlations of price levels are a classic spurious result.
+:::
+
+## 10. From practice report to assignment hand-in (10 min) {#template}
+
+**Goal:** render the official template and know what its settings do.
+
+The course repository has two templates, `mandatory-assignments/MA_R_template.qmd` and `mandatory-assignments/MA_python_template.qmd`. Their header sets up the hand-in format:
+
+```yaml
+format:
+  pdf:
+    number-sections: true
+    colorlinks: true
+    geometry:
+      - top=20mm
+      - left=20mm
+      - bottom=20mm
+      - right=20mm
+    bibliography: references.bib
+    cite-method: natbib
+    biblio-style: apalike
+    lang: en
+    fontsize: 12pt
+    highlight-style: github-light
+```
+
+| Setting | What it does |
+|---|---|
+| `fontsize: 12pt` | The required font size. Keep it. |
+| `geometry` | Margins of 20 mm on all sides. |
+| `number-sections: true` | Numbered sections; needed for `@sec-` references. |
+| `colorlinks: true` | Colored links, citations and cross-references. |
+| `cite-method: natbib`, `biblio-style: apalike` | LaTeX formats citations and the reference list in author-year style. You still cite with `[@key]`. |
+| `lang: en` | English hyphenation and labels such as "Figure". |
+| `highlight-style: github-light` | Colors for the code you show. |
+
+The rules for every hand-in: one `.qmd` file and one `.pdf` rendered from it, 12 pt, at most 7 pages including figures, tables and appendices, in English.
+
+::: {.callout-note title="Task 10 (8 min)"}
+1. Render the unchanged template for your language and compare it with the PDF next to it. If it renders, your setup is ready for the assignments.
+2. Copy the `format:` block of the template into your `stock-report.qmd`, keep your title and author, and render again.
+3. Check the page count in the PDF viewer.
+:::
+
+**Checkpoint.** The template renders, and your report renders with the hand-in settings on about two pages.
+
+For the assignments, work in your group's repository and start from a copy of the template (see [collaboration with Git and GitHub](github-collaboration.qmd)).
+
+## Troubleshooting {#troubleshooting}
+
+Read the render output from the top: the first error is usually the real one. Quarto renders in two stages. First knitr (R) or Jupyter (Python) runs your code and writes Markdown; then pandoc and LaTeX turn it into a PDF. The message tells you which stage failed: an R or Python error means your code, a LaTeX error means the text or the math. For R errors, a line such as `Quitting from stock-report.qmd:45-52` gives the lines of the chunk that failed.
+
+![From .qmd through knitr or Jupyter to Markdown, which pandoc converts into HTML, PDF, Word and other formats. Artwork by [Allison Horst](https://allisonhorst.com).](https://cdn.myportfolio.com/45214904-6a61-4e23-98d6-b140f8654a40/b5217f2a-f129-4bf9-90dc-c5b9783d0ea8_rw_3840.png?h=a41d29d8ce363dbc153f3bcc1abe085a)
+
+| What you see | Why | What to do |
+|---|---|---|
+| `No TeX installation was detected` | TinyTeX is missing. | Run `quarto install tinytex` in the Terminal, then restart Positron. |
+| `Unable to locate an installed version of R` | Quarto does not find the course's R. | Select R 4.6.1 as interpreter. In the Terminal, run `source .uvr/activate` before `quarto render`. |
+| `.uvr/activate: No such file or directory` | uvr has not written the activation script yet. | Run `uvr activate --write-shim` once, in the course repository. |
+| `there is no package called 'tidyfinance'` | Quarto uses an R without the course packages, for example because the file is outside the course repository. | Keep the file inside the course repository, run `uvr sync`, and render from the Terminal after `source .uvr/activate`. |
+| `ModuleNotFoundError: No module named 'polars'` | Quarto uses a Python without the course packages. | Select the course repository's `.venv` as interpreter, or render with `uv run quarto render`. |
+| `object 'x' not found` or `NameError: name 'x' is not defined` | `x` exists only in your Console, or a later chunk creates it. | Create `x` in a chunk above the place where you use it. |
+| `?@fig-growth` in the PDF, `Unable to resolve crossref` in the output | The label is missing, misspelled or lacks the `fig-` or `tbl-` prefix. | Make the label and the reference identical. |
+| **(Sharpe1966?)** in the PDF, `Citeproc: citation ... not found` | The key is not in the `.bib` file (keys are case-sensitive), or `bibliography` is missing. | Fix the key or the header. With the template's natbib setting, a missing key shows as (?). |
+| `np.float64(0.776)`, `datetime.date(2015, 1, 5)` or 16 digits in the text | Inline Python shows the raw value. | Format with an f-string, and dates with `str()`. |
+| `YAMLException` | A typo in the header. | Check the marked line and the one above: space after colons, spaces instead of tabs, consistent indentation. |
+| A LaTeX error starting with `!`, e.g. `! Undefined control sequence` | Usually a typo in math, such as a missing `\` or `}`. | Check the equation you edited last. `keep-tex: true` under `format: pdf:` keeps the `.tex` file for a closer look. |
+| Package messages or warnings in the PDF | They are not hidden. | Add `warning: false` (and `message: false` in R) under `execute:`. |
+| The PDF does not change | The last render failed, so the Viewer still shows the old PDF. | Read the render output in the Terminal pane. |
+| Every render takes minutes | The data are downloaded at every render. | Save the data to `data/` once and read the file in the report. |
+| More than 7 pages | Large figures, long code, raw tables. | Use a smaller `fig-height`, show code only where the assignment asks for it, and remember that appendices count. |
+
+Still stuck? Post the full error message and the chunk that causes it on the Absalon discussion board.
+
+## Final challenge: make it yours, check it like a hand-in (30 min) {#final-challenge}
+
+1. Choose three other stocks and your own sample period, with fixed dates. Update the introduction.
+2. Add one element on your own, for example a histogram of daily returns with a line at the 5% quantile (as in the [introduction exercises](../exercises/introduction.qmd)), or the correlation table from Task 9b.
+3. Go through the checklist below as if you were your own peer reviewer.
+
+**Files and rendering**
+
+- [ ] One `.qmd` file and one `.pdf`, and the PDF comes from exactly this `.qmd`.
+- [ ] The file renders from the Terminal after a restart, without errors and without warnings about cross-references or citations.
+- [ ] No `_cache` folder is needed: you deleted it and rendered once more.
+
+**Code**
+
+- [ ] All packages load in the setup chunk at the top; no `install.packages()`, `pip install` or `uv add` in the file.
+- [ ] Tickers, dates and other constants are defined once, in the setup chunk; `start_date` and `end_date` are both fixed.
+- [ ] Paths are relative, and a seed is set wherever randomness enters.
+- [ ] The code has comments that explain the purpose of each step, in English.
+
+**Report**
+
+- [ ] Every number in the text comes from inline code and is sensibly rounded.
+- [ ] Every figure and table has a label, a caption that explains it without the code, and a reference in the text.
+- [ ] Equations you refer to are numbered.
+- [ ] Every reference comes from the `.bib` file, and you checked it against its DOI.
+- [ ] 12 pt and at most 7 pages, including figures, tables and appendices.
+
+**Your responsibility**
+
+- [ ] You can explain every line, including the ones an AI assistant wrote.
+- [ ] You checked the report against the [assignment quality criteria](assignment-quality-criteria.qmd).
+
+**Optional peer check (15 min).** Swap `.qmd` files with a fellow student. Render each other's file in your own course repository and give three pieces of feedback based on the quality criteria. Peer review of the mandatory assignments works the same way.
+
+::: {.callout-tip collapse="true" title="Reference solution: stock-report.qmd after Tasks 1 to 8"}
+Your text will differ; your results should not. The same files are in the course repository, in `quarto-practice/solution/` (`stock-report-r.qmd`, `stock-report-python.qmd`, and `references.bib`): fetch the latest version of the course repository and compare your file with the solution side by side in Positron. The `references.bib` file below the code sits next to the `.qmd`.
+
+::: {.panel-tabset group="language"}
+## R
+
+````{.markdown filename="quarto-practice/stock-report.qmd"}
+---
+title: "Risk and return of three US stocks"
+author: "Your Name"
+date: today
+format:
+  pdf:
+    number-sections: true
+    fontsize: 12pt
+    geometry:
+      - margin=20mm
+execute:
+  echo: false
+  warning: false
+  message: false
+bibliography: references.bib
+---
+
+```{{r}}
+#| label: setup
+# Packages
+library(tidyverse)
+library(tidyfinance)
+library(gt)
+
+# Sample and constants: change them here, nowhere else
+symbols <- c("AAPL", "JPM", "XOM")
+start_date <- "2015-01-01"
+end_date <- "2025-12-31"
+trading_days_per_year <- 252
+```
+
+## Introduction
+
+Mean returns and volatilities are the two inputs of mean-variance analysis [@Markowitz1952]. This report compares them for `{r} length(symbols)` large US stocks: Apple (AAPL), JPMorgan Chase (JPM) and ExxonMobil (XOM).^[Daily prices from Yahoo Finance, downloaded with the tidyfinance package.]
+
+## Data {#sec-data}
+
+```{{r}}
+#| label: download
+#| echo: true
+# Daily prices from Yahoo Finance, adjusted for splits and dividends
+prices <- download_data(
+  "Stock Prices",
+  symbols = symbols,
+  start_date = start_date,
+  end_date = end_date
+)
+
+# Daily net returns per stock
+returns <- prices |>
+  arrange(symbol, date) |>
+  group_by(symbol) |>
+  mutate(ret = adjusted_close / lag(adjusted_close) - 1) |>
+  ungroup() |>
+  drop_na(ret)
+```
+
+```{{r}}
+#| label: sample-info
+n_days <- n_distinct(returns$date)
+first_day <- min(returns$date)
+last_day <- max(returns$date)
+```
+
+The sample contains `{r} n_days` trading days from `{r} first_day` to `{r} last_day`. The daily net return of stock $i$ on day $t$ is $r_{i,t} = p_{i,t} / p_{i,t-1} - 1$, where $p_{i,t}$ is the adjusted closing price.
+
+## Results
+
+```{{r}}
+#| label: fig-growth
+#| fig-cap: "Growth of one dollar invested in each stock at the start of the sample, based on daily adjusted closing prices. Log scale."
+#| fig-width: 6
+#| fig-height: 3.5
+returns |>
+  group_by(symbol) |>
+  mutate(wealth = cumprod(1 + ret)) |>
+  ggplot(aes(x = date, y = wealth, color = symbol)) +
+  geom_line() +
+  scale_y_log10() +
+  labs(x = NULL, y = "Value of $1 (log scale)", color = NULL) +
+  theme_minimal()
+```
+
+```{{r}}
+#| label: summary-stats
+# Annualized moments and Sharpe ratio (risk-free rate set to zero)
+summary_stats <- returns |>
+  group_by(symbol) |>
+  summarize(
+    mean_return = mean(ret) * trading_days_per_year,
+    volatility = sd(ret) * sqrt(trading_days_per_year)
+  ) |>
+  mutate(sharpe_ratio = mean_return / volatility)
+
+best <- summary_stats |> slice_max(sharpe_ratio, n = 1)
+```
+
+@fig-growth shows how one dollar invested in each stock evolves over the sample. We measure risk-adjusted performance with the annualized Sharpe ratio [@Sharpe1966], setting the risk-free rate to zero:
+
+$$
+\text{SR}_i = \sqrt{252}\,\frac{\bar r_i}{s_i},
+$$ {#eq-sharpe}
+
+where $\bar r_i$ and $s_i$ are the mean and the standard deviation of the daily returns of stock $i$. @tbl-summary reports the results of @eq-sharpe together with the annualized mean return and volatility. `{r} best$symbol` has the highest Sharpe ratio (`{r} round(best$sharpe_ratio, 2)`), with an annualized volatility of `{r} scales::percent(best$volatility, accuracy = 0.1)`.
+
+```{{r}}
+#| label: tbl-summary
+#| tbl-cap: "Annualized mean return, volatility and Sharpe ratio, based on daily returns. The risk-free rate is set to zero."
+summary_stats |>
+  gt() |>
+  cols_label(
+    symbol = "Stock",
+    mean_return = "Mean return",
+    volatility = "Volatility",
+    sharpe_ratio = "Sharpe ratio"
+  ) |>
+  fmt_percent(columns = c(mean_return, volatility), decimals = 1) |>
+  fmt_number(columns = sharpe_ratio, decimals = 2)
+```
+
+## References {.unnumbered}
+
+::: {#refs}
+:::
+````
+
+## Python
+
+````{.markdown filename="quarto-practice/stock-report.qmd"}
+---
+title: "Risk and return of three US stocks"
+author: "Your Name"
+date: today
+format:
+  pdf:
+    number-sections: true
+    fontsize: 12pt
+    geometry:
+      - margin=20mm
+execute:
+  echo: false
+  warning: false
+bibliography: references.bib
+---
+
+```{{python}}
+#| label: setup
+# Packages
+import polars as pl
+import tidyfinance as tf
+from great_tables import GT
+from plotnine import aes, geom_line, ggplot, labs, scale_y_log10, theme_minimal
+
+# Sample and constants: change them here, nowhere else
+symbols = ["AAPL", "JPM", "XOM"]
+start_date = "2015-01-01"
+end_date = "2025-12-31"
+trading_days_per_year = 252
+```
+
+## Introduction
+
+Mean returns and volatilities are the two inputs of mean-variance analysis [@Markowitz1952]. This report compares them for `{python} len(symbols)` large US stocks: Apple (AAPL), JPMorgan Chase (JPM) and ExxonMobil (XOM).^[Daily prices from Yahoo Finance, downloaded with the tidyfinance package.]
+
+## Data {#sec-data}
+
+```{{python}}
+#| label: download
+#| echo: true
+# Daily prices from Yahoo Finance, adjusted for splits and dividends
+prices = tf.download_data(
+    domain="Stock Prices",
+    symbols=symbols,
+    start_date=start_date,
+    end_date=end_date,
+)
+
+# Daily net returns per stock
+returns = (
+    prices
+    .sort("symbol", "date")
+    .with_columns(ret=pl.col("adjusted_close").pct_change().over("symbol"))
+    .drop_nulls("ret")
+)
+```
+
+```{{python}}
+#| label: sample-info
+n_days = returns["date"].n_unique()
+first_day = str(returns["date"].min())
+last_day = str(returns["date"].max())
+```
+
+The sample contains `{python} n_days` trading days from `{python} first_day` to `{python} last_day`. The daily net return of stock $i$ on day $t$ is $r_{i,t} = p_{i,t} / p_{i,t-1} - 1$, where $p_{i,t}$ is the adjusted closing price.
+
+## Results
+
+```{{python}}
+#| label: fig-growth
+#| fig-cap: "Growth of one dollar invested in each stock at the start of the sample, based on daily adjusted closing prices. Log scale."
+#| fig-width: 6
+#| fig-height: 3.5
+growth = returns.with_columns(
+    wealth=(1 + pl.col("ret")).cum_prod().over("symbol")
+)
+
+(
+    ggplot(growth, aes(x="date", y="wealth", color="symbol"))
+    + geom_line()
+    + scale_y_log10()
+    + labs(x="", y="Value of $1 (log scale)", color="")
+    + theme_minimal()
+)
+```
+
+```{{python}}
+#| label: summary-stats
+# Annualized moments and Sharpe ratio (risk-free rate set to zero)
+summary_stats = (
+    returns
+    .group_by("symbol")
+    .agg(
+        mean_return=pl.col("ret").mean() * trading_days_per_year,
+        volatility=pl.col("ret").std() * trading_days_per_year**0.5,
+    )
+    .with_columns(sharpe_ratio=pl.col("mean_return") / pl.col("volatility"))
+    .sort("symbol")
+)
+
+best = summary_stats.sort("sharpe_ratio", descending=True).row(0, named=True)
+```
+
+@fig-growth shows how one dollar invested in each stock evolves over the sample. We measure risk-adjusted performance with the annualized Sharpe ratio [@Sharpe1966], setting the risk-free rate to zero:
+
+$$
+\text{SR}_i = \sqrt{252}\,\frac{\bar r_i}{s_i},
+$$ {#eq-sharpe}
+
+where $\bar r_i$ and $s_i$ are the mean and the standard deviation of the daily returns of stock $i$. @tbl-summary reports the results of @eq-sharpe together with the annualized mean return and volatility. `{python} best["symbol"]` has the highest Sharpe ratio (`{python} f"{best['sharpe_ratio']:.2f}"`), with an annualized volatility of `{python} f"{best['volatility']:.1%}"`.
+
+```{{python}}
+#| label: tbl-summary
+#| tbl-cap: "Annualized mean return, volatility and Sharpe ratio, based on daily returns. The risk-free rate is set to zero."
+#| output: asis
+table = (
+    GT(summary_stats)
+    .cols_label(
+        symbol="Stock",
+        mean_return="Mean return",
+        volatility="Volatility",
+        sharpe_ratio="Sharpe ratio",
+    )
+    .fmt_percent(columns=["mean_return", "volatility"], decimals=1)
+    .fmt_number(columns="sharpe_ratio", decimals=2)
+)
+print(table.as_latex())
+```
+
+## References {.unnumbered}
+
+::: {#refs}
+:::
+````
+
+:::
+
+```{.bibtex filename="quarto-practice/references.bib"}
+@article{Markowitz1952,
+  title   = {Portfolio Selection},
+  author  = {Markowitz, Harry},
+  year    = {1952},
+  journal = {The Journal of Finance},
+  volume  = {7},
+  number  = {1},
+  pages   = {77--91},
+  doi     = {10.1111/j.1540-6261.1952.tb01525.x}
+}
+
+@article{Sharpe1966,
+  title   = {Mutual Fund Performance},
+  author  = {Sharpe, William F.},
+  year    = {1966},
+  journal = {The Journal of Business},
+  volume  = {39},
+  number  = {S1},
+  pages   = {119--138},
+  doi     = {10.1086/294846}
+}
+```
+:::
+
+## Further reading
+
+- The [Quarto guide](https://quarto.org/docs/guide/), in particular [Markdown basics](https://quarto.org/docs/authoring/markdown-basics.html), [cross-references](https://quarto.org/docs/authoring/cross-references.html), [citations](https://quarto.org/docs/authoring/citations.html), [inline code](https://quarto.org/docs/computations/inline-code.html), [execution options](https://quarto.org/docs/computations/execution-options.html), [caching](https://quarto.org/docs/computations/caching.html) and [PDF basics](https://quarto.org/docs/output-formats/pdf-basics.html).
+- [Quarto in Positron](https://quarto.org/docs/tools/positron/): preview, cell commands and the visual editor.
+- The table packages: [gt](https://gt.rstudio.com/) for R and [great_tables](https://posit-dev.github.io/great-tables/) for Python.
+- [Tidy Finance](https://www.tidy-finance.org), the book this course follows, written entirely in Quarto.
+- On this site: [technical prerequisites](../exercises/technical-prerequisites.qmd), the [Positron Assistant guide](positron-ai-assistant.qmd), the [assignment quality criteria](assignment-quality-criteria.qmd) and [collaboration with Git and GitHub](github-collaboration.qmd).
