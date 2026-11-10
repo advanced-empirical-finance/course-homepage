@@ -84,13 +84,16 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
 
     Mark everything and press `Ctrl + Enter` to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error, select the course's Python environment first: click on the interpreter icon on the top right and choose the one in the course repository's `.venv`.
 
-## Optional: Quarto and PDF support
+## PDF output with TinyTeX (required)
 
-Positron already includes Quarto, so you do not need to install it separately unless you want a standalone installation.
+You hand in every mandatory assignment as a PDF that Quarto renders from your `.qmd` file. Quarto comes with Positron, but PDF output also needs LaTeX. Install TinyTeX, a small LaTeX distribution, once:
 
-1. Install the newest version of [Quarto](https://quarto.org/docs/download/). (Quarto comes prebundled with Positron, so you will have access to quarto once you have followed the previous step)
-1. In order to create PDFs you will need to install a recent distribution of LaTeX. I recommend to install `TinyTeX`, a lightweight, cross-platform, portable, and easy-to-maintain LaTeX distribution, by running this command in Positron's Terminal:
+1. In Positron's Terminal, run:
 
    ```sh
-   quarto install tool tinytex
+   quarto install tinytex
    ```
+
+1. Check the installation with `quarto check`. Under "Checking LaTeX", the output should name TinyTeX. If it says `Tex: (not detected)`, run the install command again, then restart Positron.
+
+1. Test it: open `mandatory-assignments/MA_R_template.qmd` (or `MA_python_template.qmd`) from the course repository and click **Preview**. Positron shows the PDF in the Viewer.
