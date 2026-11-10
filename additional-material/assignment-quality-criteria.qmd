@@ -178,10 +178,10 @@ Filter by category and open a criterion for a problematic and a better example.
   "category": "Reproducibility",
   "sub": "Environment",
   "criterion": "Pinned software",
-  "description": "The document runs with the course environment (uvr.lock for R, uv.lock for Python). Packages beyond it are added with uvr add or uv add and listed with their versions in the README block. No install.packages() or pip install inside the document.",
+  "description": "The document runs with the course environment alone (uvr.lock for R, uv.lock for Python). No install.packages() or pip install inside the document.",
   "lang": "R",
   "bad": "install.packages(\"sandwich\")\nlibrary(sandwich)",
-  "good": "# README block: sandwich 3.1-1 added to the course environment (uvr add sandwich)\nlibrary(sandwich)"
+  "good": "library(tidyverse)\nlibrary(tidyfinance)  # both in the course environment"
  },
  {
   "category": "Reproducibility",
@@ -548,47 +548,21 @@ Filter by category and open a criterion for a problematic and a better example.
 
 ## A roadmap to a reproducible submission
 
-The test is simple. Someone else, a peer reviewer, a teaching assistant, or you a year from now, takes your submission, sets up the course environment, and gets the same document. Journals now demand exactly this: the [Review of Financial Studies](https://review-of-financial-studies.github.io/readme.html) checks every published paper against a detailed README template. An assignment needs less, but the logic is the same, and eight steps get you there.
+The test is simple. Someone else, a peer reviewer, a teaching assistant, or you a year from now, takes your submission, sets up the course environment, and gets the same document. Journals now demand exactly this: the [Review of Financial Studies](https://review-of-financial-studies.github.io/readme.html) checks every published paper against a detailed README template. An assignment needs much less: the course environment and the data are fixed, so your document only has to run on its own. Seven steps get you there.
 
 | Step | What it means for your submission |
 |---|---|
 | **1. Organize** | One project folder, ideally a Git repository, with the course files at its root (`uvr.toml`, `uvr.lock`, `pyproject.toml`, `uv.lock`, `_quarto.yml`) and data in `data/`. All paths are relative to that folder. |
-| **2. Pin the software** | Use the course environment: `uvr sync` (R) and `uv sync` (Python) install exactly the versions in the lockfiles. Add any extra package with `uvr add` or `uv add` and list it with its version in the README block. No installation commands in the document. |
-| **3. Document the data** | For every data source, state what it is, where it comes from, how you access it (a `tidyfinance` download, a file from Absalon), the sample period, and whether it may be shared. Licensed data (CRSP, Compustat) are never committed, uploaded, or shared. |
+| **2. Pin the software** | Use the course environment and nothing else: `uvr sync` (R) and `uv sync` (Python) install exactly the versions in the lockfiles. No installation commands in the document. |
+| **3. Document the data** | In the report, state for every data source what it is, where it comes from, how you access it (a `tidyfinance` download, a file from Absalon), the sample period, and whether it may be shared. Licensed data (CRSP, Compustat) are never committed, uploaded, or shared. |
 | **4. Freeze the inputs** | Fixed start and end dates in every data request. Raw downloads stored once in `data/` and read from there. A seed for everything random. |
-| **5. Run from scratch** | One command produces the document: `quarto render` (or Preview in Positron) in a fresh session, after deleting caches. State the runtime and, if it is long, which step takes the time. |
+| **5. Run from scratch** | One command produces the document: `quarto render` (or Preview in Positron) in a fresh session, after deleting caches. |
 | **6. Trace every result** | Every table and figure comes from a labeled chunk, every number in the text from inline code. Nothing is copied by hand from the console. |
-| **7. Write the README block** | A short comment block at the top of your `.qmd`: what the document produces, how to run it, the data, the software, the runtime (template below). |
-| **8. Verify on another machine** | We recommend this test before you submit: a teammate takes the submitted files to their own computer, runs `uvr sync` or `uv sync`, fills `data/`, and renders. Compare the key numbers. Your submission is reproducible when it works there, not when it works on your machine. |
-
-### The README block
-
-Put this comment at the top of your `.qmd`, right after the YAML header. It does not appear in the PDF, so it costs no page, but it tells every reader how to reproduce your results.
-
-```markdown
-<!--
-README
-Mandatory Assignment 2, group 14: Anna Jensen, Ben Olsen, Carla Diaz
-
-What it produces: every table and figure in the report, from the raw data.
-How to run: in the course repository, run uvr sync (or uv sync for Python),
-  put the Absalon file stock_characteristics_monthly.parquet into data/,
-  then quarto render MA_2_group_14.qmd.
-Data:
-  - stock_characteristics_monthly.parquet: Absalon, licensed, not shared
-  - Fama-French 3 factors, monthly, 1957-2021: tidyfinance download,
-    stored in data/factors_ff3_monthly.parquet on first render
-Software: course environment of 2 February 2027 (uvr.lock, uv.lock);
-  added: ranger 0.17.0 (uvr add ranger)
-Randomness: one seed, set in the setup chunk.
-Runtime: about 15 minutes on a laptop with 8 cores and 16 GB RAM;
-  the random forest takes 12 of them.
--->
-```
+| **7. Verify on another machine** | We recommend this test before you submit: a teammate takes the submitted files to their own computer, runs `uvr sync` or `uv sync`, fills `data/`, and renders. Compare the key numbers. Your submission is reproducible when it works there, not when it works on your machine. |
 
 ## Let AI review your submission
 
-AI is also a demanding reviewer. Paste the prompt below into the assistant of your choice, together with your `.qmd` and the rendered PDF. Like the Review of Financial Studies, which offers the same kind of prompt for its README checks, we add a warning: an AI reviewer rarely says that a document is fine as it is, and it suggests changes whether or not they are needed. Use your judgment, and do not let it rewrite your submission. An AI review does not replace step 8: render your submission yourself on a second machine.
+AI is also a demanding reviewer. Paste the prompt below into the assistant of your choice, together with your `.qmd` and the rendered PDF. Like the Review of Financial Studies, which offers the same kind of prompt for its replication checks, we add a warning: an AI reviewer rarely says that a document is fine as it is, and it suggests changes whether or not they are needed. Use your judgment, and do not let it rewrite your submission. An AI review does not replace step 7: render your submission yourself on a second machine.
 
 ::: {.callout-note collapse="true"}
 ## Review prompt
