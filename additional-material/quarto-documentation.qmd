@@ -876,7 +876,7 @@ A path like `C:/Users/anna/Desktop/data/crsp_monthly.parquet` exists only on Ann
 
 **4. Set seeds.** Whenever randomness enters (simulations, cross-validation folds, random forests), set a seed once in the setup chunk: `set.seed(2027)` in R; in Python, `rng = np.random.default_rng(2027)` and `random_state=2027` in scikit-learn. Without a seed, each render gives slightly different results from the ones you describe.
 
-**5. Keep the environment.** The course repository pins every package version in `uvr.lock` and `uv.lock`. Load packages in the setup chunk, and never put `install.packages()`, `pip install` or `uv add` into the document. If you add a package, commit the lock files (see [collaboration with Git and GitHub](github-collaboration.qmd)).
+**5. Keep the environment.** The course repository pins every package version in `uvr.lock` and `uv.lock`, and everything you need for the assignments is in it. Load packages in the setup chunk, and never put `install.packages()`, `pip install` or `uv add` into the document.
 
 ### Caching and its risks
 
