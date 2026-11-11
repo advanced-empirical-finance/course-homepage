@@ -1,36 +1,53 @@
 ---
-title: "Advanced Empirical Finance"
-subtitle: "Topics and Data Science"
+pagetitle: "Advanced Empirical Finance: Topics and Data Science"
 toc: false
 ---
 
-The guiding question of this course: **(How) can state-of-the-art methods improve financial decision-making?** The lecture covers the theory and the recent papers — but most of your effort should go into actually *doing* empirical work.
-
 ```{=html}
-<div class="grid home-cards">
-  <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="exercises/technical-prerequisites.html">
-    <span class="home-card-title">🚀 Start here</span>
-    <span class="home-card-text">Get R, Python &amp; Positron ready before the first lecture (Exercise&nbsp;0).</span>
+<section class="home-hero">
+  <p class="home-overline">University of Copenhagen · Department of Economics</p>
+  <h1 class="home-title">Advanced Empirical Finance</h1>
+  <p class="home-subtitle">Topics and Data Science</p>
+  <p class="home-question">(How) can state-of-the-art methods improve financial decision-making?</p>
+</section>
+
+<nav class="home-index" aria-label="Course parts">
+  <a class="home-entry" href="exercises/technical-prerequisites.html">
+    <span class="home-entry-name">Start here</span>
+    <span class="home-entry-meta">Setup of R, Python, Positron, and Quarto</span>
+    <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
-  <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="slides-index.html">
-    <span class="home-card-title">🗓️ Lecture plan</span>
-    <span class="home-card-text">Week-by-week schedule with readings and assignment deadlines.</span>
+  <a class="home-entry" href="slides-index.html">
+    <span class="home-entry-name">Lecture plan</span>
+    <span class="home-entry-meta">Dates, topics, and readings</span>
+    <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
-  <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="slides.html">
-    <span class="home-card-title">📊 Slides</span>
-    <span class="home-card-text">View and download every lecture deck, embedded on one page.</span>
+  <a class="home-entry" href="slides.html">
+    <span class="home-entry-name">Slides</span>
+    <span class="home-entry-meta">All lecture decks</span>
+    <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
-  <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="exercises/index.html">
-    <span class="home-card-title">✏️ Exercises</span>
-    <span class="home-card-text">Hands-on problem sets that build the skills the lectures introduce.</span>
+  <a class="home-entry" href="exercises/index.html">
+    <span class="home-entry-name">Exercises</span>
+    <span class="home-entry-meta">One page per week, in R and Python</span>
+    <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
-  <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="trading-game/index.html">
-    <span class="home-card-title">📈 Trading game</span>
-    <span class="home-card-text">Run a paper portfolio of US stocks from R or Python, with a team dashboard and leaderboard.</span>
+  <a class="home-entry" href="trading-game/index.html">
+    <span class="home-entry-name">Trading game</span>
+    <span class="home-entry-meta">Team portfolios, dashboard, and leaderboard</span>
+    <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
-  <a class="home-card g-col-12 g-col-md-6 g-col-lg-4" href="additional-material/index.html">
-    <span class="home-card-title">📚 More resources</span>
-    <span class="home-card-text">Guides on Quarto, Git, Positron AI, and machine-learning workflows.</span>
+  <a class="home-entry" href="additional-material/index.html">
+    <span class="home-entry-name">More resources</span>
+    <span class="home-entry-meta">Quarto, Git, Positron and AI, quality criteria</span>
+    <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
-</div>
+</nav>
+
+<dl class="home-facts">
+  <div><dt>Lecturer</dt><dd>Stefan Voigt</dd></div>
+  <div><dt>Languages</dt><dd>R and Python</dd></div>
+  <div><dt>Tools</dt><dd>Positron, Quarto, Git</dd></div>
+  <div><dt>Material</dt><dd><a href="https://github.com/advanced-empirical-finance">GitHub</a></dd></div>
+</dl>
 ```

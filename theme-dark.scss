@@ -1,0 +1,21 @@
+/*-- scss:defaults --*/
+// Dark version: near-black background, light grey text, and a lighter KU red
+// that keeps enough contrast on dark ground
+$primary: #e07a7e;
+$body-bg: #131518;
+$body-color: #d6d6d6;
+$link-color: #b0b0b0;
+$navbar-bg: #131518;
+$navbar-fg: #d6d6d6;
+$navbar-hl: #e07a7e;
+$dropdown-bg: #1b1e22;
+$dropdown-link-color: #d6d6d6;
+$dropdown-link-hover-bg: #24282d;
+$input-bg: #1b1e22;
+// Same navbar height as the light version (Darkly pads more)
+$navbar-padding-y: 0.5rem;
+
+/*-- scss:rules --*/
+.navbar {
+  border-bottom: 1px solid #262a2f;
+}

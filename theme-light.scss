@@ -1,0 +1,14 @@
+/*-- scss:defaults --*/
+// KU red for active links and focus states instead of Cosmo's blue
+$primary: #901A1E;
+$body-bg: #ffffff;
+$body-color: #3d3d3d;
+$link-color: #666666;
+$navbar-bg: #ffffff;
+$navbar-fg: #3d3d3d;
+$navbar-hl: #901A1E;
+
+/*-- scss:rules --*/
+.navbar {
+  border-bottom: 1px solid #ececec;
+}
