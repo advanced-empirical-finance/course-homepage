@@ -1,0 +1,13 @@
+---
+title: Implementable Portfolios
+---
+
+From return predictions to portfolios that can be traded: dynamic trading with transaction costs and Sharpe ratios after trading costs.
+
+## Dynamic trading with transaction costs {#dynamic-trading}
+
+::: {.callout-warning title="TBD"}
+Exercises to come on dynamic trading with transaction costs (Gârleanu and Pedersen, 2013) and Sharpe ratios after trading costs.
+:::
+
+<!-- No open question: students write an assignment in this week. -->

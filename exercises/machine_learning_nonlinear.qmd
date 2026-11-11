@@ -21,4 +21,14 @@ You will apply well-known methods such as random forests and neural networks to 
 - Evaluate the predictive performance of your competing model. Which model performed best in the test sample to predict option prices? 
 
 **Solutions:**
-All solutions are provided in the book chapter [Option pricing via machine learning (R version)](https://tidy-finance.org/r/option-pricing-via-machine-learning.html) or [Option pricing via machine learning (Python version)](https://tidy-finance.org/python/option-pricing-via-machine-learning.html)
+All solutions are provided in the book chapter [Option pricing via machine learning](https://www.tidy-finance.org/chapters/option-pricing-via-machine-learning.html).
+
+## Open question {#open-question}
+
+Can you beat the best model on the scoreboard of the lectures? Use any method from the course on the factor zoo, tuned with the estimation sample only, and compute the annualized Sharpe ratio of your SDF portfolio in the test sample.
+
+**Submit:** the Sharpe ratio in the test sample and your method in one line. The next lecture shows the scoreboard of the whole class.
+
+::: {.callout-warning title="TBD"}
+The submission link follows.
+:::

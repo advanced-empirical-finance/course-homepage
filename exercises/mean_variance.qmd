@@ -1,0 +1,46 @@
+---
+title: Mean-Variance Optimization
+---
+
+These exercises start with the portfolio choice problem of a mean-variance investor and then ask how much of the theory survives once the inputs are estimated.
+
+## Portfolio choice problems {#portfolio-choice-problems}
+
+**Exercises:**
+
+1. Compute *monthly* returns from all adjusted daily Dow Jones constituent prices. Hint: You can download the constituents of the Dow Jones 30 index from [this](https://www.ssga.com/us/en/institutional/etfs/library-content/products/fund-data/etfs/us/holdings-daily-us-en-dia.xlsx) homepage. 
+2. Compute the vector of historical average returns and the sample variance-covariance matrix.
+3. Compute the minimum variance portfolio weights and the portfolio volatility and average returns. 
+4. Visualize the mean-variance efficient frontier. For that, first, compute the efficient portfolio for an arbitrary risk-free rate (below the average return of the minimum variance portfolio). Then use the two-fund separation theorem to compute the location of a grid of combinations of the minimum variance portfolio and the efficient portfolio on the mean-volatility diagram which has (annualized) volatility on the $x$ axis and (annualized) expected returns on the $y$ axis. Indicate the location of the individual assets on the mean-volatility diagram as well.
+
+**Solutions:** All tasks are solved and described in detail in the book chapter [Modern portfolio theory](https://www.tidy-finance.org/chapters/modern-portfolio-theory.html).
+  
+## Equivalence between Certainty equivalent maximization and minimum variance optimization {#equivalence-between-certainty-equivalent-maximization-and-minimum-variance-optimization}
+
+In the lecture slides (Parameter uncertainty), I argue that an investor with a quadratic utility function with a certainty equivalent $$\max_w CE(w) = \omega'\mu - \frac{\gamma}{2} \omega'\Sigma \omega \text{ s.t. } \iota'\omega = 1$$
+faces an equivalent optimization problem to a framework where portfolio weights are chosen to minimize volatility given a pre-specified level or expected returns
+$$
+\min_w \omega'\Sigma \omega \text{ s.t. } \omega'\mu = \bar\mu \text{ and } \iota'\omega = 1
+$$
+
+Note the differences: In the first case, the investor has a (known) risk aversion $\gamma$ which determines her optimal balance between risk ($\omega'\Sigma\omega)$ and return ($\mu'\omega$). In the second case, the investor has a target return she wants to achieve while minimizing the volatility. Intuitively, both approaches are closely connected if we consider that the risk aversion $\gamma$ determines the desirable return $\bar\mu$. More risk-averse investors (higher $\gamma$) will choose a lower target return to keep their volatility level down. The efficient frontier then spans all possible portfolios depending on the risk aversion $\gamma$, starting from the minimum variance portfolio ($\gamma = \infty$). 
+
+**Exercises:** Proof that the optimal portfolio weights are equivalent in both cases. 
+
+**Solutions:** The proofs are provided in the [Proofs](https://www.tidy-finance.org/chapters/proofs.html) appendix of Tidy Finance.
+
+## Estimation uncertainty {#estimation-uncertainty}
+
+::: {.callout-warning title="TBD"}
+Exercises to come on the choice of the asset universe, resampled efficient frontiers, the failure of the plug-in portfolio in a simulation, and the $1/N$ benchmark (DeMiguel, Garlappi, and Uppal, 2009).
+:::
+
+## Open question {#open-question}
+
+How well does an estimated tangency portfolio do out of sample? Choose your own asset universe: 10 to 30 stocks from `crsp_monthly.parquet` with a return in every month from January 1990 to December 2009. Estimate the tangency portfolio with the monthly excess returns from 1990 to 1999. Then keep these weights fixed and compute the annualized Sharpe ratio of the portfolio twice: from 1990 to 1999, and from 2000 to 2009.
+
+**Submit:** the number of stocks and the two Sharpe ratios. The next lecture plots the results of the whole class.
+
+::: {.callout-warning title="TBD"}
+The submission link follows.
+:::

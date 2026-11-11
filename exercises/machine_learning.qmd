@@ -410,4 +410,14 @@ In this Chapter, you get to know `tidymodels` (R) and `scikit-learn` (Python), a
 -   Finally, write a function to parallelize the entire workflow. The function should split the data into a training and test set, create a cross-validation scheme, and tunes a lasso model for different penalty values. Finally, select the best model in terms of MSPE in the validation test set. Apply the function to every individual industry and illustrate for each industry which factor and macroeconomic variables are selected by the Lasso.
 :::
 
-**Solutions:** All solutions are provided in the book chapter *Factor selection via machine learning* ([R and Python](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html)).
+**Solutions:** All solutions are provided in the book chapter [Factor selection via machine learning](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html).
+
+## Open question {#open-question}
+
+The solution above chooses the Ridge penalty with one particular cross-validation. How much does the Sharpe ratio in the test sample depend on that choice? Choose your own validation scheme within the estimation sample: the number of folds, random or consecutive blocks of months, and the criterion, for instance the Sharpe ratio or the pricing error. Never touch the test sample.
+
+**Submit:** your scheme in one line, the chosen penalty, and the Sharpe ratio in the test sample. The next lecture shows your results next to the scoreboard of the lectures.
+
+::: {.callout-warning title="TBD"}
+The submission link follows.
+:::
