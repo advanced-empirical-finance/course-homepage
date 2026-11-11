@@ -2,9 +2,9 @@
 title: Exercises
 ---
 
-Each week has one exercise page with two parts:
+The exercises have two parts:
 
-- **Reproduce:** work through a chapter of [Tidy Finance](https://www.tidy-finance.org) or a paper, in R or Python. Try the tasks on your own before you read the solutions, which are in the book chapter or on the page.
+- **Reproduce:** work through a chapter of [Tidy Finance](https://www.tidy-finance.org) or a paper, in R or Python. Try the tasks on your own before you read the solutions, which are in the book chapter or right below the tasks.
 - **Open question:** a question without a fixed solution, close to the current lecture. You submit a figure or a number, and the next lecture discusses the results of the whole class.
 
 The exercise classes are open: bring your questions and discuss them with your peers and the TA. You can also post on Absalon or come to my office hours. Grolemund and Wickham's [R for Data Science](https://r4ds.hadley.nz/) is a good reference for the R basics.
