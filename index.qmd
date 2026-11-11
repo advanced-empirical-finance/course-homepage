@@ -28,7 +28,7 @@ toc: false
   </a>
   <a class="home-entry" href="exercises/index.html">
     <span class="home-entry-name">Exercises</span>
-    <span class="home-entry-meta">One page per week, in R and Python</span>
+    <span class="home-entry-meta">In R and Python</span>
     <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
   <a class="home-entry" href="trading-game/index.html">
