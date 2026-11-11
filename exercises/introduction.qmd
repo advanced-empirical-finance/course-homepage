@@ -1,5 +1,7 @@
 ---
 title: Introduction to Tidy Finance
+aliases:
+  - financial_data.html
 --- 
 
 The main aim of this chapter is to familiarize yourself with tidy coding principles. We start by downloading and visualizing stock data before we move to a simple portfolio choice problem. These examples introduce you to our approach of *Tidy Finance*.
@@ -25,6 +27,43 @@ As a next step, we generalize the code from before such that all the computation
 1. Ask yourself how the visualization could be improved by adding further information (e.g., highlighting days with extreme trading volume), improving axis labels, changing the style (colors, themes, etc.). Implement your ideas and create a final version of the plot. Make sure the plot is self-explanatory (e.g., contains captions, legends, an appropriate title, etc.). Upload your final plot as a `.jpg` file to the Absalon discussion board. 
 
 **Solutions:** All tasks are solved and described in detail in Tidy Finance with R in the Chapters [Scaling up the analysis](https://www.tidy-finance.org/r/introduction-to-tidy-finance.html#scaling-up-the-analysis) and [Other forms of data aggregation](https://www.tidy-finance.org/r/introduction-to-tidy-finance.html#other-forms-of-data-aggregation) and in Tidy Finance with Python in the Chapters [Scaling up the analysis](https://www.tidy-finance.org/python/introduction-to-tidy-finance.html#scaling-up-the-analysis) and [Other forms of data aggregation](https://www.tidy-finance.org/python/introduction-to-tidy-finance.html#other-forms-of-data-aggregation).
+
+## Accessing and managing financial data {#financial-data}
+
+**Exercises:**
+
+1. Read the book chapters [Accessing and managing financial data](https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html) and [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) entirely; both show the R and the Python code side by side. They describe almost every dataset that matters for research in empirical finance. Since CRSP's update in July 2022, monthly returns already include delisting returns, so you no longer need to adjust for delistings yourself; the second chapter explains the details.
+
+2. The `data` folder of your course repository already contains the public data of the first chapter, so everyone in the course works with the same numbers: the Fama-French three factors (`factors_ff3_monthly.parquet`), the ten industry portfolios (`industries_ff_monthly.parquet`), the macroeconomic predictors of Welch and Goyal (`macro_predictors.parquet`), and the consumer price index (`cpi_monthly.parquet`). Download the CRSP data, `crsp_monthly.parquet`, from Absalon and store it in the same folder under exactly this name. The CRSP data are licensed: Git ignores the file, so it never ends up on GitHub. Later in the course, `stock_characteristics_monthly.parquet` follows the same way.
+
+3. Almost all exercises from now on start by reading data from these files. This is all it takes, from a fresh R or Python session:
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: r-load-crsp-monthly
+#| eval: false
+library(nanoparquet)
+
+crsp_monthly <- read_parquet("data/crsp_monthly.parquet")
+```
+
+## Python
+
+```{python}
+#| label: py-load-crsp-monthly
+#| eval: false
+import polars as pl
+
+crsp_monthly = pl.read_parquet("data/crsp_monthly.parquet")
+```
+
+:::
+
+4. Replicate the figure from the lecture slides that shows the number of stocks in the CRSP sample over time, by listing exchange (NYSE, NYSE American, formerly AMEX, and Nasdaq).
+
+**Solutions:** The book chapter [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) solves the figure in R and Python; the lecture slides show it as well.
 
 ## Portfolio choice problems {#portfolio-choice-problems}
 

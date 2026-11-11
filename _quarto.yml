@@ -32,8 +32,6 @@ website:
             file: exercises/introduction.qmd
           - text: "---"
           - text: "asset pricing"
-          - text: "accessing & managing financial data"
-            file: exercises/financial_data.qmd
           - text: "beta estimation"
             file: exercises/beta_estimation.qmd
           - text: "portfolio sorts"
@@ -91,7 +89,6 @@ website:
              - exercises/introduction.qmd
          - section: Asset Pricing
            contents:
-             - exercises/financial_data.qmd
              - exercises/beta_estimation.qmd
              - exercises/portfolio_sorts.qmd
          - section: Machine Learning

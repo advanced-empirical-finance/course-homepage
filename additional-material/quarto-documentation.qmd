@@ -894,7 +894,7 @@ knitr stores the results in `stock-report_cache/` and skips the chunk at the nex
 
 In Python documents, `#| cache: true` on a chunk has no effect. Quarto's Jupyter cache works only for whole documents and needs the jupyter-cache package, which is not part of the course environment.
 
-The safer pattern in both languages: download once in a separate script, save the data to `data/` as in [exercise 3](../exercises/financial_data.qmd), and read the file in your report. Reading a parquet file takes a second. If you do cache, delete the `_cache` folder and render once more before you hand in.
+The safer pattern in both languages: download once in a separate script, save the data to `data/`, as the course does with its [public data](../exercises/introduction.qmd#financial-data), and read the file in your report. Reading a parquet file takes a second. If you do cache, delete the `_cache` folder and render once more before you hand in.
 
 ::: {.callout-note title="Task 8 (12 min): break it on purpose"}
 1. **Console-only object (4 min).** In the Console, run `my_number <- 42` (R) or `my_number = 42` (Python). Add the sentence "My number is `` `{r} my_number` ``." (Python: `` `{python} my_number` ``) to your file and render. Read the error, then delete the sentence.
