@@ -5,7 +5,6 @@ toc: false
 
 ```{=html}
 <section class="home-hero">
-  <p class="home-overline">University of Copenhagen · Department of Economics</p>
   <h1 class="home-title">Advanced Empirical Finance</h1>
   <p class="home-subtitle">Topics and Data Science</p>
   <p class="home-question">(How) can state-of-the-art methods improve financial decision-making?</p>

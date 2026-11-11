@@ -204,14 +204,6 @@ caption {
   padding: 2.5rem 0 2.75rem;
 }
 
-.home-overline {
-  margin: 0 0 1.1rem;
-  font-size: 0.7rem;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
 
 .home-title {
   margin: 0;
