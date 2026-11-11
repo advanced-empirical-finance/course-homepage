@@ -42,7 +42,7 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
        ```
 
        Then choose a local folder where the repository should be stored. Cloning a repository simply means creating your own copy of a shared project so you can work on it on your computer without affecting the original.
-6. Open the cloned repository in Positron by navigating to `File` -> `Open Project` and selecting the folder where you cloned the repository. The folder contains the course materials: lecture slides, templates for the mandatory assignments, the configuration files for the R and Python environments, and an empty `data` folder that you fill with the course data in [exercise 3](financial_data.qmd).
+6. Open the cloned repository in Positron by navigating to `File` -> `Open Project` and selecting the folder where you cloned the repository. The folder contains the course materials: lecture slides, templates for the mandatory assignments, the configuration files for the R and Python environments, and the `data` folder with the public course data; the licensed CRSP data from Absalon go there too, see [the exercises on financial data](introduction.qmd#financial-data).
 
 ### Install R, Python and the course packages
 

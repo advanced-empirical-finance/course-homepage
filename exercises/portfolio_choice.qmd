@@ -8,7 +8,7 @@ In this exercise, we substantially extend the simple portfolio analysis and brin
 
 **Exercises:**
 
-1. You will use the monthly Fama-French industry portfolio returns for the exercise set. Download them directly from Kenneth French's homepage or load them from the parquet files.
+1. You will use the monthly Fama-French industry portfolio returns for the exercise set. They are in `industries_ff_monthly.parquet` in the `data` folder of the course repository.
 1. Write a function that computes efficient portfolio weight allowing for $L_2$ transaction costs (conditional on the holdings before reallocation). $L_2$ transaction costs mean that within this exercise, we assume that transaction costs are quadratic and of the form 
 $$\frac{\beta}{2}\left(w_{t+1} - w_{t^+}\right)'\left(w_{t+1} - w_{t^+}\right).$$. Thus, the function should take the sample estimates $\hat\mu_t$ and $\hat\Sigma_t$, the previous portfolio weight $\omega_{t^+} := \frac{\omega_{t} \odot \left(1 + r_t\right)}{1 + w_t'r_t}$ where $\odot$ denotes element-wise multiplication as well as the transaction cost parameter $\beta$ and the risk aversion $\gamma$ as inputs.  You can consult Equation (7) in Hautsch et al. (2019) for further information. Compute the efficient portfolio for an arbitrary initial portfolio based on the industry returns. 
 1. Analyse how different transaction cost values $\beta$ affect portfolio rebalancing. You can assume that the previous allocation was the naive portfolio. Show that for high values of $\beta$. The initial portfolio becomes more relevant. What happens for different values of the risk aversion $\gamma$?
