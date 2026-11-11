@@ -14,3 +14,23 @@ title: Portfolio sorts
 
 **Solutions:**
 All solutions are provided in the book chapter [Univariate portfolio sorts (R Version)](https://www.tidy-finance.org/r/univariate-portfolio-sorts.html) or [Univariate portfolio sorts (Python Version)](https://www.tidy-finance.org/python/univariate-portfolio-sorts.html)
+
+## Size sorts and p-hacking {#size-sorts-and-p-hacking}
+
+**Exercises:**
+
+::: {.callout-warning title="TBD"}
+Exercises to come that reproduce the book chapter.
+:::
+
+**Solutions:** All solutions are provided in the book chapter [Size sorts and p-hacking](https://www.tidy-finance.org/chapters/size-sorts-and-p-hacking.html) (R and Python).
+
+## Open question {#open-question}
+
+All of you test the same hypothesis with the same data. Every other choice is yours: the breakpoints, equal or value weights, which stocks you keep, the sample period, and how you adjust for risk. Write each choice down.
+
+**Submit:** your estimate, its standard error, and your choices. The next lecture shows how far your estimates spread compared with your standard errors.
+
+::: {.callout-warning title="TBD"}
+The hypothesis (for instance: high-beta stocks earn lower risk-adjusted returns than low-beta stocks) and the submission link follow.
+:::

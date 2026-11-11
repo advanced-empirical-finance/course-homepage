@@ -15,4 +15,12 @@ title: Beta Estimation
 **Solutions:**
 All solutions are provided in the book chapter [Beta estimation (R version)](https://www.tidy-finance.org/r/beta-estimation.html) or [Beta estimation (Python version)](https://www.tidy-finance.org/python/beta-estimation.html)
 
+## Open question {#open-question}
 
+How much do the ten industry portfolios (`industries_ff_monthly.parquet`) add to the market? Choose an estimation period, compute the tangency portfolio of the market and the ten industries, and compare its annualized Sharpe ratio with the Sharpe ratio of the market alone. Then keep the weights fixed and compare both in the ten years after your estimation period.
+
+**Submit:** your estimation period and the two differences in Sharpe ratios, in and after the estimation period. The next lecture discusses your results together with tests of the CAPM based on Sharpe ratios.
+
+::: {.callout-warning title="TBD"}
+The submission link follows.
+:::

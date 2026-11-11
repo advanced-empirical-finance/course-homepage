@@ -25,31 +25,37 @@ website:
           - text: "overview"
             file: exercises/index.qmd
           - text: "---"
-          - text: "introduction"
+          - text: "start"
           - text: "technical prerequisites"
             file: exercises/technical-prerequisites.qmd
           - text: "introduction to tidy finance"
             file: exercises/introduction.qmd
           - text: "---"
-          - text: "asset pricing"
+          - text: "from portfolio choice to pricing"
+          - text: "mean-variance optimization"
+            file: exercises/mean_variance.qmd
+          - text: "shrinkage and transaction costs"
+            file: exercises/portfolio_choice.qmd
           - text: "beta estimation"
             file: exercises/beta_estimation.qmd
           - text: "portfolio sorts"
             file: exercises/portfolio_sorts.qmd
           - text: "---"
-          - text: "machine learning"
-          - text: "empirical asset pricing via machine learning"
-            file: exercises/gu_kelly_xiu.qmd
+          - text: "machine learning and the SDF"
           - text: "shrinkage estimation"
             file: exercises/machine_learning.qmd
+          - text: "empirical asset pricing via machine learning"
+            file: exercises/gu_kelly_xiu.qmd
           - text: "neural networks"
             file: exercises/machine_learning_nonlinear.qmd
+          - text: "implementable portfolios"
+            file: exercises/implementable_portfolios.qmd
           - text: "---"
-          - text: "covariance estimation and portfolio choice"
+          - text: "volatility, risk, and uncertainty"
           - text: "(co)variance estimation"
             file: exercises/covariance_estimation.qmd
-          - text: "portfolio choice under transaction costs"
-            file: exercises/portfolio_choice.qmd
+          - text: "realized covariances and model uncertainty"
+            file: exercises/realized_covariances.qmd
       - text: slides
         file: slides.qmd
       - text: trading game
@@ -83,23 +89,26 @@ website:
        style: docked
        contents:
          - exercises/index.qmd
-         - section: Introduction
+         - section: Start
            contents:
              - exercises/technical-prerequisites.qmd
              - exercises/introduction.qmd
-         - section: Asset Pricing
+         - section: From Portfolio Choice to Pricing
            contents:
+             - exercises/mean_variance.qmd
+             - exercises/portfolio_choice.qmd
              - exercises/beta_estimation.qmd
              - exercises/portfolio_sorts.qmd
-         - section: Machine Learning
+         - section: Machine Learning and the SDF
            contents:
-             - exercises/gu_kelly_xiu.qmd
              - exercises/machine_learning.qmd
+             - exercises/gu_kelly_xiu.qmd
              - exercises/machine_learning_nonlinear.qmd
-         - section: Covariance Estimation and Portfolio Choice
+             - exercises/implementable_portfolios.qmd
+         - section: Volatility, Risk, and Uncertainty
            contents:
              - exercises/covariance_estimation.qmd
-             - exercises/portfolio_choice.qmd
+             - exercises/realized_covariances.qmd
      - title: trading game
        style: docked
        contents:
