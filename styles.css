@@ -197,7 +197,7 @@ caption {
 }
 
 /* =========================
-   Landing page: title, index of the course parts, course facts
+   Landing page: title and index of the course parts
    ========================= */
 
 .home-hero {
@@ -299,27 +299,8 @@ caption {
   transform: translateX(4px);
 }
 
-.home-facts {
-  display: grid;
-  grid-template-columns: repeat(4, auto);
-  justify-content: start;
-  column-gap: 3rem;
-  row-gap: 1rem;
-  margin: 0 0 2rem;
-  font-size: 0.85rem;
-}
 
-.home-facts dt {
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
 
-.home-facts dd {
-  margin: 0.2rem 0 0;
-}
 
 @media (max-width: 767.98px) {
   .home-hero {
@@ -332,10 +313,6 @@ caption {
 
   .home-entry:nth-child(2) {
     border-top: none;
-  }
-
-  .home-facts {
-    grid-template-columns: repeat(2, auto);
   }
 }
 

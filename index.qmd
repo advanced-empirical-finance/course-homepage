@@ -44,10 +44,4 @@ toc: false
   </a>
 </nav>
 
-<dl class="home-facts">
-  <div><dt>Lecturer</dt><dd>Stefan Voigt</dd></div>
-  <div><dt>Languages</dt><dd>R and Python</dd></div>
-  <div><dt>Tools</dt><dd>Positron, Quarto, Git</dd></div>
-  <div><dt>Material</dt><dd><a href="https://github.com/advanced-empirical-finance">GitHub</a></dd></div>
-</dl>
 ```
