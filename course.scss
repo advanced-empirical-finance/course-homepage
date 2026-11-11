@@ -1,8 +1,8 @@
-/* =========================
-   Fonts
-   ========================= */
-
-@import url("https://fonts.googleapis.com/css?family=Roboto:200,300,350,400&display=swap");
+/*-- scss:rules --*/
+// Course styles for both themes. They are part of Quarto's theme bundle, whose
+// file name changes with every change, so browsers never mix new pages with an
+// old cached stylesheet. The Roboto font comes in through $web-font-path in
+// theme-light.scss and theme-dark.scss.
 
 :root {
   /* Colors */
