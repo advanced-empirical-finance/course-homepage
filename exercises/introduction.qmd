@@ -14,7 +14,7 @@ The main aim of this chapter is to familiarize yourself with tidy coding princip
 1. Compute daily net returns for the asset and visualize the distribution of daily returns in a histogram using `ggplot2` (R) or `plotnine` (Python). Also, use `geom_vline()` to add a dashed red line that indicates the 5\% quantile of the daily returns within the histogram. 
 1. Compute summary statistics (mean, standard deviation, minimum and maximum) for the daily returns.
 
-**Solutions:** All tasks are solved and described in detail in [Chapter 1.1 in Tidy Finance with R](https://www.tidy-finance.org/r/introduction-to-tidy-finance.html). For a Python version of the code, consult [Chapter 1.1 in Tidy Finance with Python](https://www.tidy-finance.org/python/introduction-to-tidy-finance.html)
+**Solutions:** All tasks are solved and described in detail in the book chapter [Working with stock returns](https://www.tidy-finance.org/chapters/working-with-stock-returns.html).
 
 ## Scaling up the analysis {#scaling-up-the-analysis}
 
@@ -27,7 +27,7 @@ As a next step, we generalize the code from before such that all the computation
 1. Ask yourself how the visualization could be improved by adding further information (e.g., highlighting days with extreme trading volume), improving axis labels, changing the style (colors, themes, etc.). Implement your ideas and create a final version of the plot. Make sure the plot is self-explanatory (e.g., contains captions, legends, an appropriate title, etc.).
 
 
-**Solutions:** All tasks are solved and described in detail in Tidy Finance with R in the Chapters [Scaling up the analysis](https://www.tidy-finance.org/r/introduction-to-tidy-finance.html#scaling-up-the-analysis) and [Other forms of data aggregation](https://www.tidy-finance.org/r/introduction-to-tidy-finance.html#other-forms-of-data-aggregation) and in Tidy Finance with Python in the Chapters [Scaling up the analysis](https://www.tidy-finance.org/python/introduction-to-tidy-finance.html#scaling-up-the-analysis) and [Other forms of data aggregation](https://www.tidy-finance.org/python/introduction-to-tidy-finance.html#other-forms-of-data-aggregation).
+**Solutions:** All tasks are solved and described in detail in the sections [Scaling up the analysis](https://www.tidy-finance.org/chapters/working-with-stock-returns.html#scaling-up-the-analysis) and [Other forms of data aggregation](https://www.tidy-finance.org/chapters/working-with-stock-returns.html#other-forms-of-data-aggregation) of the book chapter *Working with stock returns*.
 
 ## Accessing and managing financial data {#financial-data}
 

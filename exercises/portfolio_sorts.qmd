@@ -13,7 +13,7 @@ title: Portfolio sorts
 1. Does a high beta minus low beta portfolio yield abnormal excess returns? 
 
 **Solutions:**
-All solutions are provided in the book chapter [Univariate portfolio sorts (R Version)](https://www.tidy-finance.org/r/univariate-portfolio-sorts.html) or [Univariate portfolio sorts (Python Version)](https://www.tidy-finance.org/python/univariate-portfolio-sorts.html)
+All solutions are provided in the book chapter [Univariate portfolio sorts](https://www.tidy-finance.org/chapters/univariate-portfolio-sorts.html).
 
 ## Size sorts and p-hacking {#size-sorts-and-p-hacking}
 
@@ -23,7 +23,7 @@ All solutions are provided in the book chapter [Univariate portfolio sorts (R Ve
 Exercises to come that reproduce the book chapter.
 :::
 
-**Solutions:** All solutions are provided in the book chapter [Size sorts and p-hacking](https://www.tidy-finance.org/chapters/size-sorts-and-p-hacking.html) (R and Python).
+**Solutions:** All solutions are provided in the book chapter [Size sorts and p-hacking](https://www.tidy-finance.org/chapters/size-sorts-and-p-hacking.html).
 
 ## Open question {#open-question}
 

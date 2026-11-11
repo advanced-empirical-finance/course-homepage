@@ -13,7 +13,7 @@ These exercises start with the portfolio choice problem of a mean-variance inves
 3. Compute the minimum variance portfolio weights and the portfolio volatility and average returns. 
 4. Visualize the mean-variance efficient frontier. For that, first, compute the efficient portfolio for an arbitrary risk-free rate (below the average return of the minimum variance portfolio). Then use the two-fund separation theorem to compute the location of a grid of combinations of the minimum variance portfolio and the efficient portfolio on the mean-volatility diagram which has (annualized) volatility on the $x$ axis and (annualized) expected returns on the $y$ axis. Indicate the location of the individual assets on the mean-volatility diagram as well.
 
-**Solutions:** All tasks are solved and described in detail in the book chapter [Modern portfolio theory](https://www.tidy-finance.org/chapters/modern-portfolio-theory.html) (R and Python).
+**Solutions:** All tasks are solved and described in detail in the book chapter [Modern portfolio theory](https://www.tidy-finance.org/chapters/modern-portfolio-theory.html).
   
 ## Equivalence between Certainty equivalent maximization and minimum variance optimization {#equivalence-between-certainty-equivalent-maximization-and-minimum-variance-optimization}
 

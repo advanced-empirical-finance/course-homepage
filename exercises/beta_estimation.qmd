@@ -13,7 +13,7 @@ title: Beta Estimation
 1. What is the theoretical prediction of CAPM concerning the relationship between market beta and expected returns? What would you expect if you create portfolios based on beta (you create a high- and a low-beta portfolio each month and track the performance over time)? How should the expected returns differ between high and low-beta portfolios?
 
 **Solutions:**
-All solutions are provided in the book chapter [Beta estimation (R version)](https://www.tidy-finance.org/r/beta-estimation.html) or [Beta estimation (Python version)](https://www.tidy-finance.org/python/beta-estimation.html)
+All solutions are provided in the book chapter [Beta estimation](https://www.tidy-finance.org/chapters/beta-estimation.html).
 
 ## Open question {#open-question}
 

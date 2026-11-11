@@ -305,7 +305,7 @@ All solutions are provided in the book chapter [Constrained optimization and bac
 Exercises to come that reproduce the book chapter.
 :::
 
-**Solutions:** All solutions are provided in the book chapter [Parametric portfolio policies](https://www.tidy-finance.org/chapters/parametric-portfolio-policies.html) (R and Python).
+**Solutions:** All solutions are provided in the book chapter [Parametric portfolio policies](https://www.tidy-finance.org/chapters/parametric-portfolio-policies.html).
 
 ## Open question {#open-question}
 
