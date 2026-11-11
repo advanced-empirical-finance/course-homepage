@@ -38,7 +38,7 @@ toc: false
   </a>
   <a class="home-entry" href="additional-material/index.html">
     <span class="home-entry-name">More resources</span>
-    <span class="home-entry-meta">Quarto, Git, Positron and AI, quality criteria</span>
+    <span class="home-entry-meta">Quarto, Git, Positron and AI</span>
     <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
 </nav>
