@@ -134,10 +134,9 @@ format:
     # Light and dark version; the toggle sits in the navbar, and the
     # first visit follows the reader's system setting
     theme:
-      light: [cosmo, theme-light.scss]
-      dark: [darkly, theme-dark.scss]
+      light: [cosmo, theme-light.scss, course.scss]
+      dark: [darkly, theme-dark.scss, course.scss]
     respect-user-color-scheme: true
-    css: styles.css
     toc: true
     code-block-border-left: true
     grid:

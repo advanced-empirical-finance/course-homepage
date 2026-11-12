@@ -1,4 +1,7 @@
 /*-- scss:defaults --*/
+// Roboto, the course font, loaded by the theme instead of the Bootswatch default
+$web-font-path: "https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,200;0,300;0,400;1,300&display=swap";
+$font-family-sans-serif: "Roboto", sans-serif;
 // Dark version: near-black background, light grey text, and a lighter KU red
 // that keeps enough contrast on dark ground
 $primary: #e07a7e;
