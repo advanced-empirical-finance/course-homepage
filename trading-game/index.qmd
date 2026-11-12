@@ -3,6 +3,19 @@ css: simulation.css
 title: "The trading game"
 ---
 
+```{=html}
+<iframe id="aef-intro" class="intro-frame" src="intro/index.html" title="The trading game in 60 seconds"></iframe>
+<script>
+  // The player reports its height, so the frame fits it at every width
+  window.addEventListener("message", (event) => {
+    const frame = document.getElementById("aef-intro");
+    if (event.source === frame.contentWindow && event.data && event.data.aefIntroHeight) {
+      frame.style.height = event.data.aefIntroHeight + "px";
+    }
+  });
+</script>
+```
+
 Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send a new **weight vector** from R or Python. **You only decide and submit; everything else happens automatically:** the trading game trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort.
 
 ::: {.callout-note}
