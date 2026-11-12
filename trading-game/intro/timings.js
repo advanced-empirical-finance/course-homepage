@@ -45,7 +45,7 @@ window.TIMINGS = {
   {
    "id": "close",
    "start": 51.502,
-   "end": 55.654
+   "end": 55.912
   }
  ]
 };
