@@ -13,6 +13,70 @@ We strongly encourage you to use Git and GitHub for your team work in this cours
 
 Each team gets one private repository on GitHub for the whole semester, which we create for you: `advanced-empirical-finance/aef27-<team>`. It starts as a copy of the [course repository](https://github.com/advanced-empirical-finance/course-repository), with the R and Python environment, the `data` folder, the templates and the slides, and it stays connected to it, so new course material reaches you with one command. Only your team and the teaching team can see it.
 
+```{=html}
+<style>
+.git-diagram { display: block; width: 100%; height: auto; margin: 1.4rem 0 1.8rem; font-family: var(--font-sans); }
+.git-diagram.narrow { display: none; max-width: 420px; }
+@media (max-width: 640px) { .git-diagram.wide { display: none; } .git-diagram.narrow { display: block; } }
+.git-diagram .box { fill: var(--surface); stroke: var(--rule); stroke-width: 1.5; }
+.git-diagram .box.team { stroke: var(--accent2); }
+.git-diagram .title { fill: var(--jet); font-size: 20px; font-weight: 400; }
+.git-diagram .sub { fill: var(--accent); font-size: 16px; font-weight: 300; }
+.git-diagram .code { fill: var(--jet); font-family: SFMono-Regular, Menlo, Consolas, monospace; font-size: 15px; }
+.git-diagram .role { fill: var(--accent); font-size: 12px; font-weight: 400; letter-spacing: 0.16em; }
+.git-diagram .red { fill: var(--accent2); }
+.git-diagram .ink { stroke: var(--jet); stroke-width: 1.5; fill: none; }
+.git-diagram .red-line { stroke: var(--accent2); stroke-width: 2; stroke-dasharray: 7 5; fill: none; }
+.git-diagram .dot { fill: var(--accent2); }
+.git-diagram .head-ink { fill: var(--jet); }
+.git-diagram .head-red { fill: var(--accent2); }
+</style>
+<svg class="git-diagram wide" viewBox="0 0 960 350" role="img" aria-label="The course repository is copied once into your team repository on GitHub. Each team member pulls from and pushes to the team repository. New course material comes in with git pull upstream main.">
+<defs>
+<marker id="gd1w-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd1w-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<rect x="20" y="24" width="330" height="96" rx="8" class="box"/>
+<text x="42" y="64" class="title">Course repository</text>
+<text x="42" y="94" class="sub">slides, data, templates</text>
+<rect x="20" y="230" width="330" height="96" rx="8" class="box team"/>
+<text x="42" y="270" class="title">Your team repository</text>
+<text x="42" y="300" class="sub">private, on GitHub</text>
+<line x1="185" y1="124" x2="185" y2="224" class="ink" marker-end="url(#gd1w-ink)"/>
+<text x="200" y="180" class="sub">copy, made by us</text>
+<rect x="700" y="36" width="64" height="42" rx="4" class="box"/><line x1="690" y1="84" x2="774" y2="84" class="ink"/><text x="792" y="66" class="title">You</text>
+<line x1="356" y1="278" x2="682" y2="58" class="ink" marker-start="url(#gd1w-ink)" marker-end="url(#gd1w-ink)"/>
+<rect x="700" y="146" width="64" height="42" rx="4" class="box"/><line x1="690" y1="194" x2="774" y2="194" class="ink"/><text x="792" y="176" class="title">Teammate</text>
+<line x1="356" y1="278" x2="682" y2="168" class="ink" marker-start="url(#gd1w-ink)" marker-end="url(#gd1w-ink)"/>
+<rect x="700" y="256" width="64" height="42" rx="4" class="box"/><line x1="690" y1="304" x2="774" y2="304" class="ink"/><text x="792" y="286" class="title">Teammate</text>
+<line x1="356" y1="278" x2="682" y2="278" class="ink" marker-start="url(#gd1w-ink)" marker-end="url(#gd1w-ink)"/>
+<text x="470" y="330" class="code">git pull · git push</text>
+<path d="M356,62 L682,46" class="red-line" marker-end="url(#gd1w-red)"/>
+<text x="400" y="38" class="code red">git pull upstream main</text>
+</svg>
+<svg class="git-diagram narrow" viewBox="0 0 400 560" role="img" aria-label="The course repository is copied once into your team repository on GitHub. Each team member pulls from and pushes to the team repository. New course material comes in with git pull upstream main.">
+<defs>
+<marker id="gd1n-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd1n-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<rect x="10" y="10" width="300" height="84" rx="8" class="box"/>
+<text x="30" y="46" class="title">Course repository</text>
+<text x="30" y="74" class="sub">slides, data, templates</text>
+<line x1="160" y1="98" x2="160" y2="184" class="ink" marker-end="url(#gd1n-ink)"/>
+<text x="172" y="146" class="sub">copy, made by us</text>
+<rect x="10" y="190" width="300" height="84" rx="8" class="box team"/>
+<text x="30" y="226" class="title">Your team repository</text>
+<text x="30" y="254" class="sub">private, on GitHub</text>
+<rect x="30" y="340" width="56" height="36" rx="4" class="box"/><line x1="22" y1="382" x2="94" y2="382" class="ink"/><text x="110" y="366" class="title">You</text>
+<rect x="30" y="412" width="56" height="36" rx="4" class="box"/><line x1="22" y1="454" x2="94" y2="454" class="ink"/><text x="110" y="438" class="title">Teammate</text>
+<rect x="30" y="484" width="56" height="36" rx="4" class="box"/><line x1="22" y1="526" x2="94" y2="526" class="ink"/><text x="110" y="510" class="title">Teammate</text>
+<line x1="58" y1="278" x2="58" y2="334" class="ink" marker-start="url(#gd1n-ink)" marker-end="url(#gd1n-ink)"/>
+<text x="72" y="312" class="code">git pull · git push</text>
+<path d="M314,52 H352 V358 H236" class="red-line" marker-end="url(#gd1n-red)"/>
+<text x="0" y="0" class="code red" transform="translate(372 120) rotate(90)">git pull upstream main</text>
+</svg>
+```
+
 1. Create a free [GitHub account](https://github.com/signup), if you do not have one. Your username does not have to be your real name. As a student, you can also apply for the [GitHub Student Developer Pack](https://education.github.com/pack), which includes GitHub Copilot.
 2. Send us the GitHub usernames of everyone in your team.
 3. Each of you receives an invitation by email. Accept it within seven days.
@@ -76,6 +140,77 @@ Each of you works in your own section file, and the report still renders from st
 ## Before you hand in: the teammate check as a pull request
 
 The [quality criteria](assignment-quality-criteria.qmd) recommend that a teammate reproduces your report before you hand it in. A pull request is the natural place for this check.
+
+```{=html}
+<svg class="git-diagram wide" viewBox="0 0 960 256" role="img" aria-label="The teammate check: you put the final version on a branch and open a pull request; a teammate clones it fresh, installs the environment, adds the data and renders the report; if the numbers match, you merge. Fixes go into the same branch.">
+<defs>
+<marker id="gd2w-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd2w-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<line x1="90" y1="96" x2="870" y2="96" class="ink"/>
+<path d="M690,84 C620,44 160,44 96,82" class="red-line" marker-end="url(#gd2w-red)"/>
+<text x="390" y="28" class="sub red" text-anchor="middle">fixes go into the same branch</text>
+<circle cx="90" cy="96" r="9" class="dot"/>
+<text x="90" y="138" class="title" text-anchor="middle">Branch</text>
+<text x="90" y="164" class="code" text-anchor="middle">git switch -c</text>
+<text x="90" y="186" class="code" text-anchor="middle">assignment-1-check</text>
+<text x="90" y="232" class="role" text-anchor="middle">YOU</text>
+<circle cx="285" cy="96" r="9" class="dot"/>
+<text x="285" y="138" class="title" text-anchor="middle">Pull request</text>
+<text x="285" y="164" class="sub" text-anchor="middle">on GitHub: say</text>
+<text x="285" y="186" class="sub" text-anchor="middle">what to check</text>
+<text x="285" y="232" class="role" text-anchor="middle">YOU</text>
+<circle cx="480" cy="96" r="9" class="dot"/>
+<text x="480" y="138" class="title" text-anchor="middle">Fresh clone</text>
+<text x="480" y="164" class="sub" text-anchor="middle">uvr sync, uv sync,</text>
+<text x="480" y="186" class="sub" text-anchor="middle">licensed data</text>
+<text x="480" y="232" class="role" text-anchor="middle">TEAMMATE</text>
+<circle cx="675" cy="96" r="9" class="dot"/>
+<text x="675" y="138" class="title" text-anchor="middle">Render</text>
+<text x="675" y="164" class="sub" text-anchor="middle">do the numbers</text>
+<text x="675" y="186" class="sub" text-anchor="middle">match the PDF?</text>
+<text x="675" y="232" class="role" text-anchor="middle">TEAMMATE</text>
+<circle cx="870" cy="96" r="9" class="dot"/>
+<text x="870" y="138" class="title" text-anchor="middle">Merge</text>
+<text x="870" y="164" class="sub" text-anchor="middle">into main, then</text>
+<text x="870" y="186" class="sub" text-anchor="middle">everyone pulls</text>
+<text x="870" y="232" class="role" text-anchor="middle">YOU</text>
+</svg>
+<svg class="git-diagram narrow" viewBox="0 0 400 660" role="img" aria-label="The teammate check: you put the final version on a branch and open a pull request; a teammate clones it fresh, installs the environment, adds the data and renders the report; if the numbers match, you merge. Fixes go into the same branch.">
+<defs>
+<marker id="gd2n-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd2n-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<line x1="30" y1="30" x2="30" y2="550" class="ink"/>
+<path d="M150,420 H360 V30 H150" class="red-line" marker-end="url(#gd2n-red)"/>
+<text x="0" y="0" class="sub red" transform="translate(378 120) rotate(90)">fixes go into the same branch</text>
+<circle cx="30" cy="30" r="9" class="dot"/>
+<text x="56" y="37" class="title">Branch</text>
+<text x="56" y="62" class="role">YOU</text>
+<text x="56" y="88" class="code">git switch -c</text>
+<text x="56" y="110" class="code">assignment-1-check</text>
+<circle cx="30" cy="160" r="9" class="dot"/>
+<text x="56" y="167" class="title">Pull request</text>
+<text x="56" y="192" class="role">YOU</text>
+<text x="56" y="218" class="sub">on GitHub: say</text>
+<text x="56" y="240" class="sub">what to check</text>
+<circle cx="30" cy="290" r="9" class="dot"/>
+<text x="56" y="297" class="title">Fresh clone</text>
+<text x="56" y="322" class="role">TEAMMATE</text>
+<text x="56" y="348" class="sub">uvr sync, uv sync,</text>
+<text x="56" y="370" class="sub">licensed data</text>
+<circle cx="30" cy="420" r="9" class="dot"/>
+<text x="56" y="427" class="title">Render</text>
+<text x="56" y="452" class="role">TEAMMATE</text>
+<text x="56" y="478" class="sub">do the numbers</text>
+<text x="56" y="500" class="sub">match the PDF?</text>
+<circle cx="30" cy="550" r="9" class="dot"/>
+<text x="56" y="557" class="title">Merge</text>
+<text x="56" y="582" class="role">YOU</text>
+<text x="56" y="608" class="sub">into main, then</text>
+<text x="56" y="630" class="sub">everyone pulls</text>
+</svg>
+```
 
 1. **Whoever finishes the report** puts the final version on a branch of its own and pushes it:
 
