@@ -1,170 +1,269 @@
 ---
 title: Collaboration with Git and GitHub
-description: "The essential Git and GitHub workflow for collaborating with your group on the mandatory assignments."
+description: "Your team's repository: one place for the course material, your assignments and the trading game, with a teammate check before every hand-in."
 ---
 
-This guide covers the essential Git and GitHub commands and workflows you need to collaborate with your group on the mandatory assignments.
+***Git*** records every change to your project, so you can see who changed what and go back to any earlier state. ***GitHub*** hosts the repository online, so your team works on the same files without sending them around. Both are standard tools in finance and data science jobs.
 
-***Git*** is a version control system that lets one or more people work on a project simultaneously without overwriting each other's work. It tracks changes to files and lets you revert to earlier versions if needed. ***GitHub*** is a web platform that hosts Git repositories, making it easy to share code and collaborate.
+![Bad file management can be a burden](figures/git-file-versions.png){fig-align="center" width="70%"}
 
+We strongly encourage you to use Git and GitHub for your team work in this course. It is not required: you can hand in your assignments without it.
 
-#### Why use Git and GitHub for collaboration?
+## Your team repository
 
-Most people have at some point ended up with multiple versions of the same file (see figure 1), making it hard to track the latest version and even harder to collaborate without sending files back and forth.
+Each team gets one private repository on GitHub for the whole semester, which we create for you: `advanced-empirical-finance/aef27-<team>`. It starts as a copy of the [course repository](https://github.com/advanced-empirical-finance/course-repository), with the R and Python environment, the `data` folder, the templates and the slides, and it stays connected to it, so new course material reaches you with one command. Only your team and the teaching team can see it.
 
-![Bad file management can be a burden](figures/git-file-versions.png){fig-align="center"}
-
-Git and GitHub are the industry standard for version control and are widely used in finance and data science roles. The goal here is not to make you an expert, but to give you enough to collaborate effectively on your assignments.
-
-
-#### Are there any limitations?
-
-Git collaboration works by sharing *commits* — snapshots of your project at a point in time — to and from a shared repository on GitHub. Unlike Overleaf, there is no live co-editing, so you won't see each other's changes in real time. To avoid merge conflicts, I recommend either working in separate Python files (e.g. `mean-variance-pfo.py`) and pasting code into the Quarto document afterwards, or at minimum working on different sections of the Quarto document at the same time.
-
-
-### Overview of the workflow
-
-Only one person in your group (Student A) needs to follow Parts 1–5. Once Student A has set up the repository and pushed the initial files, the other group members (Student B and C) clone the repository and pull the files.
-
-
-![A sketch of the workflow introduced below, including the groups new assignment repo (black), as well as the downloading of files from the course repo (orange).](figures/git-figurative-workflow.jpg){fig-align="center"}
-
-
-#### Part 1 - Creating a GitHub repository for your group.
-
-1. Go to [GitHub.com](https://github.com) and click the green *"New"* button on the left, or navigate to *"Repositories"* in your profile (top right) and click *"New"*.
-
-2. Name your repository (e.g. *"AEF-2026-Assignments-Group1"*), add a description, and set visibility to *"Private"*. You do not need to initialize with a README or .gitignore. Click *"Create repository"*.
-
-3. Copy the HTTPS URL of the new repository.
-
-![You should see a similar setup as above. Copy the URL](figures/git-url.png){fig-align="center"}
-
-4. Add collaborators: go to *Settings* → *Collaborators* → *Add people*, and search for your group members by GitHub username or email. Each member must accept the invitation before they can push to the repository.
-
-
-#### Part 2 - Making a local copy of the repository through Positron
-
-1. In Positron, click *"New"* (top left) and select *"New folder from Git"*.
-
-2. Paste the repository URL and click OK. This creates a local copy on your computer. Log in if prompted by the Git Credential Manager.
-
-3. Open the terminal in Positron. On Windows, the default is PowerShell — you can switch to Git Bash (recommended) or any terminal you prefer.
-
-
-
-#### Part 3 - Connecting to the course repository and grabbing files
-
-1. Your repository is currently empty. To access course materials, add an "upstream" connection to the course repository by running:
-
-```bash
-git remote add upstream https://github.com/advanced-empirical-finance/course-repository.git
+```{=html}
+<style>
+.git-diagram { display: block; width: 100%; height: auto; margin: 1.4rem 0 1.8rem; font-family: var(--font-sans); }
+.git-diagram.narrow { display: none; max-width: 420px; }
+@media (max-width: 640px) { .git-diagram.wide { display: none; } .git-diagram.narrow { display: block; } }
+.git-diagram .box { fill: var(--surface); stroke: var(--rule); stroke-width: 1.5; }
+.git-diagram .box.team { stroke: var(--accent2); }
+.git-diagram .title { fill: var(--jet); font-size: 20px; font-weight: 400; }
+.git-diagram .sub { fill: var(--accent); font-size: 16px; font-weight: 300; }
+.git-diagram .code { fill: var(--jet); font-family: SFMono-Regular, Menlo, Consolas, monospace; font-size: 15px; }
+.git-diagram .role { fill: var(--accent); font-size: 12px; font-weight: 400; letter-spacing: 0.16em; }
+.git-diagram .red { fill: var(--accent2); }
+.git-diagram .ink { stroke: var(--jet); stroke-width: 1.5; fill: none; }
+.git-diagram .red-line { stroke: var(--accent2); stroke-width: 2; stroke-dasharray: 7 5; fill: none; }
+.git-diagram .dot { fill: var(--accent2); }
+.git-diagram .head-ink { fill: var(--jet); }
+.git-diagram .head-red { fill: var(--accent2); }
+</style>
+<svg class="git-diagram wide" viewBox="0 0 960 350" role="img" aria-label="The course repository is copied once into your team repository on GitHub. Each team member pulls from and pushes to the team repository. New course material comes in with git pull upstream main.">
+<defs>
+<marker id="gd1w-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd1w-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<rect x="20" y="24" width="330" height="96" rx="8" class="box"/>
+<text x="42" y="64" class="title">Course repository</text>
+<text x="42" y="94" class="sub">slides, data, templates</text>
+<rect x="20" y="230" width="330" height="96" rx="8" class="box team"/>
+<text x="42" y="270" class="title">Your team repository</text>
+<text x="42" y="300" class="sub">private, on GitHub</text>
+<line x1="185" y1="124" x2="185" y2="224" class="ink" marker-end="url(#gd1w-ink)"/>
+<text x="200" y="180" class="sub">copied at the start</text>
+<rect x="700" y="36" width="64" height="42" rx="4" class="box"/><line x1="690" y1="84" x2="774" y2="84" class="ink"/><text x="792" y="66" class="title">You</text>
+<line x1="356" y1="278" x2="682" y2="58" class="ink" marker-start="url(#gd1w-ink)" marker-end="url(#gd1w-ink)"/>
+<rect x="700" y="146" width="64" height="42" rx="4" class="box"/><line x1="690" y1="194" x2="774" y2="194" class="ink"/><text x="792" y="176" class="title">Teammate</text>
+<line x1="356" y1="278" x2="682" y2="168" class="ink" marker-start="url(#gd1w-ink)" marker-end="url(#gd1w-ink)"/>
+<rect x="700" y="256" width="64" height="42" rx="4" class="box"/><line x1="690" y1="304" x2="774" y2="304" class="ink"/><text x="792" y="286" class="title">Teammate</text>
+<line x1="356" y1="278" x2="682" y2="278" class="ink" marker-start="url(#gd1w-ink)" marker-end="url(#gd1w-ink)"/>
+<text x="470" y="330" class="code">git pull · git push</text>
+<path d="M356,62 L682,46" class="red-line" marker-end="url(#gd1w-red)"/>
+<text x="400" y="38" class="code red">git pull upstream main</text>
+</svg>
+<svg class="git-diagram narrow" viewBox="0 0 400 560" role="img" aria-label="The course repository is copied once into your team repository on GitHub. Each team member pulls from and pushes to the team repository. New course material comes in with git pull upstream main.">
+<defs>
+<marker id="gd1n-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd1n-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<rect x="10" y="10" width="300" height="84" rx="8" class="box"/>
+<text x="30" y="46" class="title">Course repository</text>
+<text x="30" y="74" class="sub">slides, data, templates</text>
+<line x1="160" y1="98" x2="160" y2="184" class="ink" marker-end="url(#gd1n-ink)"/>
+<text x="172" y="146" class="sub">copied at the start</text>
+<rect x="10" y="190" width="300" height="84" rx="8" class="box team"/>
+<text x="30" y="226" class="title">Your team repository</text>
+<text x="30" y="254" class="sub">private, on GitHub</text>
+<rect x="30" y="340" width="56" height="36" rx="4" class="box"/><line x1="22" y1="382" x2="94" y2="382" class="ink"/><text x="110" y="366" class="title">You</text>
+<rect x="30" y="412" width="56" height="36" rx="4" class="box"/><line x1="22" y1="454" x2="94" y2="454" class="ink"/><text x="110" y="438" class="title">Teammate</text>
+<rect x="30" y="484" width="56" height="36" rx="4" class="box"/><line x1="22" y1="526" x2="94" y2="526" class="ink"/><text x="110" y="510" class="title">Teammate</text>
+<line x1="58" y1="278" x2="58" y2="334" class="ink" marker-start="url(#gd1n-ink)" marker-end="url(#gd1n-ink)"/>
+<text x="72" y="312" class="code">git pull · git push</text>
+<path d="M314,52 H352 V358 H236" class="red-line" marker-end="url(#gd1n-red)"/>
+<text x="0" y="0" class="code red" transform="translate(372 120) rotate(90)">git pull upstream main</text>
+</svg>
 ```
 
-2. Verify it worked by running `git remote -v`. Your output should look like this:
+1. Create a free [GitHub account](https://github.com/signup), if you do not have one. Your username does not have to be your real name. As a student, you can also apply for the [GitHub Student Developer Pack](https://education.github.com/pack), which includes GitHub Copilot.
+2. Send us the GitHub usernames of everyone in your team.
+3. Each of you receives an invitation by email. Accept it within seven days.
+
+::: {.callout-warning title="TBD"}
+The link to send your usernames follows.
+:::
+
+## Get the repository onto your computer
+
+Each team member does this once.
+
+1. In Positron, click *New*, then *New Folder from Git*, and paste the address of your team repository: `https://github.com/advanced-empirical-finance/aef27-<team>.git`. Sign in to GitHub when your browser asks.
+2. Open the Terminal in that folder and connect the repository to the course repository, so you can pull new material later:
+
+   ```bash
+   git remote add upstream https://github.com/advanced-empirical-finance/course-repository.git
+   git config pull.rebase false   # pulling merges, as described below
+   ```
+
+3. Install the environment, as in the [technical prerequisites](../exercises/technical-prerequisites.qmd): `uvr sync` and `uv sync`.
+4. Put the licensed data from Absalon into the `data` folder, such as `crsp_monthly.parquet`. Git ignores them, so they never end up on GitHub.
+
+## Where your work goes
+
+Put everything your team writes into folders of its own: `assignment-1`, `assignment-2`, `assignment-3` and `trading-game`. To start an assignment, copy the template and `references.bib` from `mandatory-assignments` into the assignment's folder.
+
+Do not edit the course's files (`lecture-slides`, `mandatory-assignments`, `data-raw`). Course updates change exactly these files; if you leave them alone, every update arrives without conflicts.
+
+## The daily loop
+
+Before you start, get your teammates' latest work. When you are done, or whenever you reach a step worth keeping, save it as a commit and share it:
 
 ```bash
-origin   https://github.com/your-username/AEF-Assignments-Group1.git (fetch)
-origin   https://github.com/your-username/AEF-Assignments-Group1.git (push)
-upstream https://github.com/advanced-empirical-finance/course-repository.git (fetch)
-upstream https://github.com/advanced-empirical-finance/course-repository.git (push)
+git pull                           # your teammates' latest work
+# ... work ...
+git status                         # what has changed?
+git add assignment-1
+git commit -m "Estimate the tangency portfolio with monthly returns"
+git push
 ```
 
+The *Source Control* panel in Positron (`Ctrl+Shift+G`) does the same with buttons. A commit message says what you changed and why, in one line.
 
-3. Rather than pulling everything, use `checkout` to grab only the files you need. First fetch the latest state of the course repository:
+## Split the report so you do not get in each other's way
+
+Git merges changes in different files, or in different parts of a file, by itself. It only stops when two of you change the same lines. So give each section of your report its own file and pull them into the report with includes:
+
+```markdown
+## Data
+
+{{{< include sections/_data.qmd >}}}
+
+## Results
+
+{{{< include sections/_results.qmd >}}}
+```
+
+Each of you works in your own section file, and the report still renders from start to finish. Files whose names start with an underscore are not rendered on their own. If Git does report a conflict, it marks the lines in the file: keep the right version, delete the markers, then `git add` and `git commit`.
+
+## Before you hand in: the teammate check as a pull request
+
+The [quality criteria](assignment-quality-criteria.qmd) recommend that a teammate reproduces your report before you hand it in. A pull request is the natural place for this check.
+
+```{=html}
+<svg class="git-diagram wide" viewBox="0 0 960 256" role="img" aria-label="The teammate check: you put the final version on a branch and open a pull request; a teammate clones it fresh, installs the environment, adds the data and renders the report; if the numbers match, you merge. Fixes go into the same branch.">
+<defs>
+<marker id="gd2w-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd2w-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<line x1="90" y1="96" x2="870" y2="96" class="ink"/>
+<path d="M690,84 C620,44 160,44 96,82" class="red-line" marker-end="url(#gd2w-red)"/>
+<text x="390" y="28" class="sub red" text-anchor="middle">fixes go into the same branch</text>
+<circle cx="90" cy="96" r="9" class="dot"/>
+<text x="90" y="138" class="title" text-anchor="middle">Branch</text>
+<text x="90" y="164" class="code" text-anchor="middle">git switch -c</text>
+<text x="90" y="186" class="code" text-anchor="middle">assignment-1-check</text>
+<text x="90" y="232" class="role" text-anchor="middle">YOU</text>
+<circle cx="285" cy="96" r="9" class="dot"/>
+<text x="285" y="138" class="title" text-anchor="middle">Pull request</text>
+<text x="285" y="164" class="sub" text-anchor="middle">on GitHub: say</text>
+<text x="285" y="186" class="sub" text-anchor="middle">what to check</text>
+<text x="285" y="232" class="role" text-anchor="middle">YOU</text>
+<circle cx="480" cy="96" r="9" class="dot"/>
+<text x="480" y="138" class="title" text-anchor="middle">Fresh clone</text>
+<text x="480" y="164" class="sub" text-anchor="middle">uvr sync, uv sync,</text>
+<text x="480" y="186" class="sub" text-anchor="middle">licensed data</text>
+<text x="480" y="232" class="role" text-anchor="middle">TEAMMATE</text>
+<circle cx="675" cy="96" r="9" class="dot"/>
+<text x="675" y="138" class="title" text-anchor="middle">Render</text>
+<text x="675" y="164" class="sub" text-anchor="middle">do the numbers</text>
+<text x="675" y="186" class="sub" text-anchor="middle">match the PDF?</text>
+<text x="675" y="232" class="role" text-anchor="middle">TEAMMATE</text>
+<circle cx="870" cy="96" r="9" class="dot"/>
+<text x="870" y="138" class="title" text-anchor="middle">Merge</text>
+<text x="870" y="164" class="sub" text-anchor="middle">into main, then</text>
+<text x="870" y="186" class="sub" text-anchor="middle">everyone pulls</text>
+<text x="870" y="232" class="role" text-anchor="middle">YOU</text>
+</svg>
+<svg class="git-diagram narrow" viewBox="0 0 400 660" role="img" aria-label="The teammate check: you put the final version on a branch and open a pull request; a teammate clones it fresh, installs the environment, adds the data and renders the report; if the numbers match, you merge. Fixes go into the same branch.">
+<defs>
+<marker id="gd2n-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-ink"/></marker>
+<marker id="gd2n-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head-red"/></marker>
+</defs>
+<line x1="30" y1="30" x2="30" y2="550" class="ink"/>
+<path d="M150,420 H360 V30 H150" class="red-line" marker-end="url(#gd2n-red)"/>
+<text x="0" y="0" class="sub red" transform="translate(378 120) rotate(90)">fixes go into the same branch</text>
+<circle cx="30" cy="30" r="9" class="dot"/>
+<text x="56" y="37" class="title">Branch</text>
+<text x="56" y="62" class="role">YOU</text>
+<text x="56" y="88" class="code">git switch -c</text>
+<text x="56" y="110" class="code">assignment-1-check</text>
+<circle cx="30" cy="160" r="9" class="dot"/>
+<text x="56" y="167" class="title">Pull request</text>
+<text x="56" y="192" class="role">YOU</text>
+<text x="56" y="218" class="sub">on GitHub: say</text>
+<text x="56" y="240" class="sub">what to check</text>
+<circle cx="30" cy="290" r="9" class="dot"/>
+<text x="56" y="297" class="title">Fresh clone</text>
+<text x="56" y="322" class="role">TEAMMATE</text>
+<text x="56" y="348" class="sub">uvr sync, uv sync,</text>
+<text x="56" y="370" class="sub">licensed data</text>
+<circle cx="30" cy="420" r="9" class="dot"/>
+<text x="56" y="427" class="title">Render</text>
+<text x="56" y="452" class="role">TEAMMATE</text>
+<text x="56" y="478" class="sub">do the numbers</text>
+<text x="56" y="500" class="sub">match the PDF?</text>
+<circle cx="30" cy="550" r="9" class="dot"/>
+<text x="56" y="557" class="title">Merge</text>
+<text x="56" y="582" class="role">YOU</text>
+<text x="56" y="608" class="sub">into main, then</text>
+<text x="56" y="630" class="sub">everyone pulls</text>
+</svg>
+```
+
+1. **Whoever finishes the report** puts the final version on a branch of its own and pushes it:
+
+   ```bash
+   git switch -c assignment-1-check
+   git push -u origin assignment-1-check
+   ```
+
+   On GitHub, click *Compare & pull request* and write what the teammate should check.
+
+2. **A teammate** gets that version in a new folder, installs the environment from scratch, adds the licensed data and renders the report:
+
+   ```bash
+   git clone --branch assignment-1-check https://github.com/advanced-empirical-finance/aef27-<team>.git check-assignment-1
+   cd check-assignment-1
+   uvr sync
+   uv sync
+   # copy the licensed data into data/, then render assignment-1/report.qmd
+   ```
+
+   If it renders and the numbers match the PDF, approve the pull request on GitHub. If not, comment on what went wrong; fixes go into the same branch.
+
+3. **Merge** the pull request on GitHub. Everyone then switches back with `git switch main` and runs `git pull`.
+
+## New material from the course
+
+When we announce new material, pull it from the course repository into your team repository, and push it so your teammates have it too:
 
 ```bash
-git fetch upstream
+git pull upstream main
+git push
 ```
 
-Then grab the environment files:
+If you added packages of your own, Git may report a conflict in `uvr.toml`, `uvr.lock`, `pyproject.toml` or `uv.lock`. Keep the course's version, add your packages again and commit:
 
 ```bash
-git checkout upstream/main -- uvr.toml uvr.lock .Rprofile pyproject.toml uv.lock _quarto.yml .python-version .gitignore
+git checkout --theirs uvr.toml uvr.lock pyproject.toml uv.lock
+uvr add <your R packages>
+uv add <your Python packages>
+git add uvr.toml uvr.lock pyproject.toml uv.lock
+git commit -m "Course update; our packages added again"
 ```
 
-The files will appear in Positron's file explorer. To copy an entire folder, use `git checkout upstream/main -- foldername/`.
+## What never goes into Git
 
-4. Grab the assignment files, e.g.:
+- **Licensed data**, such as CRSP. The `data` folder ignores everything except the public files of the course.
+- **Your trading game token.** `set_token()` saves it in `.Renviron` (R) or `.env` (Python), which Git ignores. If a token ever ends up on GitHub, tell us and we replace it.
+- **Large files**: GitHub refuses files over 100 MB. Save results as compact parquet files, or recompute them.
 
-```bash
-git checkout upstream/main -- mandatory-assignments/MA_1_portfolio_choice_2026.pdf mandatory-assignments/MA_python_template.qmd
-```
+Run `git status` before every commit: it lists what would be added.
 
-(Choose the R template instead if you are working in R.)
+## Git with an AI assistant
 
+Your AI assistant in Positron, or an agent such as Claude Code or GitHub Copilot, can run every command on this page and resolve most conflicts for you. Read what it changed before you commit (*Source Control* panel or `git diff`), and make sure the commit message says what the change does.
 
-![After getting the files with the checkout command, you should be able to see them in the left side of Positron](figures/git-upstream-files-1.png){fig-align="center"}
-
-#### Part 4 (Optional) - Organizing the folder structure
-
-1. To reorganize into per-assignment folders, you can drag files in Positron's file explorer or use the terminal:
-
-```bash
-mkdir "Assignment 1"
-mv mandatory-assignments/MA_1_portfolio_choice_2026.pdf "Assignment 1/"
-mv mandatory-assignments/MA_python_template.qmd "Assignment 1/"
-rmdir mandatory-assignments
-```
-
-Leave the environment files in the root folder.
-
-#### Part 5 - Saving and sharing your work with Git and GitHub
-
-1. The files are currently only on your local machine — GitHub still shows an empty repository. To share them, you need to stage, commit, and push.
-
-2. Stage all files:
-```bash
-git add .
-```
-The `.` adds everything in the current folder. To stage specific files only, use `git add filename`. Think of staging as selecting which changes to include in your next commit.
-
-3. Commit the staged changes with a short message describing what you did:
-```bash
-git commit -m "Initial commit with environment and assignment files"
-```
-This creates a snapshot of your project that you can return to later.
-
-4. Push to GitHub:
-```bash
-git push origin main
-```
-You can now check your repository on GitHub and see the files.
-
-5. **Student B and C** can now clone the repository to their machines (Parts 1–2 without creating a new repo, by using Student A's URL) and run `git pull origin main` to download everything. From this point on, the daily workflow is: pull before you start, work, then add → commit → push.
-
-#### Part 6 - Keeping your repository up to date with the course repository
-
-1. When new assignments are released or course files are updated, fetch and selectively check out the files you need:
-
-```bash
-git fetch upstream
-git checkout upstream/main -- files_or_folders_you_want_to_update
-```
-
-Do **not** use `git pull upstream main` — it pulls everything and is likely to cause merge conflicts.
-
-2. Share the updates with your group by pushing as usual:
-
-```bash
-git add .
-git commit -m "Updated files with latest changes from course repository"
-git push origin main
-```
-
-
-#### Part 7 - The daily workflow
-
-1. Before you start, pull the latest changes from your group's repository:
-```bash
-git pull origin main
-```
-
-2. Open or create your files and make your changes, saving regularly.
-
-3. When you're done or want to share progress, stage, commit, and push:
-```bash
-git add .
-git commit -m "Your message here"
-git push origin main
-```
+To learn more, read [Happy Git and GitHub for the useR](https://happygitwithr.com) by Jenny Bryan, which also applies to Python.
