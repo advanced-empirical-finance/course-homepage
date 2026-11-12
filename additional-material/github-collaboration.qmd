@@ -78,12 +78,8 @@ Each team gets one private repository on GitHub for the whole semester, which we
 ```
 
 1. Create a free [GitHub account](https://github.com/signup), if you do not have one. Your username does not have to be your real name. As a student, you can also apply for the [GitHub Student Developer Pack](https://education.github.com/pack), which includes GitHub Copilot.
-2. Send us the GitHub usernames of everyone in your team.
-3. Each of you receives an invitation by email. Accept it within seven days.
-
-::: {.callout-warning title="TBD"}
-The link to send your usernames follows.
-:::
+2. Once your team is formed, one of you sends us your team's name and the GitHub usernames of all members, through the form linked on Absalon.
+3. Each of you receives an invitation from GitHub by email. Accept it within seven days.
 
 ## Get the repository onto your computer
 
