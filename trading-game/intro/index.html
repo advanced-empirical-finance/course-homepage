@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The trading game in 60 seconds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,200;0,300;0,400;1,300&family=Roboto+Mono:wght@400&display=swap">
+<style>
+  /* One 16:9 stage with a hairline progress bar under it, embedded in the trading game page */
+  :root {
+    --bg: #ffffff;
+    --fg: #3d3d3d;
+    --muted: #8b8783;
+    --rule: #e6e3df;
+    --accent: #901a1e;
+    --stage-edge: #e6e3df;
+    --sans: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131518; --fg: #e2e2e2; --muted: #a6a6a6; --rule: #2a2e33; --accent: #e07a7e; --stage-edge: #2a2e33;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131518; --fg: #e2e2e2; --muted: #a6a6a6; --rule: #2a2e33; --accent: #e07a7e; --stage-edge: #2a2e33;
+    color-scheme: dark;
+  }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-weight: 300;
+  }
+  main {
+    display: grid;
+    gap: 12px;
+    padding-block: 2px;
+  }
+  .stage-wrap {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    border: 1px solid var(--stage-edge);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #ffffff;           /* the film itself is always light */
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #overlay span {
+    display: grid;
+    place-items: center;
+    width: clamp(64px, 9vw, 104px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: rgba(144, 26, 30, 0.92);
+    color: #ffffff;
+    font-size: clamp(22px, 3vw, 34px);
+    padding-left: 6px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  }
+  body.playing #overlay { opacity: 0; }
+  body.preview #overlay { display: none; }
+  .controls {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+  }
+  button {
+    font: 400 15px var(--sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg);
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 8px 14px;
+    cursor: pointer;
+    min-width: 92px;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button:focus-visible, #bar:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .pause-label { display: none; }
+  body.playing .play-label { display: none; }
+  body.playing .pause-label { display: inline; }
+  #bar {
+    position: relative;
+    height: 18px;
+    cursor: pointer;
+  }
+  #bar::before, #fill {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 8px;
+    height: 2px;
+  }
+  #bar::before { background: var(--rule); }
+  #fill {
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  #time {
+    font-size: 15px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .credits {
+    margin: 4px 0 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 70ch;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #overlay { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="stage-wrap">
+    <canvas id="stage" width="1920" height="1080" aria-label="Animated introduction to the AEF trading game"></canvas>
+    <div id="overlay" aria-hidden="true"><span>▶</span></div>
+  </div>
+  <div class="controls">
+    <button id="play" type="button"><span class="play-label">Play</span><span class="pause-label">Pause</span></button>
+    <div id="bar" role="slider" tabindex="0" aria-label="Position" aria-valuemin="0" aria-valuemax="60"><div id="fill"></div></div>
+    <span id="time">0:00 / 1:00</span>
+  </div>
+  <p class="credits">60 seconds, with sound. Voice, music and drawings generated with Google's Gemini 3.8 Flash TTS, Lyria 3.5 and Nano Banana 2; the dashboard figures are an illustration.</p>
+</main>
+
+<audio id="vo" src="assets/vo.mp3" preload="auto"></audio>
+<audio id="music" src="assets/music.mp3" preload="auto"></audio>
+<script src="script.js"></script>
+<script src="timings.js"></script>
+<script src="intro.js"></script>
+<script>
+  // Inside the course homepage: follow its light/dark toggle and tell it our height
+  (() => {
+    const root = document.documentElement;
+    function syncTheme() {
+      try {
+        const b = window.parent.document.body;
+        if (b.classList.contains("quarto-dark")) root.dataset.theme = "dark";
+        else if (b.classList.contains("quarto-light")) root.dataset.theme = "light";
+      } catch (e) { /* standalone or another origin: the system setting applies */ }
+    }
+    syncTheme();
+    try {
+      if (window.parent !== window) {
+        new MutationObserver(syncTheme).observe(window.parent.document.body, { attributes: true, attributeFilter: ["class"] });
+      }
+    } catch (e) { /* not embedded */ }
+    const report = () => window.parent.postMessage({ aefIntroHeight: Math.ceil(document.documentElement.scrollHeight) }, "*");
+    window.addEventListener("load", report);
+    new ResizeObserver(report).observe(document.body);
+  })();
+</script>
+</body>
+</html>

@@ -8,6 +8,7 @@ project:
     - tools/build-slides-page.R
   resources:
     - slides/
+    - trading-game/intro/**   # the intro animation's player, scripts and media
     - CNAME      # keep the custom domain on every render of docs/
 
 
