@@ -55,7 +55,7 @@ website:
           - text: "volatility, risk, and uncertainty"
           - text: "(co)variance estimation"
             file: exercises/covariance_estimation.qmd
-          - text: "realized covariances and model uncertainty"
+          - text: "realized covariances"
             file: exercises/realized_covariances.qmd
       - text: slides
         file: slides.qmd
