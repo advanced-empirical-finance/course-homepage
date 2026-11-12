@@ -2,44 +2,37 @@
 title: "Lecture plan"
 ---
 
-Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–15 (CSS 18-01-11). The exercise classes are open office hours on Mondays 8–10 in odd weeks (CSS 2-2-36). The next lecture is highlighted.
+Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–15 (CSS 18-01-11). The next lecture is highlighted.
 
 | Week | Date | Lecture | Slides | Exercises | Preparation |
 |:-----|:-----|:--------|:-------|:----------|:------------|
-| 4 | Mon 25 Jan | Trading game: the dry run opens | | [Getting started](trading-game/getting-started.qmd) | |
-| 6 | Mon 8 Feb | **1** Welcome, setup and financial data | [Introduction](slides.qmd#aef-1-introduction) | [Technical prerequisites](exercises/technical-prerequisites.qmd), [Introduction to Tidy Finance](exercises/introduction.qmd) | Complete the technical prerequisites |
-| 6 | Thu 11 Feb | **2** Mean-variance optimization | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Mean-variance optimization](exercises/mean_variance.qmd) | Markowitz (1952) |
-| 7 | Mon 15 Feb | Exercise class | | | |
-| 7 | Tue 16 Feb | Trading game: trading starts | | | |
-| 7 | Thu 18 Feb | **3** Estimation uncertainty | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Mean-variance optimization](exercises/mean_variance.qmd) | DeMiguel, Garlappi & Uppal (2009) |
-| 8 | Mon 22 Feb | **4** Shrinkage for portfolio choice | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Shrinkage and transaction costs](exercises/portfolio_choice.qmd) | Ledoit & Wolf (2004); Jorion (1986) |
-| 8 | Thu 25 Feb | **5** Transaction costs and parametric portfolio policies | [Volatility and portfolio choice](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice) | [Shrinkage and transaction costs](exercises/portfolio_choice.qmd) | Brandt, Santa-Clara & Valkanov (2009) |
-| 9 | Mon 1 Mar | Exercise class | | | |
-| 9 | Thu 4 Mar | **6** The SDF, the efficient frontier and the CAPM | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Beta estimation](exercises/beta_estimation.qmd) | Cochrane (2005), chapters 1 and 5–6 |
-| 10 | date tbd | **7** Multifactor models and portfolio sorts | [Multifactor models](slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis) | [Portfolio sorts](exercises/portfolio_sorts.qmd) | Fama & French (1993) |
-| 10 | Thu 11 Mar | **8** Reproducibility and non-standard errors | [Reproducibility](slides.qmd#aef-reproducibility-in-asset-pricing) | [Portfolio sorts](exercises/portfolio_sorts.qmd) | Menkveld et al. (2024) |
-| 10 | Thu 11 Mar | Assignment 1 released | | | |
-| 11 | Mon 15 Mar | Exercise class | | | |
-| 11 | Thu 18 Mar | Assignment 1 deadline | | | |
-| 11 | Thu 18 Mar | **10** Machine learning foundations | [Machine learning](slides.qmd#aef-4-machine-learning) | [Shrinkage estimation](exercises/machine_learning.qmd) | |
-| 12 | 22–26 Mar | Easter break | | | |
-| 13 | Thu 1 Apr | **9** Assignment 1 discussion | | | |
-| 14 | Mon 5 Apr | **11** Shrinking the SDF | [Machine learning](slides.qmd#aef-4-machine-learning) | [Shrinkage estimation](exercises/machine_learning.qmd) | Kozak, Nagel & Santosh (2020) |
-| 14 | Thu 8 Apr | **12** Latent factors | [Machine learning](slides.qmd#aef-4-machine-learning) | [Empirical asset pricing via machine learning](exercises/gu_kelly_xiu.qmd) | Lettau & Pelger (2020) |
-| 15 | Mon 12 Apr | Exercise class | | | |
-| 15 | date tbd | **13** Return prediction with trees and forests | [Machine learning](slides.qmd#aef-4-machine-learning) | [Empirical asset pricing via machine learning](exercises/gu_kelly_xiu.qmd) | Gu, Kelly & Xiu (2020) |
-| 16 | Mon 19 Apr | **14** Neural networks and learning the SDF | [Machine learning](slides.qmd#aef-4-machine-learning) | [Neural networks](exercises/machine_learning_nonlinear.qmd) | Chen, Pelger & Zhu (2024) |
-| 16 | Mon 19 Apr | Assignment 2 released | | | |
-| 16 | Thu 22 Apr | **15** From predictions to implementable portfolios | | [Implementable portfolios](exercises/implementable_portfolios.qmd) | Jensen, Kelly, Malamud & Pedersen (2026) |
-| 17 | Mon 26 Apr | Assignment 2 deadline; exercise class | | | |
-| 17 | Thu 29 Apr | **17** Volatility from high-frequency data | [Volatility and portfolio choice](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice) | [(Co)variance estimation](exercises/covariance_estimation.qmd) | Andersen, Bollerslev, Diebold & Labys (2003) |
-| 18 | Mon 3 May | **18** Realized covariances for portfolio choice | | [Realized covariances](exercises/realized_covariances.qmd) | Hautsch, Kyj & Oomen (2012) |
-| 18 | Mon 3 May | Assignment 3 released | | | |
-| 19 | Mon 10 May | Assignment 3 deadline; exercise class | | | |
-| 19 | Thu 13 May | **16** Assignment 2 discussion | | | |
-| 19 | Fri 14 May | Trading game closes | | | |
-| 20 | Thu 20 May | **20** Assignment 3 discussion | | | |
-| after 20 | date tbd | **21** Conference session | | | |
+| 6 | Mon 8 Feb | **1** Welcome, setup and financial data | [Introduction](slides.qmd#aef-1-introduction) | [0](exercises/technical-prerequisites.qmd "Technical prerequisites"), [1](exercises/introduction.qmd "Introduction to Tidy Finance") | Complete the technical prerequisites |
+|  | Thu 11 Feb | **2** Mean-variance optimization | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [2](exercises/mean_variance.qmd "Mean-variance optimization") | Markowitz (1952) |
+| 7 | Thu 18 Feb | **3** Estimation uncertainty | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [2](exercises/mean_variance.qmd "Mean-variance optimization") | DeMiguel, Garlappi & Uppal (2009) |
+| 8 | Mon 22 Feb | **4** Shrinkage for portfolio choice | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [3](exercises/portfolio_choice.qmd "Shrinkage and transaction costs") | Ledoit & Wolf (2004); Jorion (1986) |
+|  | Thu 25 Feb | **5** Transaction costs and parametric portfolio policies | [Volatility and portfolio choice](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice) | [3](exercises/portfolio_choice.qmd "Shrinkage and transaction costs") | Brandt, Santa-Clara & Valkanov (2009) |
+| 9 | Thu 4 Mar | **6** The SDF, the efficient frontier and the CAPM | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [4](exercises/beta_estimation.qmd "Beta estimation") | Cochrane (2005), chapters 1 and 5–6 |
+| 10 | date tbd | **7** Multifactor models and portfolio sorts | [Multifactor models](slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis) | [5](exercises/portfolio_sorts.qmd "Portfolio sorts") | Fama & French (1993) |
+|  | Thu 11 Mar | **8** Reproducibility and non-standard errors | [Reproducibility](slides.qmd#aef-reproducibility-in-asset-pricing) | [5](exercises/portfolio_sorts.qmd "Portfolio sorts") | Menkveld et al. (2024) |
+|  | Thu 11 Mar | Assignment 1 released |  |  |  |
+| 11 | Thu 18 Mar | Assignment 1 deadline |  |  |  |
+|  | Thu 18 Mar | **10** Machine learning foundations | [Machine learning](slides.qmd#aef-4-machine-learning) | [6](exercises/machine_learning.qmd "Shrinkage estimation") |  |
+| 12 | 22–26 Mar | Easter break |  |  |  |
+| 13 | Thu 1 Apr | **9** Assignment 1 discussion |  |  |  |
+| 14 | Mon 5 Apr | **11** Shrinking the SDF | [Machine learning](slides.qmd#aef-4-machine-learning) | [6](exercises/machine_learning.qmd "Shrinkage estimation") | Kozak, Nagel & Santosh (2020) |
+|  | Thu 8 Apr | **12** Latent factors | [Machine learning](slides.qmd#aef-4-machine-learning) | [7](exercises/gu_kelly_xiu.qmd "Empirical asset pricing via machine learning") | Lettau & Pelger (2020) |
+| 15 | date tbd | **13** Return prediction with trees and forests | [Machine learning](slides.qmd#aef-4-machine-learning) | [7](exercises/gu_kelly_xiu.qmd "Empirical asset pricing via machine learning") | Gu, Kelly & Xiu (2020) |
+| 16 | Mon 19 Apr | **14** Neural networks and learning the SDF | [Machine learning](slides.qmd#aef-4-machine-learning) | [8](exercises/machine_learning_nonlinear.qmd "Neural networks") | Chen, Pelger & Zhu (2024) |
+|  | Mon 19 Apr | Assignment 2 released |  |  |  |
+|  | Thu 22 Apr | **15** From predictions to implementable portfolios |  | [9](exercises/implementable_portfolios.qmd "Implementable portfolios") | Jensen, Kelly, Malamud & Pedersen (2026) |
+| 17 | Mon 26 Apr | Assignment 2 deadline |  |  |  |
+|  | Thu 29 Apr | **17** Volatility from high-frequency data | [Volatility and portfolio choice](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice) | [10](exercises/covariance_estimation.qmd "(Co)variance estimation") | Andersen, Bollerslev, Diebold & Labys (2003) |
+| 18 | Mon 3 May | **18** Realized covariances for portfolio choice |  | [11](exercises/realized_covariances.qmd "Realized covariances") | Hautsch, Kyj & Oomen (2012) |
+|  | Mon 3 May | Assignment 3 released |  |  |  |
+| 19 | Mon 10 May | Assignment 3 deadline |  |  |  |
+|  | Thu 13 May | **16** Assignment 2 discussion |  |  |  |
+| 20 | Thu 20 May | **20** Assignment 3 discussion |  |  |  |
+| after 20 | date tbd | **21** Conference session |  |  |  |
 
 : {.hover}
 
@@ -50,6 +43,8 @@ Lectures 9 and 16 come after their peer feedback, so they are out of numerical o
 /* The next lecture: KU red on the left, a light surface behind */
 tr.next-lecture td { background: var(--surface) !important; font-weight: 400; }
 tr.next-lecture td:first-child { box-shadow: inset 3px 0 0 var(--accent2); }
+/* Dates on one line */
+main table td:nth-child(2) { white-space: nowrap; }
 </style>
 <script>
 // Highlights the next lecture: the first row with a lecture number whose date

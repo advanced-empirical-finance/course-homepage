@@ -8,5 +8,5 @@ window.SCRIPT = {
  "clock": "Your last submission before nine a.m. in New York, three p.m. in Copenhagen, trades at the market open.",
  "evening": "Every evening, the game values your portfolio at closing prices and books dividends and interest.",
  "dashboard": "Your dashboard compares you with an equal-weighted portfolio, buy and hold, the market, and your peers.",
- "close": "Trading starts on February eighth. Everything else is on the course homepage."
+ "close": "Trading starts on February sixteenth. Everything else is on the course homepage."
 };

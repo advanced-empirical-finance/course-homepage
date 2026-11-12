@@ -132,7 +132,7 @@
     return out;
   }
   const TITLE_WALK = walk(7, 120, 0.004, 0.035);
-  const DAYS = 66;                               // trading days, 8 Feb to 14 May 2027
+  const DAYS = 63;                               // trading days, 16 Feb to 14 May 2027
   const SERIES = [
     { name: "Your team", color: C.red, width: 4, v: walk(74, DAYS, 0.00055, 0.0085) },
     { name: "Equal weight", color: C.ink, width: 2, v: walk(12, DAYS, 0.0004, 0.0082) },
@@ -190,7 +190,7 @@
       const facts = [
         ["Paper portfolio", "US stocks, real prices"],
         ["Team", "1 to 3 students"],
-        ["Trading", "8 Feb – 14 May 2027"],
+        ["Trading", "16 Feb – 14 May 2027"],
       ];
       const cw = (W - 2 * M) / 3;
       facts.forEach(([label, value], i) => {
@@ -414,7 +414,7 @@
         line(px, Y(v), px + pw, Y(v), C.faint, Math.abs(v - 1) < 1e-9 ? 2 : 1);
         text(v.toFixed(2), px - 18, Y(v) + 8, { size: 22, color: C.mute, align: "right", alpha: g });
       });
-      [["Feb", 0], ["Mar", 15], ["Apr", 35], ["May", 56]].forEach(([m, i]) =>
+      [["Feb", 0], ["Mar", 9], ["Apr", 31], ["May", 53]].forEach(([m, i]) =>
         text(m, X(i), py + ph + 42, { size: 22, color: C.mute, align: "center", alpha: g }));
       text("Value of $1, net of costs", px - 90, py - 30, { size: 24, color: C.mute, alpha: g });
       const p = ease(prog(t, a + 0.4, 2.6));
@@ -423,11 +423,16 @@
       ctx.beginPath(); ctx.rect(px, py, pw + 4, ph); ctx.clip();
       PEERS.forEach((v) => path(v.map((x, i) => [X(i), Y(x)]), p * peers, "#dcd7d2", 1.5));
       ctx.restore();
+      const labels = [];
       SERIES.slice().reverse().forEach((s) => {
         const end = path(s.v.map((v, i) => [X(i), Y(v)]), p, s.color, s.width, s.dash);
-        if (end && p > 0.97) text(s.name, end[0] + 14, end[1] + 8, { size: 22, weight: s.color === C.red ? 400 : 300,
-          color: s.color === C.red ? C.red : C.ink, alpha: prog(p, 0.97, 0.03) });
+        if (end && p > 0.97) labels.push({ s, x: end[0] + 14, y: end[1] + 8 });
       });
+      // Line labels at least 26 px apart, top to bottom
+      labels.sort((a, b) => a.y - b.y);
+      labels.forEach((l, i) => { if (i > 0) l.y = Math.max(l.y, labels[i - 1].y + 26); });
+      labels.forEach(({ s, x, y }) => text(s.name, x, y, { size: 22, weight: s.color === C.red ? 400 : 300,
+        color: s.color === C.red ? C.red : C.ink, alpha: prog(p, 0.97, 0.03) }));
       // Sharpe ratio of every team as a dot plot; yours in red
       const sx = 1430, sw = 340, base = 640;
       const S = (v) => sx + sw * (v + 4) / 10;
@@ -449,7 +454,7 @@
     close(t, a, b, alpha) {
       ctx.save(); ctx.globalAlpha = alpha;
       const p = easeOut(prog(t, a + 0.1, 0.8));
-      text("Trading starts on 8 February 2027", M - 4, 470, { size: 96, weight: 200, alpha: p });
+      text("Trading starts on 16 February 2027", M - 4, 470, { size: 96, weight: 200, alpha: p });
       const s = easeOut(prog(t, cue("close", "Everything"), 0.7));
       text("aef-course.ku.dk/trading-game", M, 560, { size: 40, color: C.red, alpha: s });
       line(M, 760, M + (W - 2 * M) * ease(prog(t, a + 0.3, 1.4)), 760, C.faint, 2);
