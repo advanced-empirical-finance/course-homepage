@@ -28,14 +28,14 @@ Every submission carries a **rationale**: what you expect and why. Together they
 - Work alone or in a team of up to three. **Choose your team during the dry run.**
 - Each team gets one **token**: a key, like a password, that identifies your team to the trading game. The client packages and the dashboard use it to authenticate you. Keep it within your team.
 - Each team starts with **$1,000,000** in cash.
-- **Dry run:** 25 January to 5 February 2027, to try the tools and form your team; results are reset afterwards.
-- **Trading:** 8 February to 14 May 2027, every NYSE trading day.
+- **Dry run:** from 25 January until 12 February 2027, one week after the first lecture, to try the tools and form your team; results are reset afterwards.
+- **Trading:** 16 February to 14 May 2027, every NYSE trading day (15 February is a US holiday).
 
 The rules tighten during the semester. Every response from the trading game tells you which rules apply to the next trade, so a change never catches you by surprise.
 
 | From | What changes |
 |---|---|
-| 8 February | Long and short positions, and borrowing cash, with a gross exposure of up to 300 % (defined below). No transaction costs. |
+| 16 February | Long and short positions, and borrowing cash, with a gross exposure of up to 300 % (defined below). No transaction costs. |
 | 1 March | Every trade costs 10 bps (0.1 %) of its value. |
 | 5 April | Short positions pay a borrow fee of 50 bps a year. |
 
