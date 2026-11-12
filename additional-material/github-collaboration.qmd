@@ -43,7 +43,7 @@ Each team gets one private repository on GitHub for the whole semester, which we
 <text x="42" y="270" class="title">Your team repository</text>
 <text x="42" y="300" class="sub">private, on GitHub</text>
 <line x1="185" y1="124" x2="185" y2="224" class="ink" marker-end="url(#gd1w-ink)"/>
-<text x="200" y="180" class="sub">copy, made by us</text>
+<text x="200" y="180" class="sub">copied at the start</text>
 <rect x="700" y="36" width="64" height="42" rx="4" class="box"/><line x1="690" y1="84" x2="774" y2="84" class="ink"/><text x="792" y="66" class="title">You</text>
 <line x1="356" y1="278" x2="682" y2="58" class="ink" marker-start="url(#gd1w-ink)" marker-end="url(#gd1w-ink)"/>
 <rect x="700" y="146" width="64" height="42" rx="4" class="box"/><line x1="690" y1="194" x2="774" y2="194" class="ink"/><text x="792" y="176" class="title">Teammate</text>
@@ -63,7 +63,7 @@ Each team gets one private repository on GitHub for the whole semester, which we
 <text x="30" y="46" class="title">Course repository</text>
 <text x="30" y="74" class="sub">slides, data, templates</text>
 <line x1="160" y1="98" x2="160" y2="184" class="ink" marker-end="url(#gd1n-ink)"/>
-<text x="172" y="146" class="sub">copy, made by us</text>
+<text x="172" y="146" class="sub">copied at the start</text>
 <rect x="10" y="190" width="300" height="84" rx="8" class="box team"/>
 <text x="30" y="226" class="title">Your team repository</text>
 <text x="30" y="254" class="sub">private, on GitHub</text>
