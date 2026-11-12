@@ -1,84 +1,49 @@
 ---
-title: Positron AI Assistant Guide
-description: "Enable and use Positron's AI chat and Copilot code completion — setup, settings, and sensible practice."
+title: AI assistants
+description: "Set up an assistant in Positron, let it read the course rules, and work with it so that you can defend every line."
 ---
 
-Positron offers several AI-powered features to assist you in your work, including the Positron Assistant Chat and Code Completion with GitHub Copilot. These tools are designed to help you save time, increase efficiency, and enhance your overall productivity. For a more detailed introduction to the Positron Assistant, we recommend reading the [Positron Assistant Introduction](https://positron.posit.co/assistant) including their guide for getting started. 
+You may, and you are expected to, use AI assistants for code, text and review. In exchange, the bar is high: you answer for every line you hand in. The [assignment quality criteria](assignment-quality-criteria.qmd) say what that means in detail. This page covers the practical side: setting up an assistant, the course rules it reads, and a way of working that holds up.
 
-Before we begin, remember that AI assistants are not perfect and may sometimes provide incorrect or suboptimal suggestions. **Always review the suggestions provided by the assistant and use your own judgment when deciding whether to accept them.**
+## Set up an assistant in Positron
 
+Positron Assistant gives you a chat (to ask, to edit files, or as an agent that works across the project) and code completion while you type.
 
+1. **A model provider.** GitHub Copilot is free for students with the [GitHub Student Developer Pack](https://education.github.com/pack). Alternatively, use an API key from Anthropic, which you pay per use.
+2. **Turn it on.** In Positron's settings, search for *Positron Assistant: Enable* and tick it. Then reload the window: *Ctrl+Shift+P* (*Cmd+Shift+P* on a Mac), *Developer: Reload Window*.
+3. **Sign in.** *Ctrl+Shift+P*, *Positron Assistant: Configure Language Model Providers*, choose your provider and sign in.
 
-## Setting up Positron Assistant
+The [Positron documentation](https://positron.posit.co/assistant) shows every step with screenshots. Other assistants, such as Claude Code or Copilot in VS Code, work in the same project and read the same rules.
 
-To set up the Positron Assistant, you will first need to enable it in the Positron settings. You may either click on the `Chat` tab at the left side bar (`Ctrl + Alt + I`) and enter the settings through there, *or* by clicking the small gear in the bottom left corner ("Manage" -> "Settings"). Write `"Positron Assistant Enable"` in the search bar and **check the first box**.
+## The course rules your assistant reads
 
-![Check this box](figures/positron_assistant_enable.png)
+The course repository, and your team's copy of it, contains a file `AGENTS.md`. It tells assistants how this course works, in short:
 
-After you've checked this box, you need to **restart Positron**. This is most easily done by pressing `Ctrl + Shift + P` and then writing *"Reload window"*. Choose the `"Developer: Reload Window"` option.
+- packages only through uvr and uv, and how to render;
+- tidyverse with `|>` in R, polars in Python, code no more complex than the task;
+- licensed data read by code, never shown in the chat;
+- numbers in the text from inline code, labelled figures and tables, only references that exist.
 
+Positron Assistant, Copilot and Claude Code read it automatically when you open the repository folder, so you don't have to repeat these rules in every chat. Don't edit `AGENTS.md`: course updates change it. Put your team's own rules into `.github/instructions/team.instructions.md`, which Positron and Copilot also read:
 
+```markdown
+---
+applyTo: "**"
+---
+We write all code in Python. Figures use plotnine with theme_minimal().
+```
 
-Next we need to choose a large language model provider. By default, you may choose between Anthropic or GitHub Copilot. Note that the *code completion* feature explained below is only available with GitHub Copilot as of now.
+## A way of working that holds up
 
-I've chosen to use GitHub Copilot. To connect with your GitHub account, press `Ctrl + Shift + P` and write `Positron Assistant: Configure Language Model Providers`. Select GitHub Copilot and press the *Sign In* button to initialize GutHub's OAuth authentication flow. Follow the instructions to log in to your GitHub account and authorize Positron to access your Copilot subscription. After successful authentication, you should see a confirmation message in Positron.
+1. **Ask before you build.** Describe the question, the data and the method, and ask for a plan before any code. Disagree with the plan where you know better.
+2. **One step at a time.** Let the assistant change one chunk or one function, run it, and look at the result before the next step.
+3. **Check the numbers yourself.** Compare with a value you know (from the lecture, the book chapter or a second, simpler computation) and with common sense: a monthly return of 40 % or a Sharpe ratio of 5 is a bug until proven otherwise.
+4. **Read the changes before you commit.** The *Source Control* panel shows every changed line. If you cannot explain a line, rewrite or delete it.
+5. **Render the whole report** after each round of changes, so the text, tables and figures still agree.
+6. **Let AI review the result** with the [review prompt in the quality criteria](assignment-quality-criteria.qmd#let-ai-review-your-submission), then decide yourself what to change.
 
-![There are different options with respect to large language model provider](figures/llm-provider.png)
+## Licensed data and tokens
 
-**Important note**: If you don't seem to have any model connected (i.e. at the bottom of the Positron Assistant Chat panel, if your chat-model is not "GPT-5 mini" after authenticating with GitHub Copilot), you may need to check your settings at github.com under [Copilot settings](https://github.com/settings/copilot/features) to ensure that you have access and activated your Github Copilot subscription.
-
-
-## Positron AI
-
-Within Positron, you have several options to utilize the AI assistant, including a main chat interface, code completion features, and an inline chat function. Each of these features is designed to provide you with different ways to interact with the assistant and get the help you need.
-
-### Chat interface - Context, models and modes
-
-At the bottom of the main chat interface, you will find a button to switch between different modes of interaction with the AI assistant: *'Ask'*, *'Edit'*, and *'Agent'* mode, a button to choose your desired large language model (e.g. *GPT-5 mini*) and the option to provide additional context for the assistant to use in its responses. The context can be any relevant information that you want the assistant to consider when generating its responses, such as project details, specific requirements, or any other information that may help the assistant provide more accurate and relevant answers. Examples include project descriptions, code snippets, documentation on your (teams) coding style, etc.
-
-![There are several options available in this panel](figures/context.png)
-
-With respect to the different modes, there are three main options.
-
-- **Ask mode**: This is the default mode where you can ask the assistant questions or request information. Think of it as having ChatGPT embedded directly in the side panel. The assistant will provide responses based on your queries, which can be related to coding, documentation, or general knowledge. \
-- **Edit mode**: In this mode, you can provide the assistant with a piece of code or text and ask it to edit or improve it. For example, you can ask the assistant to optimize a function, rewrite a paragraph for clarity, or suggest improvements to your code. \
-- **Agent mode**: This mode allows you to set up a more complex interaction with the assistant, including multi-step tasks and workflow planning across the entire project.
-
-We will primarily be working with the **ask** and **edit** modes in this course, as they are the most commonly used for coding assistance and documentation generation.
-
-*Exercise: Try asking the assistant "Can you summarize the main essential equations I need on mean variance portfolio optimization?" in ask mode, and then switch to edit mode to ask it to "Write a function that calculates the optimal portfolio weights based on the mean-variance optimization framework".*
-
-
-### Code Completion with GitHub Copilot
-
-Given that you've chosen to use GitHub Copilot as the large language model provider, you may take advantage of the **code completion** feature. This allows you to receive so called *'ghost text'* suggestions as you write, which are greyed-out text that appears as you type, suggesting completions for your code or text.
-
-Note that for the standard free setup (Copilot Free plan through Github), there is a usage limit which you may find on GitHub.com under [Copilot settings](https://github.com/settings/copilot/features)
-
-![Github Copilot usage](figures/github-copilot-usage.png)
-
-The suggestions will appear naturally as you write. You can accept the suggestions by pressing `Tab` or `Ctrl + Right Arrow` on Windows/Linux, or `Option + Right Arrow` on Mac. You can also cycle through different suggestions by pressing `Ctrl + Space` (or `Cmd + Space` on Mac) after the initial suggestion appears.
-
-![Code suggestions will automatically pop up](figures/code-completion-1.png)
-
-It is also possible to give *code suggestions* by writing `// ` followed by a text prompt, which will trigger the assistant to generate a suggestion based on the prompt. This is particularly useful for generating code, if you're e.g. unsure about the syntax for a specific function or package.
-
-![If you're a Python user who's used to matplotlib, the assistant can e.g. guide you to using the plotnine package](figures/code-completion-2.png)
-
-
-
-### Inline chat
-
-In addition to the main chat interface, Positron also offers an *inline chat* feature. This allows you to use the AI assistant directly within your code or text editor, without needing to switch to a separate chat window. You can access the inline chat by `Ctrl + i` (or `Cmd + i` on Mac) while your cursor is in the editor. This will open a small chat interface where you can ask questions or request assistance related to the code or text you're working on, which is ideal for assistance with very specific lines of code, e.g. *"Write documentation for this function"*, *"Explain this line of code"*, *"Rewrite this as a function instead"*, etc.
-
-![Pressing `Ctrl + i` opens up the inline chat function](figures/inline-chat.png)
-
-After providing the inline chat with a prompt, the assistant will generate a response and insert it directly into your code or text editor at the location of your cursor. You can then accept the suggestion, modify it, or ask for a different response if needed.  
-
-![You will get the opportunity to accept the suggestion](figures/inline-chat-2.png)
-
-
-
-
-
-
+- **Never paste rows of CRSP or other licensed data into a chat, and never upload the files.** An assistant in agent mode can read the files in your project; `AGENTS.md` tells it to look at licensed data only through column names, types and summaries. Check that it does.
+- **Never paste your trading game token** into a chat. It belongs in `.Renviron` or `.env`, where `set_token()` puts it.
+- Check your provider's privacy settings: some providers store your prompts or use them for training.

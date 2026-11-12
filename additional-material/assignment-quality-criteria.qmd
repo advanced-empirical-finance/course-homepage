@@ -1,5 +1,5 @@
 ---
-title: "Assignment Quality Criteria"
+title: "Assignment quality criteria"
 date: "2026-11-10"
 categories: [assignments, workflow, reproducibility, AI]
 description: "What we expect from a submission when AI does the typing: the criteria with examples, and a roadmap to a reproducible project."

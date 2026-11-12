@@ -1,16 +1,16 @@
 ---
 title: "More resources"
 listing:
-  - id: positron-ai
+  - id: assignments
     contents:
-      - positron-ai-assistant.qmd
       - assignment-quality-criteria.qmd
     type: grid
     fields: [title, description]
     sort: false
     categories: false
-  - id: reproducible-workflows
+  - id: tools
     contents:
+      - positron-ai-assistant.qmd
       - quarto-documentation.qmd
       - github-collaboration.qmd
     type: grid
@@ -19,14 +19,12 @@ listing:
     categories: false
 ---
 
-Guides and references that support the lectures and assignments, grouped by topic. Click any card to open the full write-up.
+## Assignments
 
-## Positron & AI
-
-:::{#positron-ai}
+:::{#assignments}
 :::
 
-## Reproducible workflows
+## Tools
 
-:::{#reproducible-workflows}
+:::{#tools}
 :::
