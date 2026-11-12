@@ -50,7 +50,6 @@ Lectures 9 and 16 come after their peer feedback, so they are out of numerical o
 /* The next lecture: KU red on the left, a light surface behind */
 tr.next-lecture td { background: var(--surface) !important; font-weight: 400; }
 tr.next-lecture td:first-child { box-shadow: inset 3px 0 0 var(--accent2); }
-.next-badge { margin-left: .4em; font-size: .75em; letter-spacing: .08em; text-transform: uppercase; color: var(--accent2); }
 </style>
 <script>
 // Highlights the next lecture: the first row with a lecture number whose date
@@ -66,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!m) continue;
     if (new Date(2027, months[m[2]], parseInt(m[1], 10)) >= today) {
       row.classList.add('next-lecture');
-      cells[1].insertAdjacentHTML('beforeend', '<span class="next-badge">next</span>');
       break;
     }
   }
