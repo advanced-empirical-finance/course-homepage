@@ -72,13 +72,13 @@ website:
           - text: "overview"
             file: additional-material/index.qmd
           - text: "---"
-          - text: "positron & AI"
-          - text: "positron AI assistant guide"
-            file: additional-material/positron-ai-assistant.qmd
+          - text: "assignments"
           - text: "assignment quality criteria"
             file: additional-material/assignment-quality-criteria.qmd
           - text: "---"
-          - text: "reproducible workflows"
+          - text: "tools"
+          - text: "AI assistants"
+            file: additional-material/positron-ai-assistant.qmd
           - text: "reproducible research with quarto"
             file: additional-material/quarto-documentation.qmd
           - text: "collaboration with git and github"
@@ -120,12 +120,12 @@ website:
        style: docked
        contents:
          - additional-material/index.qmd
-         - section: Positron and AI
+         - section: Assignments
+           contents:
+             - additional-material/assignment-quality-criteria.qmd
+         - section: Tools
            contents:
              - additional-material/positron-ai-assistant.qmd
-             - additional-material/assignment-quality-criteria.qmd
-         - section: Workflows
-           contents:
              - additional-material/quarto-documentation.qmd
              - additional-material/github-collaboration.qmd
 

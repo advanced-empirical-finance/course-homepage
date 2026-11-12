@@ -181,7 +181,7 @@ Math uses LaTeX notation. Quarto shows a live preview of an equation when your c
 
 ### Output formats
 
-One line in the header switches the output format. You hand in PDF; HTML renders faster and is handy for a quick look.
+One line in the header switches the output format. You hand in PDF; HTML renders faster and is handy for a quick look while you work.
 
 ::: {.panel-tabset}
 ## PDF
@@ -199,22 +199,6 @@ format: html
 ```
 
 ![](figures/output-html.png)
-
-## Word
-
-```yaml
-format: docx
-```
-
-![](figures/output-word.png)
-
-## PowerPoint
-
-```yaml
-format: pptx
-```
-
-![](figures/output-powerpoint.png)
 
 :::
 
@@ -916,7 +900,7 @@ A hand-in must give your reviewer the same numbers you describe, so the sample h
 
 **Goal:** let an assistant draft Quarto code, and catch its typical mistakes before your reviewer does.
 
-AI assistants are allowed and expected in this course (see the [Positron Assistant guide](positron-ai-assistant.qmd)). They write Quarto syntax quickly, but they often mix in old or wrong details: R Markdown syntax, pandas, `%>%`, outdated tidyfinance calls, typed numbers and invented references. You hand in the result, so you answer for every line.
+AI assistants are allowed and expected in this course (see [AI assistants](positron-ai-assistant.qmd)). They write Quarto syntax quickly, but they often mix in old or wrong details: R Markdown syntax, pandas, `%>%`, outdated tidyfinance calls, typed numbers and invented references. You hand in the result, so you answer for every line.
 
 ::: {.callout-note title="Task 9a (7 min): spot the bugs"}
 You asked an assistant: "Add a table with annualized summary statistics to my report, with a caption, and refer to it in the text." Its answer is below. The code runs, and the PDF looks fine at first sight. Find at least six problems before you open the answer.
@@ -1059,7 +1043,7 @@ The rules for every hand-in: one `.qmd` file and one `.pdf` rendered from it, 12
 
 **Checkpoint.** The template renders, and your report renders with the hand-in settings on about two pages.
 
-For the assignments, work in your group's repository and start from a copy of the template (see [collaboration with Git and GitHub](github-collaboration.qmd)).
+For the assignments, copy the template into your team's folder, such as `assignment-1`, and start from there (see [collaboration with Git and GitHub](github-collaboration.qmd)).
 
 ## Troubleshooting {#troubleshooting}
 
@@ -1425,4 +1409,4 @@ print(table.as_latex())
 - [Quarto in Positron](https://quarto.org/docs/tools/positron/): preview, cell commands and the visual editor.
 - The table packages: [gt](https://gt.rstudio.com/) for R and [great_tables](https://posit-dev.github.io/great-tables/) for Python.
 - [Tidy Finance](https://www.tidy-finance.org), the book this course follows, written entirely in Quarto.
-- On this site: [technical prerequisites](../exercises/technical-prerequisites.qmd), the [Positron Assistant guide](positron-ai-assistant.qmd), the [assignment quality criteria](assignment-quality-criteria.qmd) and [collaboration with Git and GitHub](github-collaboration.qmd).
+- On this site: [technical prerequisites](../exercises/technical-prerequisites.qmd), [AI assistants](positron-ai-assistant.qmd), the [assignment quality criteria](assignment-quality-criteria.qmd) and [collaboration with Git and GitHub](github-collaboration.qmd).
