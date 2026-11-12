@@ -2,64 +2,72 @@
 title: "Lecture plan"
 ---
 
-| Week | Date | Topic | Slide deck | Exercise | Preparation |
-|:-----|:-----|:------|:-----------|:---------|:------------|
-| 7 | Mon Feb 9 | Kick-off |  | [0](exercises/technical-prerequisites.qmd) | Complete all [technical prerequisites](exercises/technical-prerequisites.qmd) |
-|  | Thu Feb 12 | Asset prices | [📊](slides.qmd#aef-1-introduction "Introduction") |  |  |
-| 8 | Mon Feb 16 | Optimal portfolio choice | [📊](slides.qmd#aef-2-portfolio-choice "Portfolio choice") | [1](exercises/introduction.qmd#introduction-to-tidy-finance) | Chapter 3 in [R for Data Science](https://r4ds.hadley.nz/data-transform) (data transformation), Sections 2.1 and 3.1 of [Portfolio Choice Problems](https://doi-org.ep.fjernadgang.kb.dk/10.1016/B978-0-444-50897-3.50008-0) |
-|  | Thu Feb 19 | Optimal portfolio choice | [📊](slides.qmd#aef-2-portfolio-choice "Portfolio choice") | [2](exercises/introduction.qmd#scaling-up-the-analysis) | Introduction and Section 1 of [Risk Reduction in Large Portfolios](https://onlinelibrary-wiley-com.ep.fjernadgang.kb.dk/doi/full/10.1111/1540-6261.00580) |
-| 9 | Thu Feb 26 | Multifactor models | [📊](slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis "Multifactor models & the reproducibility crisis") | [3](exercises/introduction.qmd#financial-data), [4](exercises/beta_estimation.qmd) | Chapters 7 and 8 of [Empirical Asset Pricing: The Cross-Section of Stock Returns](https://www.wiley.com/en-us/Empirical+Asset+Pricing%3A+The+Cross+Section+of+Stock+Returns-p-9781118095041) |
-| | Fri Feb 27  | **MA 1 released** |  | [Quarto](additional-material/quarto-documentation.qmd) | |
-| 10 | Mon Mar 2 | Reproducibility crisis | [📊](slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis "Multifactor models & the reproducibility crisis") | [5](exercises/portfolio_sorts.qmd) | FT article: "The hidden 'replication crisis' of finance" |
-|  | Thu Mar 5 | Reproducibility crisis | [📊](slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis "Multifactor models & the reproducibility crisis") |  | |
-| | Sat Mar 7  | **MA 1 deadline** |  | | |
-| 11 | Thu Mar 12 | ML in Finance | [📊](slides.qmd#aef-4-machine-learning "Machine learning") |  | |
-| 12 | Mon Mar 16 | ML in Finance | [📊](slides.qmd#aef-4-machine-learning "Machine learning") | [6](exercises/gu_kelly_xiu.qmd) | [Empirical asset pricing via Machine Learning](https://dachxiu.chicagobooth.edu/download/ML.pdf) |
-|  | Thu Mar 19 | ML in Finance | [📊](slides.qmd#aef-4-machine-learning "Machine learning") | [7](exercises/machine_learning.qmd) | |
-| 13 | Thu Mar 26 | ML in Finance | [📊](slides.qmd#aef-4-machine-learning "Machine learning") | [8](exercises/machine_learning_nonlinear.qmd) | |
-| |  | **Easter break (W14)** |  | | |
-| | Fri Apr 3 | **MA 2 released** |  | | |
-| 15 | Tue Apr 7 | ML in Finance | [📊](slides.qmd#aef-4-machine-learning "Machine learning") |   | |
-|  | Thu Apr 9 | Volatility estimation | [📊](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice "Volatility estimation & advanced portfolio choice") | [9](exercises/covariance_estimation.qmd) | |
-| | Sun Apr 12 | **MA 2 deadline (8pm)** |  | | |
-| 16 | Mon Apr 13 | Volatility estimation | [📊](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice "Volatility estimation & advanced portfolio choice") |  | |
-| 17 | Thu Apr 23 | Portfolio optimization | [📊](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice "Volatility estimation & advanced portfolio choice") | [10](exercises/portfolio_choice.qmd) | |
-| 18 | Mon Apr 27 | Parametric Portfolio Choice | [📊](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice "Volatility estimation & advanced portfolio choice") |  | |
-| | Fri May 1  | **MA 3 released** |  | | |
-| 19 | Thu May 7 | Guest lecture: Cilie Feldager Chief GenAI Model Evaluation Expert (Danske Bank) |  |  | |
-| | Sun May 10 | **MA 3 deadline (8pm)** |  | | |
-| 21 | Thu May 21 | Q&A |  | | |
+Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–15 (CSS 18-01-11). The exercise classes are open office hours on Mondays 8–10 in odd weeks (CSS 2-2-36). The next lecture is highlighted.
 
-: {.primary .hover}
+| Week | Date | Lecture | Slides | Exercises | Preparation |
+|:-----|:-----|:--------|:-------|:----------|:------------|
+| 4 | Mon 25 Jan | Trading game: the dry run opens | | [Getting started](trading-game/getting-started.qmd) | |
+| 6 | Mon 8 Feb | **1** Welcome, setup and financial data | [Introduction](slides.qmd#aef-1-introduction) | [Technical prerequisites](exercises/technical-prerequisites.qmd), [Introduction to Tidy Finance](exercises/introduction.qmd) | Complete the technical prerequisites |
+| 6 | Thu 11 Feb | **2** Mean-variance optimization | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Mean-variance optimization](exercises/mean_variance.qmd) | Markowitz (1952) |
+| 7 | Mon 15 Feb | Exercise class | | | |
+| 7 | Tue 16 Feb | Trading game: trading starts | | | |
+| 7 | Thu 18 Feb | **3** Estimation uncertainty | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Mean-variance optimization](exercises/mean_variance.qmd) | DeMiguel, Garlappi & Uppal (2009) |
+| 8 | Mon 22 Feb | **4** Shrinkage for portfolio choice | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Shrinkage and transaction costs](exercises/portfolio_choice.qmd) | Ledoit & Wolf (2004); Jorion (1986) |
+| 8 | Thu 25 Feb | **5** Transaction costs and parametric portfolio policies | [Volatility and portfolio choice](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice) | [Shrinkage and transaction costs](exercises/portfolio_choice.qmd) | Brandt, Santa-Clara & Valkanov (2009) |
+| 9 | Mon 1 Mar | Exercise class | | | |
+| 9 | Thu 4 Mar | **6** The SDF, the efficient frontier and the CAPM | [Portfolio choice](slides.qmd#aef-2-portfolio-choice) | [Beta estimation](exercises/beta_estimation.qmd) | Cochrane (2005), chapters 1 and 5–6 |
+| 10 | date tbd | **7** Multifactor models and portfolio sorts | [Multifactor models](slides.qmd#aef-3-multifactor-models-and-the-reproducibility-crisis) | [Portfolio sorts](exercises/portfolio_sorts.qmd) | Fama & French (1993) |
+| 10 | Thu 11 Mar | **8** Reproducibility and non-standard errors | [Reproducibility](slides.qmd#aef-reproducibility-in-asset-pricing) | [Portfolio sorts](exercises/portfolio_sorts.qmd) | Menkveld et al. (2024) |
+| 10 | Thu 11 Mar | Assignment 1 released | | | |
+| 11 | Mon 15 Mar | Exercise class | | | |
+| 11 | Thu 18 Mar | Assignment 1 deadline | | | |
+| 11 | Thu 18 Mar | **10** Machine learning foundations | [Machine learning](slides.qmd#aef-4-machine-learning) | [Shrinkage estimation](exercises/machine_learning.qmd) | |
+| 12 | 22–26 Mar | Easter break | | | |
+| 13 | Thu 1 Apr | **9** Assignment 1 discussion | | | |
+| 14 | Mon 5 Apr | **11** Shrinking the SDF | [Machine learning](slides.qmd#aef-4-machine-learning) | [Shrinkage estimation](exercises/machine_learning.qmd) | Kozak, Nagel & Santosh (2020) |
+| 14 | Thu 8 Apr | **12** Latent factors | [Machine learning](slides.qmd#aef-4-machine-learning) | [Empirical asset pricing via machine learning](exercises/gu_kelly_xiu.qmd) | Lettau & Pelger (2020) |
+| 15 | Mon 12 Apr | Exercise class | | | |
+| 15 | date tbd | **13** Return prediction with trees and forests | [Machine learning](slides.qmd#aef-4-machine-learning) | [Empirical asset pricing via machine learning](exercises/gu_kelly_xiu.qmd) | Gu, Kelly & Xiu (2020) |
+| 16 | Mon 19 Apr | **14** Neural networks and learning the SDF | [Machine learning](slides.qmd#aef-4-machine-learning) | [Neural networks](exercises/machine_learning_nonlinear.qmd) | Chen, Pelger & Zhu (2024) |
+| 16 | Mon 19 Apr | Assignment 2 released | | | |
+| 16 | Thu 22 Apr | **15** From predictions to implementable portfolios | | [Implementable portfolios](exercises/implementable_portfolios.qmd) | Jensen, Kelly, Malamud & Pedersen (2026) |
+| 17 | Mon 26 Apr | Assignment 2 deadline; exercise class | | | |
+| 17 | Thu 29 Apr | **17** Volatility from high-frequency data | [Volatility and portfolio choice](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice) | [(Co)variance estimation](exercises/covariance_estimation.qmd) | Andersen, Bollerslev, Diebold & Labys (2003) |
+| 18 | Mon 3 May | **18** Realized covariances for portfolio choice | | [Realized covariances](exercises/realized_covariances.qmd) | Hautsch, Kyj & Oomen (2012) |
+| 18 | Mon 3 May | Assignment 3 released | | | |
+| 19 | Mon 10 May | Assignment 3 deadline; exercise class | | | |
+| 19 | Thu 13 May | **16** Assignment 2 discussion | | | |
+| 19 | Fri 14 May | Trading game closes | | | |
+| 20 | Thu 20 May | **20** Assignment 3 discussion | | | |
+| after 20 | date tbd | **21** Conference session | | | |
+
+: {.hover}
+
+Lectures 9 and 16 come after their peer feedback, so they are out of numerical order. The new dates for lectures 7 and 13 follow.
 
 ```{=html}
 <style>
-tr.current-week td {
-  background-color: rgba(var(--bs-primary-rgb), 0.12) !important;
-  font-weight: 600;
-}
+/* The next lecture: KU red on the left, a light surface behind */
+tr.next-lecture td { background: var(--surface) !important; font-weight: 400; }
+tr.next-lecture td:first-child { box-shadow: inset 3px 0 0 var(--accent2); }
 </style>
 <script>
+// Highlights the next lecture: the first row with a lecture number whose date
+// is today or later. Dates are in 2027; rows without a date are skipped.
 document.addEventListener('DOMContentLoaded', function () {
+  const months = {Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5};
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
-  const dow = today.getDay();
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() + (dow === 0 ? -6 : 1 - dow));
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-
-  const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
-
-  document.querySelectorAll('table tbody tr').forEach(function (row) {
+  for (const row of document.querySelectorAll('main table tbody tr')) {
     const cells = row.querySelectorAll('td');
-    if (cells.length < 2) return;
-    const m = cells[1].textContent.trim().match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d+)/);
-    if (!m) return;
-    const d = new Date(today.getFullYear(), months[m[1]], parseInt(m[2]));
-    if (d >= weekStart && d <= weekEnd) row.classList.add('current-week');
-  });
+    if (cells.length < 3 || !/^\d+\s/.test(cells[2].textContent.trim())) continue;
+    const m = cells[1].textContent.match(/(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun)/);
+    if (!m) continue;
+    if (new Date(2027, months[m[2]], parseInt(m[1], 10)) >= today) {
+      row.classList.add('next-lecture');
+      break;
+    }
+  }
 });
 </script>
 ```
