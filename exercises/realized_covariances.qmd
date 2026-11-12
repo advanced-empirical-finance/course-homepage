@@ -1,17 +1,11 @@
 ---
-title: Realized Covariances and Model Uncertainty
+title: Realized Covariances
 ---
 
 ## Realized covariances for portfolio choice {#realized-covariances}
 
 ::: {.callout-warning title="TBD"}
 Exercises to come on multivariate realized measures, asynchronous trading and the Epps effect, forecasts with HAR models, and covariance forecasts for portfolio choice.
-:::
-
-## Bayesian portfolio choice {#bayesian-portfolio-choice}
-
-::: {.callout-warning title="TBD"}
-Exercises to come on Bayes-Stein shrinkage of expected returns (Jorion, 1986) and priors on mispricing (Pástor and Stambaugh, 2000).
 :::
 
 ## Open question {#open-question}

@@ -412,6 +412,12 @@ In this Chapter, you get to know `tidymodels` (R) and `scikit-learn` (Python), a
 
 **Solutions:** All solutions are provided in the book chapter [Factor selection via machine learning](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html).
 
+## Bayesian shrinkage of the SDF {#bayesian-sdf}
+
+::: {.callout-warning title="TBD"}
+Exercises to come on priors on mispricing (Pástor and Stambaugh, 2000) and model averaging over the factor zoo (Bryzgalova, Huang, and Julliard, 2023), as Bayesian counterparts of the ridge and lasso SDF.
+:::
+
 ## Open question {#open-question}
 
 The solution above chooses the Ridge penalty with one particular cross-validation. How much does the Sharpe ratio in the test sample depend on that choice? Choose your own validation scheme within the estimation sample: the number of folds, random or consecutive blocks of months, and the criterion, for instance the Sharpe ratio or the pricing error. Never touch the test sample.
