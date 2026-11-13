@@ -27,16 +27,16 @@ Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–
 |  | Thu 22 Apr | **15** From predictions to implementable portfolios |  | [9](exercises/implementable_portfolios.qmd "Implementable portfolios") | Jensen, Kelly, Malamud & Pedersen (2026) |
 | 17 | Mon 26 Apr | Assignment 2 deadline |  |  |  |
 |  | Thu 29 Apr | **17** Volatility from high-frequency data | [Volatility and portfolio choice](slides.qmd#aef-5-volatility-estimation-and-advanced-portfolio-choice) | [10](exercises/covariance_estimation.qmd "(Co)variance estimation") | Andersen, Bollerslev, Diebold & Labys (2003) |
-| 18 | Mon 3 May | **18** Realized covariances for portfolio choice |  | [11](exercises/realized_covariances.qmd "Realized covariances") | Hautsch, Kyj & Oomen (2012) |
+| 18 | Mon 3 May | **16** Assignment 2 discussion (first hour) |  |  |  |
+|  | Mon 3 May | **18** Realized covariances for portfolio choice |  | [11](exercises/realized_covariances.qmd "Realized covariances") | Hautsch, Kyj & Oomen (2012) |
 |  | Mon 3 May | Assignment 3 released |  |  |  |
 | 19 | Mon 10 May | Assignment 3 deadline |  |  |  |
-|  | Thu 13 May | **16** Assignment 2 discussion |  |  |  |
 | 20 | Thu 20 May | **20** Assignment 3 discussion |  |  |  |
 | after 20 | date tbd | **21** Conference session |  |  |  |
 
 : {.hover}
 
-Lectures 9 and 16 come after their peer feedback, so they are out of numerical order. The new dates for lectures 7 and 13 follow.
+Lectures 9 and 16 come after their peer feedback, so they are out of numerical order; the discussion of assignment 2 takes the first hour on 3 May. The new dates for lectures 7 and 13 follow.
 
 ```{=html}
 <style>
