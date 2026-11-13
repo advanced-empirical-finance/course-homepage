@@ -41,6 +41,4 @@ How well does an estimated tangency portfolio do out of sample? Choose your own 
 
 **Submit:** the number of stocks and the two Sharpe ratios. The next lecture plots the results of the whole class.
 
-::: {.callout-warning title="TBD"}
-The submission link follows.
-:::
+Send your three numbers here: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex02-out-of-sample)
