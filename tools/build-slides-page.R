@@ -22,36 +22,29 @@ if (dir.exists(dest_dir)) {
   dir.create(dest_dir, recursive = TRUE)
 }
 
-decks <- sort(list.files(source_dir, pattern = "\\.html$"))
-# Decks not taught this semester stay in the course repository but are left
-# off the homepage.
-skip <- c("aef-6-high-frequency-econometrics.html")
-decks <- setdiff(decks, skip)
-# Live versions (<deck>.live.html, quarto ... --profile live) are for the
-# lecturer only and never published.
+# One deck per lecture: aef-NN-<topic>.html, NN the lecture number. The older
+# decks in the course repository hold material that moves into these and stay
+# off the homepage. Live versions (<deck>.live.html, quarto ... --profile live)
+# are for the lecturer only and never published.
+decks <- sort(list.files(source_dir, pattern = "^aef-[0-9]{2}-.*\\.html$"))
 decks <- decks[!grepl("\\.live\\.html$", decks)]
 if (length(decks) == 0) stop(sprintf("No .html decks found in %s", source_dir))
 invisible(file.copy(file.path(source_dir, decks), file.path(dest_dir, decks), overwrite = TRUE))
-# Every deck also comes as PDF (tools/deck_pdf.py in the course repository)
+# Every deck also comes as PDF (Quarto renders both formats)
 pdfs <- sub("\\.html$", ".pdf", decks)
 pdfs <- pdfs[file.exists(file.path(source_dir, pdfs))]
 invisible(file.copy(file.path(source_dir, pdfs), file.path(dest_dir, pdfs), overwrite = TRUE))
 cat(sprintf("Copied %d deck(s) and %d PDF(s) to %s\n", length(decks), length(pdfs), dest_dir))
 
-# Capitalise each word (matches the previous generator's titles).
-title_case <- function(s) {
-  w <- strsplit(s, " ", fixed = TRUE)[[1]]
-  paste(toupper(substring(w, 1, 1)), substring(w, 2), sep = "", collapse = " ")
-}
-
-# Turn a filename stem into a readable heading.
+# The heading of a deck is its subtitle, the lecture's title in the lecture
+# plan; without a .qmd next to it, the file name.
 deck_title <- function(stem) {
-  s <- sub("^aef-", "", stem)
-  m <- regmatches(s, regexec("^([0-9]+)-(.*)$", s))[[1]]
-  if (length(m) == 3) return(paste0("Lecture ", m[2], " &mdash; ", title_case(gsub("-", " ", m[3]))))
-  m2 <- regmatches(s, regexec("^mandatory-assignment-([0-9]+)-evaluation$", s))[[1]]
-  if (length(m2) == 2) return(paste0("Mandatory Assignment ", m2[2], " &mdash; Evaluation"))
-  title_case(gsub("-", " ", s))
+  qmd <- file.path(source_dir, paste0(stem, ".qmd"))
+  if (file.exists(qmd)) {
+    subtitle <- grep("^subtitle:", readLines(qmd, n = 20, warn = FALSE), value = TRUE)
+    if (length(subtitle)) return(trimws(gsub('^subtitle:|"', "", subtitle[1])))
+  }
+  gsub("-", " ", sub("^aef-[0-9]+-", "", stem))
 }
 
 lines <- c(
