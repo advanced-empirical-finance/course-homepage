@@ -10,4 +10,3 @@ From return predictions to portfolios that can be traded: dynamic trading with t
 Exercises to come on dynamic trading with transaction costs (Gârleanu and Pedersen, 2013) and Sharpe ratios after trading costs.
 :::
 
-<!-- No open question: students write an assignment in this week. -->

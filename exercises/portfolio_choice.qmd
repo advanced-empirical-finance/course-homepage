@@ -313,12 +313,4 @@ Exercises to come that reproduce the book chapter.
 Exercises to come on Bayes-Stein shrinkage of the expected returns (Jorion, 1986), next to Ledoit-Wolf shrinkage of the covariance matrix.
 :::
 
-## Open question {#open-question}
-
-Your team's portfolio in the [trading game](../trading-game/index.qmd) is an estimated portfolio, too. Rebalance it with one of this week's tools, for instance a Ledoit-Wolf covariance matrix or the minimum-variance portfolio without short sales, before transaction costs start on 1 March.
-
-**Submit:** the new weights in the trading game, and the turnover of the rebalancing (the sum of the absolute weight changes) with the link below. The next lecture compares the teams' choices.
-
-::: {.callout-warning title="TBD"}
-The submission link follows.
-:::
+<!-- No open question: students write an assignment in this week. -->
