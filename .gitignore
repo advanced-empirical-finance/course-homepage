@@ -3,7 +3,7 @@
 /.quarto/
 **/*.quarto_ipynb
 
-# Lecture decks: tools/build-slides-page.R copies them from ../course-repository
+# Lecture decks: tools/copy-decks.R copies them from ../course-repository
 /slides/
 
 # R and Python environments: uvr sync and uv sync create them

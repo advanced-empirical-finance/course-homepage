@@ -28,7 +28,7 @@ uv run quarto render    # runs Quarto with the Python in .venv
 `quarto render` rebuilds every page. Besides the packages it needs:
 
 - **One Quarto version.** The workflow uses 1.11.9; use the same locally.
-- **The lecture slides.** The pre-render hook `tools/build-slides-page.R` copies the rendered decks from `../course-repository/lecture-slides` into `slides/` and regenerates `slides.qmd`. Check out `course-repository` next to this repository, or point `SLIDES_SRC` at the decks.
+- **The lecture slides.** The pre-render hook `tools/copy-decks.R` copies the rendered decks (HTML and PDF) from `../course-repository/lecture-slides` into `slides/`, where the lecture plan links them. Check out `course-repository` next to this repository, or point `SLIDES_SRC` at the decks.
 
 Python pages use the kernel `python3` from `.venv`, which is why Quarto runs through `uv run`. Some R chunks run even though `_quarto.yml` sets `eval: false`, so the R packages have to be installed too.
 
