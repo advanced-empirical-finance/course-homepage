@@ -838,20 +838,20 @@ uv run quarto render quarto-practice/stock-report.qmd
 
 **2. Fix the sample.** Always pass both `start_date` and `end_date`. With an open end, or with today's date as the end, your numbers change every day.
 
-**3. Use relative paths.** Quarto runs the code in the folder of the `.qmd` file. The course repository's `data/` folder is one level up from `quarto-practice/` and from `mandatory-assignments/`:
+**3. Use relative paths from the repository root.** In the course repository, Quarto runs the code from the root of the repository (its `_quarto.yml` says `execute-dir: project`), wherever the `.qmd` file lives. So every file reads the data the same way:
 
 ::: {.panel-tabset group="language"}
 ## R
 
 ```r
 library(nanoparquet)
-crsp_monthly <- read_parquet("../data/crsp_monthly.parquet")
+crsp_monthly <- read_parquet("data/crsp_monthly.parquet")
 ```
 
 ## Python
 
 ```python
-crsp_monthly = pl.read_parquet("../data/crsp_monthly.parquet")
+crsp_monthly = pl.read_parquet("data/crsp_monthly.parquet")
 ```
 
 :::
@@ -889,7 +889,7 @@ The safer pattern in both languages: download once in a separate script, save th
 **Checkpoint.** You have seen both failure modes, no `_cache` folder is left, and the Terminal render gives the same PDF as Preview.
 
 ::: {.callout-tip collapse="true" title="Self-check: your teammate's render stops because it cannot find C:/Users/anna/Desktop/data/crsp_monthly.parquet. What is wrong?"}
-The code uses an absolute path that exists only on Anna's laptop. Use the relative path `../data/crsp_monthly.parquet`, and keep the same folder structure, the course repository with its `data/` folder, on every computer.
+The code uses an absolute path that exists only on Anna's laptop. Use the relative path `data/crsp_monthly.parquet`, and keep the same folder structure, the course repository with its `data/` folder, on every computer.
 :::
 
 ::: {.callout-tip collapse="true" title="Self-check: why is today's date as end_date wrong in a hand-in, but fine for the trading game?"}

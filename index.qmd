@@ -18,12 +18,7 @@ toc: false
   </a>
   <a class="home-entry" href="slides-index.html">
     <span class="home-entry-name">Lecture plan</span>
-    <span class="home-entry-meta">Dates, topics, and readings</span>
-    <span class="home-entry-arrow" aria-hidden="true">→</span>
-  </a>
-  <a class="home-entry" href="slides.html">
-    <span class="home-entry-name">Slides</span>
-    <span class="home-entry-meta">All lecture decks</span>
+    <span class="home-entry-meta">Dates, topics, slides, and readings</span>
     <span class="home-entry-arrow" aria-hidden="true">→</span>
   </a>
   <a class="home-entry" href="exercises/index.html">

@@ -1,11 +1,11 @@
 project:
   type: website
   output-dir: docs
-  # Pulls the latest lecture decks from ../course-repository and regenerates
-  # slides.qmd before every render. Requires course-repository checked out
-  # alongside this repo.
+  # Copies the latest lecture decks from ../course-repository into slides/
+  # before every render; the lecture plan links them. Requires
+  # course-repository checked out alongside this repo.
   pre-render:
-    - tools/build-slides-page.R
+    - tools/copy-decks.R
   resources:
     - slides/
     - trading-game/intro/**   # the intro animation's player, scripts and media
@@ -57,8 +57,6 @@ website:
             file: exercises/covariance_estimation.qmd
           - text: "realized covariances"
             file: exercises/realized_covariances.qmd
-      - text: slides
-        file: slides.qmd
       - text: trading game
         menu:
           - text: the game
