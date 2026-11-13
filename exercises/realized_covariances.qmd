@@ -8,12 +8,4 @@ title: Realized Covariances
 Exercises to come on multivariate realized measures, asynchronous trading and the Epps effect, forecasts with HAR models, and covariance forecasts for portfolio choice.
 :::
 
-## Open question {#open-question}
-
-Rebalance your team's portfolio in the [trading game](../trading-game/index.qmd) with a covariance matrix forecast from realized measures, or with expected returns shrunk by Bayes-Stein.
-
-**Submit:** the new weights in the trading game, the turnover of the rebalancing, and your method in one line. The next lecture compares the teams' choices.
-
-::: {.callout-warning title="TBD"}
-The submission link follows.
-:::
+<!-- No open question: students write an assignment in this week. -->

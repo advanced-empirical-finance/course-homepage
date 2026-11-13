@@ -767,12 +767,4 @@ The paper goes much further, for instance with the question which covariates mat
 Exercises to come on principal components of the factor zoo and risk-premium PCA (Lettau and Pelger, 2020).
 :::
 
-## Open question {#open-question}
-
-Do latent factors price the factor zoo? Extract $K$ factors from the anomaly returns of the estimation sample, once with PCA and once with RP-PCA (Lettau and Pelger, 2020), with your own choice of $K$ and of the RP-PCA weight on the means. Compute the annualized Sharpe ratio of the mean-variance efficient combination of the $K$ factors in the test sample.
-
-**Submit:** $K$, the RP-PCA weight, and the two Sharpe ratios in the test sample. The next lecture compares your results.
-
-::: {.callout-warning title="TBD"}
-The submission link follows.
-:::
+<!-- No open question: students write an assignment in this week. -->

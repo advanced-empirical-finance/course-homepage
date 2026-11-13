@@ -541,12 +541,4 @@ symbol_order = unconditional_volatility["symbol"].to_list()
 Exercises to come on realized variance from limit order book data (LOBSTER): sampling frequency, market microstructure noise, and signature plots.
 :::
 
-## Open question {#open-question}
-
-How often should you sample prices to estimate the variance of one day? For one stock and one trading day of limit order book data from LOBSTER, compute the realized variance for sampling frequencies from 1 second to 30 minutes and plot it against the frequency (a signature plot). Which frequency would you choose, and why?
-
-**Submit:** the stock, the day, your chosen frequency, and the realized variance at that frequency. The next lecture discusses your choices.
-
-::: {.callout-warning title="TBD"}
-Access to the LOBSTER data and the submission link follow.
-:::
+<!-- No open question: students write an assignment in this week. -->
