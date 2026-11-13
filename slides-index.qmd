@@ -46,9 +46,10 @@ tr.next-lecture td:first-child { box-shadow: inset 3px 0 0 var(--accent2); }
 main table td:nth-child(2), main table td:nth-child(4) { white-space: nowrap; }
 /* Phones: the table scrolls sideways in its own box, not the whole page */
 @media (max-width: 767.98px) { main table { display: block; overflow-x: auto; } }
-/* Assignment dates and the break: date and text in grey, behind the lectures */
+/* Assignment dates and the break: lighter grey text on a light grey row, behind the lectures */
+main table tr:has(.plan-minor) td { background: color-mix(in srgb, var(--surface) 55%, transparent); }
 main table tr:has(.plan-minor) td:nth-child(2),
-main table tr:has(.plan-minor) td:nth-child(3) { color: var(--accent); font-size: 0.875em; }
+main table tr:has(.plan-minor) td:nth-child(3) { color: var(--accent); font-weight: 200; }
 </style>
 <script>
 // Highlights the next lecture: the first lecture row (not an assignment date
