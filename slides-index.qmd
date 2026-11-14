@@ -15,8 +15,7 @@ Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–
 | 9 | Thu 4 Mar | The SDF, the efficient frontier and the CAPM | [HTML](slides/aef-06-sdf-efficient-frontier-and-capm.html) · [PDF](slides/aef-06-sdf-efficient-frontier-and-capm.pdf) | [4](exercises/beta_estimation.qmd "Beta estimation") | Cochrane (2005), chapters 1 and 5–6 |
 |  | Thu 4 Mar | [Assignment 1 deadline]{.plan-minor} |  |  |  |
 | 10 | date tbd | Multifactor models and portfolio sorts | [HTML](slides/aef-07-multifactor-models-and-portfolio-sorts.html) · [PDF](slides/aef-07-multifactor-models-and-portfolio-sorts.pdf) | [5](exercises/portfolio_sorts.qmd "Portfolio sorts") | Fama & French (1993) |
-|  | Thu 11 Mar | Assignment 1 discussion (first hour) |  |  |  |
-|  | Thu 11 Mar | Reproducibility and non-standard errors | [HTML](slides/aef-08-reproducibility-and-non-standard-errors.html) · [PDF](slides/aef-08-reproducibility-and-non-standard-errors.pdf) |  | Menkveld et al. (2024) |
+|  | Thu 11 Mar | Reproducibility and non-standard errors (first hour: assignment 1 discussion) | [HTML](slides/aef-08-reproducibility-and-non-standard-errors.html) · [PDF](slides/aef-08-reproducibility-and-non-standard-errors.pdf) |  | Menkveld et al. (2024) |
 | 11 | Thu 18 Mar | Machine learning foundations | [HTML](slides/aef-10-machine-learning-foundations.html) · [PDF](slides/aef-10-machine-learning-foundations.pdf) | [6](exercises/machine_learning.qmd "Shrinkage estimation") |  |
 | 12 | 22–26 Mar | [Easter break]{.plan-minor} |  |  |  |
 | 14 | Mon 5 Apr | Shrinking the SDF | [HTML](slides/aef-11-shrinking-the-sdf.html) · [PDF](slides/aef-11-shrinking-the-sdf.pdf) | [7](exercises/gu_kelly_xiu.qmd "Empirical asset pricing via machine learning") | Kozak, Nagel & Santosh (2020) |
@@ -25,8 +24,7 @@ Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–
 | 15 | date tbd | Return prediction with trees and forests | [HTML](slides/aef-13-trees-and-forests.html) · [PDF](slides/aef-13-trees-and-forests.pdf) |  | Gu, Kelly & Xiu (2020) |
 |  | Thu 15 Apr | [Assignment 2 deadline]{.plan-minor} |  |  |  |
 | 16 | Mon 19 Apr | Neural networks and learning the SDF | [HTML](slides/aef-14-neural-networks-and-learning-the-sdf.html) · [PDF](slides/aef-14-neural-networks-and-learning-the-sdf.pdf) | [8](exercises/machine_learning_nonlinear.qmd "Neural networks"), [9](exercises/implementable_portfolios.qmd "Implementable portfolios") | Chen, Pelger & Zhu (2024) |
-|  | Thu 22 Apr | Assignment 2 discussion (first hour) |  |  |  |
-|  | Thu 22 Apr | From predictions to implementable portfolios | [HTML](slides/aef-15-implementable-portfolios.html) · [PDF](slides/aef-15-implementable-portfolios.pdf) |  | Jensen, Kelly, Malamud & Pedersen (2026) |
+|  | Thu 22 Apr | From predictions to implementable portfolios (first hour: assignment 2 discussion) | [HTML](slides/aef-15-implementable-portfolios.html) · [PDF](slides/aef-15-implementable-portfolios.pdf) |  | Jensen, Kelly, Malamud & Pedersen (2026) |
 | 17 | Thu 29 Apr | Volatility from high-frequency data | [HTML](slides/aef-17-volatility-from-high-frequency-data.html) · [PDF](slides/aef-17-volatility-from-high-frequency-data.pdf) | [10](exercises/covariance_estimation.qmd "(Co)variance estimation") | Andersen, Bollerslev, Diebold & Labys (2003) |
 |  | Thu 29 Apr | [Assignment 3 released]{.plan-minor} |  |  |  |
 | 18 | Mon 3 May | Realized covariances for portfolio choice | [HTML](slides/aef-18-realized-covariances-for-portfolio-choice.html) · [PDF](slides/aef-18-realized-covariances-for-portfolio-choice.pdf) | [11](exercises/realized_covariances.qmd "Realized covariances") | Hautsch, Kyj & Oomen (2012) |
