@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
-# Copies the rendered lecture decks (HTML and PDF) from the sibling
-# course-repository into slides/, where the lecture plan links them.
+# Copies the PDFs of the lecture decks from the sibling course-repository
+# into slides/, where the lecture plan links them. The homepage offers the
+# slides as PDF only; the HTML versions stay in the course repository.
 #
 # Wired as a Quarto pre-render hook (see _quarto.yml), so it runs automatically
 # on every `quarto render` / `quarto preview`. The decks are treated as opaque,
@@ -21,15 +22,10 @@ if (dir.exists(dest_dir)) {
   dir.create(dest_dir, recursive = TRUE)
 }
 
-# One deck per lecture: aef-NN-<topic>.html, NN the lecture number, and its
-# PDF. The older decks in the course repository hold material that moves into
-# these and stay off the homepage. Live versions (<deck>.live.html, quarto ...
-# --profile live) are for the lecturer only and never published.
-decks <- sort(list.files(source_dir, pattern = "^aef-[0-9]{2}-.*\\.html$"))
-decks <- decks[!grepl("\\.live\\.html$", decks)]
-if (length(decks) == 0) stop(sprintf("No .html decks found in %s", source_dir))
-pdfs <- sub("\\.html$", ".pdf", decks)
-pdfs <- pdfs[file.exists(file.path(source_dir, pdfs))]
-files <- c(decks, pdfs)
-invisible(file.copy(file.path(source_dir, files), file.path(dest_dir, files), overwrite = TRUE))
-cat(sprintf("Copied %d deck(s) and %d PDF(s) to %s\n", length(decks), length(pdfs), dest_dir))
+# One deck per lecture: aef-NN-<topic>.pdf, NN the lecture number. The older
+# decks in the course repository hold material that moves into these and stay
+# off the homepage.
+pdfs <- sort(list.files(source_dir, pattern = "^aef-[0-9]{2}-.*\\.pdf$"))
+if (length(pdfs) == 0) stop(sprintf("No PDF decks found in %s", source_dir))
+invisible(file.copy(file.path(source_dir, pdfs), file.path(dest_dir, pdfs), overwrite = TRUE))
+cat(sprintf("Copied %d PDF(s) to %s\n", length(pdfs), dest_dir))
