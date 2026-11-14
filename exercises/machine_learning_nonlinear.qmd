@@ -27,8 +27,4 @@ All solutions are provided in the book chapter [Option pricing via machine learn
 
 Can you beat the best model on the scoreboard of the lectures? Use any method from the course on the factor zoo, tuned with the estimation sample only, and compute the annualized Sharpe ratio of your SDF portfolio in the test sample.
 
-**Submit:** the Sharpe ratio in the test sample and your method in one line. The next lecture shows the scoreboard of the whole class.
-
-::: {.callout-warning title="TBD"}
-The submission link follows.
-:::
+**Submit by Wednesday 21 April:** the kind of method you used and the Sharpe ratios of your SDF portfolio in the test and the estimation sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex08-scoreboard). The next lecture shows the scoreboard of the whole class.
