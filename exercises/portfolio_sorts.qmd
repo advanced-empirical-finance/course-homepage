@@ -29,7 +29,7 @@ Exercises to come that reproduce the book chapter.
 
 All of you test the same hypothesis with the same data. Every other choice is yours: the breakpoints, equal or value weights, which stocks you keep, the sample period, and how you adjust for risk. Write each choice down.
 
-**Submit:** your estimate, its standard error, and your choices. The next lecture shows how far your estimates spread compared with your standard errors.
+**Submit:** your estimate, its standard error, and your choices. The lecture on reproducibility and non-standard errors shows how far your estimates spread compared with your standard errors.
 
 ::: {.callout-warning title="TBD"}
 The hypothesis (for instance: high-beta stocks earn lower risk-adjusted returns than low-beta stocks) and the submission link follow.
