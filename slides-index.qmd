@@ -14,8 +14,8 @@ Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–
 |  | Thu 25 Feb | [Assignment 1 released]{.plan-minor} |  |  |  |
 | 9 | Thu 4 Mar | The SDF, the efficient frontier and the CAPM | [HTML](slides/aef-06-sdf-efficient-frontier-and-capm.html) · [PDF](slides/aef-06-sdf-efficient-frontier-and-capm.pdf) | [4](exercises/beta_estimation.qmd "Beta estimation") | Cochrane (2005), chapters 1 and 5–6 |
 |  | Thu 4 Mar | [Assignment 1 deadline]{.plan-minor} |  |  |  |
-| 10 | date tbd | Multifactor models and portfolio sorts | [HTML](slides/aef-07-multifactor-models-and-portfolio-sorts.html) · [PDF](slides/aef-07-multifactor-models-and-portfolio-sorts.pdf) | [5](exercises/portfolio_sorts.qmd "Portfolio sorts") | Fama & French (1993) |
-|  | Thu 11 Mar | Reproducibility and non-standard errors (first hour: assignment 1 discussion) | [HTML](slides/aef-08-reproducibility-and-non-standard-errors.html) · [PDF](slides/aef-08-reproducibility-and-non-standard-errors.pdf) |  | Menkveld et al. (2024) |
+| 10 | Thu 11 Mar | Multifactor models and portfolio sorts (first hour: assignment 1 discussion) | [HTML](slides/aef-07-multifactor-models-and-portfolio-sorts.html) · [PDF](slides/aef-07-multifactor-models-and-portfolio-sorts.pdf) | [5](exercises/portfolio_sorts.qmd "Portfolio sorts") | Fama & French (1993) |
+|  | date tbd | Reproducibility and non-standard errors | [HTML](slides/aef-08-reproducibility-and-non-standard-errors.html) · [PDF](slides/aef-08-reproducibility-and-non-standard-errors.pdf) |  | Menkveld et al. (2024) |
 | 11 | Thu 18 Mar | Machine learning foundations | [HTML](slides/aef-10-machine-learning-foundations.html) · [PDF](slides/aef-10-machine-learning-foundations.pdf) | [6](exercises/machine_learning.qmd "Shrinkage estimation") |  |
 | 12 | 22–26 Mar | [Easter break]{.plan-minor} |  |  |  |
 | 14 | Mon 5 Apr | Shrinking the SDF | [HTML](slides/aef-11-shrinking-the-sdf.html) · [PDF](slides/aef-11-shrinking-the-sdf.pdf) | [7](exercises/gu_kelly_xiu.qmd "Empirical asset pricing via machine learning") | Kozak, Nagel & Santosh (2020) |
