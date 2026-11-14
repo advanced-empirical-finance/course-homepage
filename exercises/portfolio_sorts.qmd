@@ -31,4 +31,4 @@ Exercises to come that reproduce the book chapter.
 
 All of you test this hypothesis with the same data: `crsp_monthly`, `factors_ff3_monthly` and your betas from exercise 4. Estimate the CAPM alpha of a portfolio that is long high-beta stocks and short low-beta stocks. Every other choice is yours: the number of portfolios and their breakpoints, equal or value weights, which stocks you keep, the sample period, and the standard errors. Write each choice down.
 
-**Submit:** your alpha and its standard error, both in % per year, and your choices: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex05-beta-sorts). The lecture on reproducibility and non-standard errors shows how far your estimates spread compared with your standard errors.
+**Submit by Wednesday 17 March:** your alpha and its standard error, both in % per year, and your choices: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex05-beta-sorts). The lecture on reproducibility and non-standard errors shows how far your estimates spread compared with your standard errors.
