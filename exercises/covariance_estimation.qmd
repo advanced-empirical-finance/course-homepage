@@ -538,7 +538,7 @@ symbol_order = unconditional_volatility["symbol"].to_list()
 ## Realized variance from high-frequency data {#realized-variance}
 
 ::: {.callout-warning title="TBD"}
-Exercises to come on realized variance from limit order book data (LOBSTER): sampling frequency, market microstructure noise, and signature plots.
+Exercises to come on realized variance from the high-frequency SPY data in tidyfinance (5-second order book snapshots): sampling frequency, market microstructure noise, and signature plots.
 :::
 
 <!-- No open question: students write an assignment in this week. -->
