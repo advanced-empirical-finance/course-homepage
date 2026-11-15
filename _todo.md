@@ -8,7 +8,6 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
   - Fri 5 Mar, portfolio sorts (for Mon 8 Mar);
   - Fri 9 Apr, trees and forests (for Thu 15 Apr).
 - [ ] **C:** then update the lecture plan, which currently says "time and room follow", and the deck headers.
-- [ ] **C:** bring the roadmap (course-repository#5) in line with this file. Many of its checkboxes are outdated (lecture 1 deck, replacement dates, the 13 May slot); either update them or close it in favour of this file.
 
 ## Absalon
 
