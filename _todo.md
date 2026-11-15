@@ -36,6 +36,7 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 - [ ] **C:** 15 implementable portfolios: Sharpe ratios after costs, once the factor library with trading costs exists; check the publication year of Jensen, Kelly, Malamud & Pedersen.
 - [ ] **C:** 17 realized volatility and 18 realized covariances, once the VOLARE files are on eumel (plan in course-homepage#101).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
+- [ ] **C:** a printable sample whiteboard for every whiteboard slide (28 in decks 2–16, more in 17–18): the drawing or derivation S shows, step by step, as a PDF to take to class.
 - [ ] **C:** after S's review, remove the 2026 decks from the course repository (aef-2 to aef-6, aef-4-machine-learning, aef-reproducibility-in-asset-pricing, the old mandatory assignment files).
 
 ## Exercises
@@ -51,7 +52,7 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 ## Assignments
 
 - [ ] **S + C:** assignment 1 (portfolio choice), final version with a solution script. It can take what it needs from the retired exercise on shrinkage and transaction costs (Ledoit-Wolf, backtests with costs, parametric policies, Bayes-Stein).
-- [ ] **S + C:** assignment 2 (machine learning in asset pricing), draft. It starts from `stock_characteristics_monthly.parquet` of exercise 4; put the solution's file on Absalon.
+- [ ] **S + C:** assignment 2 (machine learning in asset pricing), draft. It starts from the `stock_characteristics_monthly.parquet` each student builds in exercise 4 (not distributed on Absalon).
 - [ ] **S + C:** assignment 3 (realized volatility from high-frequency data, SPY and VOLARE), draft. GARCH (the retired exercise 10) can serve as its daily benchmark.
 
 ## Trading game and conference

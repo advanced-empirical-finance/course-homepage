@@ -9,7 +9,7 @@ Most pages have two parts:
 - **Reproduce:** work through a lecture, a chapter of [Tidy Finance](https://www.tidy-finance.org) or a paper, in R or Python. Try the tasks on your own before you read the solutions, which are right below the tasks or in the book chapter.
 - **Open question:** a question without a fixed solution, close to the current lecture. You submit a figure or a number, and a later lecture discusses the results of the whole class.
 
-Exercise 4 prepares the data for the second assignment instead: the stock characteristics that the assignment starts from.
+Exercise 4 prepares the data for the second assignment instead: you build the file of stock characteristics that the assignment starts from.
 
 The exercise classes are open: bring your questions and discuss them with your peers and the TA. You can also post on Absalon. Grolemund and Wickham's [R for Data Science](https://r4ds.hadley.nz/) is a good reference for the R basics.
 

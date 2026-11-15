@@ -5,7 +5,7 @@ aliases:
   - gu_kelly_xiu.html
 ---
 
-Lecture 13 and the second assignment predict stock returns from stock characteristics, following Gu, Kelly, and Xiu (2020, *Empirical Asset Pricing via Machine Learning*, Review of Financial Studies). On this page, you build that dataset once: the characteristics of the paper, prepared as in the paper and merged with the CRSP returns and the macroeconomic predictors from your `data` folder. The result, `data/stock_characteristics_monthly.parquet`, is the file the second assignment starts from. Absalon has the file that the solution below creates, so that everyone starts the assignment from the same data.
+Lecture 13 and the second assignment predict stock returns from stock characteristics, following Gu, Kelly, and Xiu (2020, *Empirical Asset Pricing via Machine Learning*, Review of Financial Studies). On this page, you build that dataset once: the characteristics of the paper, prepared as in the paper and merged with the CRSP returns and the macroeconomic predictors from your `data` folder. The result, `data/stock_characteristics_monthly.parquet`, is the file the second assignment starts from. Each of you builds it yourself, so keep your code: the assignment relies on this file.
 
 The data are large: the download is about 1.5 GB, and the unzipped file holds 3.8 GB of text. Read into memory at once, it would need more memory than most laptops have. The solution therefore works through the data one year at a time. Start early: the download and the preparation take a while. Ask in the exercise class or on Absalon if your computer struggles.
 
