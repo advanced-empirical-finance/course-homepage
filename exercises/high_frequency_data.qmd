@@ -1,0 +1,226 @@
+---
+title: High-frequency data
+eval: false
+aliases:
+  - covariance_estimation.html
+  - realized_covariances.html
+---
+
+These exercises go with the last three lectures: the order book data of SPY, the exchange-traded fund on the S&P 500 (lecture 16), and realized covariances for portfolio choice (lecture 18). Realized volatility itself (lecture 17) is the topic of the third assignment.
+
+## Liquidity and price impact of SPY
+
+**Exercises:**
+
+1. Download the SPY order book snapshots for March of every year from 2008 to 2025 with `download_data(domain = "Tidy Finance", dataset = "high_frequency_sp500")` from `tidyfinance`. What does one row contain, and in which units are the spread, the depth and the volume?
+2. Liquidity through the day: for March 2024, compute the average spread, the depth at the best quotes in USD, and the dollar volume per ten minutes of continuous trading, and plot them against the time of day. Leave out the snapshots of the opening and closing auctions. What pattern do you see, and why?
+3. Liquidity over the years: compute the average spread and depth for each March. How did they change since 2008, and which years stand out?
+4. Price impact (Kyle, 1985): aggregate the snapshots to one-minute midquote returns in basis points and one-minute order flow (the sum of `signed_volume`), scale the order flow by its standard deviation in each year, and regress the returns on the order flow, year by year. How does the slope $\lambda$ change over time, and how does the $R^2$? What do your results mean for the trading costs of a portfolio of large stocks, as in lecture 5?
+
+**Solutions:**
+
+The snapshots are taken every five seconds during regular trading hours, from LOBSTER data. One month of SPY has about 100,000 rows, so the 18 months take a moment to download.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-download-spy
+library(tidyverse)
+library(tidyfinance)
+library(scales)
+
+years <- 2008:2025
+sample_month <- 3
+
+spy <- map(years, \(year) {
+  start <- make_date(year, sample_month, 1)
+  download_data(
+    domain = "Tidy Finance", dataset = "high_frequency_sp500",
+    start_date = start, end_date = ceiling_date(start, "month") - days(1)
+  ) |>
+    mutate(year = year)
+}) |>
+  list_rbind()
+
+glimpse(spy)
+```
+
+## Python
+```{python}
+#| label: py-download-spy
+import polars as pl
+import tidyfinance as tf
+from plotnine import *
+
+years = range(2008, 2026)
+
+spy = pl.concat([
+    tf.download_data(
+        domain="Tidy Finance", dataset="high_frequency_sp500",
+        start_date=f"{year}-03-01", end_date=f"{year}-03-31"
+    ).with_columns(year=pl.lit(year))
+    for year in years
+])
+
+spy.glimpse()
+```
+:::
+
+The 18 months have 1,815,840 snapshots. Each row is one snapshot `ts` of the order book: the `midquote` in USD, the `spread` in basis points of the midquote, the depth at the best ask and bid (`depth0_ask`, `depth0_bid`) and within 5 basis points of the midquote (`depth5_ask`, `depth5_bid`) in shares, the dollar volume traded in the five seconds before (`trading_volume`), and the signed order flow (`signed_volume`), buyer- minus seller-initiated volume. Depth in shares times the midquote gives depth in USD.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-intraday
+intraday <- spy |>
+  filter(year == 2024) |>
+  mutate(clock_exact = hour(ts) + minute(ts) / 60 + second(ts) / 3600) |>
+  filter(clock_exact > 9.5 + 5 / 3600, clock_exact < 16) |>
+  mutate(time = floor_date(ts, "10 minutes"), clock = hour(time) + minute(time) / 60) |>
+  summarize(
+    spread = mean(spread),
+    depth = mean((depth0_ask + depth0_bid) / 2 * midquote),
+    volume = mean(trading_volume),
+    .by = clock
+  )
+
+intraday |>
+  pivot_longer(-clock) |>
+  ggplot(aes(x = clock, y = value)) +
+  geom_line() +
+  facet_wrap(~name, scales = "free_y") +
+  labs(x = "Hour of the day (New York time)", y = NULL)
+```
+
+## Python
+```{python}
+#| label: py-intraday
+clock_exact = pl.col("ts").dt.hour() + pl.col("ts").dt.minute() / 60 + pl.col("ts").dt.second() / 3600
+time = pl.col("ts").dt.truncate("10m")
+
+intraday = (spy
+    .filter(pl.col("year") == 2024, clock_exact > 9.5 + 5 / 3600, clock_exact < 16)
+    .group_by(clock=time.dt.hour() + time.dt.minute() / 60)
+    .agg(
+        spread=pl.col("spread").mean(),
+        depth=((pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")).mean(),
+        volume=pl.col("trading_volume").mean(),
+    )
+    .sort("clock")
+)
+
+(
+    ggplot(intraday.unpivot(index="clock"), aes(x="clock", y="value"))
+    + geom_line()
+    + facet_wrap("variable", scales="free_y")
+    + labs(x="Hour of the day (New York time)", y="")
+)
+```
+:::
+
+The first snapshot of the day comes right after the opening auction at 9:30 and the last ones before the closing auction at 16:00, so the filter keeps continuous trading only. In March 2024, trading is heaviest at the open and at the close: the dollar volume per five seconds falls from about USD 2.0 million in the first ten minutes to USD 0.6 million around noon and rises to USD 6.5 million in the last ten minutes (the U-shape). The spread is widest right after the open (0.24 basis points), when uncertainty about the day's news is largest, and narrowest at the close (0.21). Depth at the best quotes builds up during the day, from about USD 0.23 million to 0.51 million.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-yearly
+yearly <- spy |>
+  summarize(
+    spread = mean(spread),
+    depth = mean((depth0_ask + depth0_bid) / 2 * midquote),
+    .by = year
+  )
+
+yearly |>
+  pivot_longer(-year) |>
+  ggplot(aes(x = year, y = value)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~name, scales = "free_y") +
+  labs(x = NULL, y = NULL)
+```
+
+## Python
+```{python}
+#| label: py-yearly
+yearly = (spy
+    .group_by("year")
+    .agg(
+        spread=pl.col("spread").mean(),
+        depth=((pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")).mean(),
+    )
+    .sort("year")
+)
+
+(
+    ggplot(yearly.unpivot(index="year"), aes(x="year", y="value"))
+    + geom_line()
+    + geom_point()
+    + facet_wrap("variable", scales="free_y")
+    + labs(x="", y="")
+)
+```
+:::
+
+The spread fell from 0.91 basis points in March 2008 to 0.21 in March 2024. SPY trades at the minimum tick of one cent, and with a rising price, one cent became an ever smaller share of the price. The crisis month March 2009 stands out with 1.49 basis points. Depth at the best quotes fell as well, from about USD 1.1 million in 2008 to 0.3 million in 2024: orders are smaller and spread over more trading venues.
+
+For the price impact, the last midquote of each minute gives the minute's return, and the sum of the signed volume its order flow. Returns are computed within a day, so the overnight change does not count as a one-minute return. Scaling the order flow by its standard deviation in each year makes the slopes comparable across years.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-price-impact
+price_impact <- spy |>
+  mutate(day = as_date(ts), minute = floor_date(ts, "minute")) |>
+  summarize(
+    midquote = last(midquote), flow = sum(signed_volume),
+    .by = c(year, day, minute)
+  ) |>
+  mutate(ret = 1e4 * (log(midquote) - lag(log(midquote))), .by = c(year, day)) |>
+  drop_na() |>
+  mutate(flow = flow / sd(flow), .by = year) |>
+  nest(data = -year) |>
+  mutate(
+    fit = map(data, \(d) lm(ret ~ flow, data = d)),
+    lambda = map_dbl(fit, \(f) coef(f)[["flow"]]),
+    r2 = map_dbl(fit, \(f) summary(f)$r.squared)
+  ) |>
+  select(year, lambda, r2)
+
+price_impact
+```
+
+## Python
+```{python}
+#| label: py-price-impact
+minutes = (spy
+    .with_columns(day=pl.col("ts").dt.date(), minute=pl.col("ts").dt.truncate("1m"))
+    .group_by("year", "day", "minute", maintain_order=True)
+    .agg(midquote=pl.col("midquote").last(), flow=pl.col("signed_volume").sum())
+    .sort("year", "day", "minute")
+    .with_columns(ret=1e4 * pl.col("midquote").log().diff().over("year", "day"))
+    .drop_nulls()
+    .with_columns(flow=pl.col("flow") / pl.col("flow").std().over("year"))
+)
+
+price_impact = (minutes
+    .group_by("year")
+    .agg(
+        lambda_=pl.cov("ret", "flow") / pl.col("flow").var(),
+        r2=pl.corr("ret", "flow") ** 2,
+    )
+    .sort("year")
+)
+price_impact
+```
+:::
+
+With one regressor, the slope is the covariance of returns and order flow divided by the variance of the order flow, and the $R^2$ is their squared correlation, so the Python code computes them directly.
+
+One standard deviation of a minute's order flow moved SPY by 2.5 basis points in March 2008 and by 0.5 in March 2024. The crisis months stand out again: 5.7 basis points in March 2009 and 4.1 in March 2020. The $R^2$ fell from between 12% and 40% until 2012 to between 1% and 8% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, both spreads and price impact are small today, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
+
+## Realized covariances for portfolio choice
+
+::: {.callout-warning title="TBD"}
+Exercises to come with the realized covariance matrices of the 30 Dow Jones stocks from [VOLARE](https://volare.unime.it): covariance forecasts and minimum-variance portfolios out of sample, compared with the rolling covariances of lecture 3 and Ledoit-Wolf shrinkage of lecture 4. The data will be on Absalon.
+:::

@@ -62,9 +62,9 @@ crsp_monthly = pl.read_parquet("data/crsp_monthly.parquet")
 
 :::
 
-4. Replicate the figure from the lecture slides that shows the number of stocks in the CRSP sample over time, by listing exchange (NYSE, NYSE American, formerly AMEX, and Nasdaq).
+4. Plot the number of stocks in the CRSP sample over time, by listing exchange (NYSE, NYSE American, formerly AMEX, and Nasdaq).
 
-**Solutions:** The book chapter [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) solves the figure in R and Python; the lecture slides show it as well.
+**Solutions:** The book chapter [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) solves the figure in R and Python.
 
 ## Open question {#open-question}
 

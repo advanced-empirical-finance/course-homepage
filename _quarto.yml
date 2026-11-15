@@ -27,36 +27,28 @@ website:
             file: exercises/index.qmd
           - text: "---"
           - text: "start"
-          - text: "technical prerequisites"
+          - text: "0 technical prerequisites"
             file: exercises/technical-prerequisites.qmd
-          - text: "introduction to tidy finance"
+          - text: "1 introduction to tidy finance"
             file: exercises/introduction.qmd
           - text: "---"
           - text: "from portfolio choice to pricing"
-          - text: "mean-variance optimization"
+          - text: "2 mean-variance optimization"
             file: exercises/mean_variance.qmd
-          - text: "shrinkage and transaction costs"
-            file: exercises/portfolio_choice.qmd
-          - text: "beta estimation"
-            file: exercises/beta_estimation.qmd
-          - text: "portfolio sorts"
+          - text: "3 CAPM, betas and portfolio sorts"
             file: exercises/portfolio_sorts.qmd
           - text: "---"
           - text: "machine learning and the SDF"
-          - text: "shrinkage estimation"
+          - text: "4 data for machine learning"
+            file: exercises/machine_learning_data.qmd
+          - text: "5 shrinking the SDF"
             file: exercises/machine_learning.qmd
-          - text: "empirical asset pricing via machine learning"
-            file: exercises/gu_kelly_xiu.qmd
-          - text: "neural networks"
+          - text: "6 neural networks and implementable portfolios"
             file: exercises/machine_learning_nonlinear.qmd
-          - text: "implementable portfolios"
-            file: exercises/implementable_portfolios.qmd
           - text: "---"
-          - text: "volatility, risk, and uncertainty"
-          - text: "(co)variance estimation"
-            file: exercises/covariance_estimation.qmd
-          - text: "realized covariances"
-            file: exercises/realized_covariances.qmd
+          - text: "high-frequency data"
+          - text: "7 high-frequency data"
+            file: exercises/high_frequency_data.qmd
       - text: trading game
         menu:
           - text: the game
@@ -95,19 +87,15 @@ website:
          - section: From Portfolio Choice to Pricing
            contents:
              - exercises/mean_variance.qmd
-             - exercises/portfolio_choice.qmd
-             - exercises/beta_estimation.qmd
              - exercises/portfolio_sorts.qmd
          - section: Machine Learning and the SDF
            contents:
+             - exercises/machine_learning_data.qmd
              - exercises/machine_learning.qmd
-             - exercises/gu_kelly_xiu.qmd
              - exercises/machine_learning_nonlinear.qmd
-             - exercises/implementable_portfolios.qmd
-         - section: Volatility, Risk, and Uncertainty
+         - section: High-Frequency Data
            contents:
-             - exercises/covariance_estimation.qmd
-             - exercises/realized_covariances.qmd
+             - exercises/high_frequency_data.qmd
      - title: trading game
        style: docked
        contents:

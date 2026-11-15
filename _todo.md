@@ -36,32 +36,29 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 - [ ] **C:** 15 implementable portfolios: Sharpe ratios after costs, once the factor library with trading costs exists; check the publication year of Jensen, Kelly, Malamud & Pedersen.
 - [ ] **C:** 17 realized volatility and 18 realized covariances, once the VOLARE files are on eumel (plan in course-homepage#101).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
+- [ ] **C:** a printable sample whiteboard for every whiteboard slide (28 in decks 2–16, more in 17–18): the drawing or derivation S shows, step by step, as a PDF to take to class.
 - [ ] **C:** after S's review, remove the 2026 decks from the course repository (aef-2 to aef-6, aef-4-machine-learning, aef-reproducibility-in-asset-pricing, the old mandatory assignment files).
+
+## Course quality
+
+- [ ] **C:** alignment table on one page: each learning outcome of the course description, with the lectures, exercises and assignments that teach and assess it. Draft for S.
+- [ ] **C:** automatic feedback before the deadline: a check in the team repositories (course-homepage#81) that renders each report and tests it against the assignment quality criteria (runs from a clean session, chunk labels, numbers from inline code, captions and axis labels), so that teams see problems before they hand in.
 
 ## Exercises
 
-- [ ] **S:** decide where exercises 10 (GARCH, now week 17) and 11 (realized covariances, after the last exercise class on 10 May) go (course-homepage#101).
-- [ ] **C:** map the exercise pages to the final calendar (course-homepage#74).
-- [ ] **C:** exercise pages that are still placeholders:
-  - #61 estimation uncertainty;
-  - #62 parametric portfolio policies;
-  - #63 size sorts and p-hacking;
-  - #64 latent factors;
-  - #65 implementable portfolios;
-  - #66 realized variance with SPY (course-homepage#102 open);
-  - #67 realized covariances with VOLARE;
-  - #68 Bayesian shrinkage.
-- [ ] **C:** open questions:
-  - submission links for the remaining weeks (#69; exercises 2, 5 and 8 are done);
-  - figure upload and gallery for the first open question (#70);
-  - check whether #71 (non-standard errors) is done now that exercise 5 has its form.
-- [ ] **C:** exercise 6 should use tidyfinance's download of the anomaly returns once it works in Python.
+Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
+
+- [ ] **S:** review the eight pages (course-homepage PR for the new exercises).
+- [ ] **C:** exercise 7, the realized covariances part, once the VOLARE files are on eumel.
+- [ ] **C:** figure upload and gallery for the open question of exercise 1 (#70).
+- [ ] **C:** exercise 5 should use tidyfinance's download of the anomaly returns once it works in Python.
+- [ ] **S:** decide whether the exercise classes on 1 March and 12 April (assignment weeks) become question time for the assignment.
 
 ## Assignments
 
-- [ ] **S + C:** assignment 1 (portfolio choice), final version with a solution script.
-- [ ] **S + C:** assignment 2 (machine learning in asset pricing), draft.
-- [ ] **S + C:** assignment 3 (realized volatility from high-frequency data, SPY and VOLARE), draft.
+- [ ] **S + C:** assignment 1 (portfolio choice), final version with a solution script. It can take what it needs from the retired exercise on shrinkage and transaction costs (Ledoit-Wolf, backtests with costs, parametric policies, Bayes-Stein).
+- [ ] **S + C:** assignment 2 (machine learning in asset pricing), draft. It starts from the `stock_characteristics_monthly.parquet` each student builds in exercise 4 (not distributed on Absalon).
+- [ ] **S + C:** assignment 3 (realized volatility from high-frequency data, SPY and VOLARE), draft. GARCH (the retired exercise 10) can serve as its daily benchmark.
 
 ## Trading game and conference
 
@@ -74,7 +71,7 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 
 - [ ] **S:** ask KU IT (serviceportal.ku.dk) to allowlist `eumel.tail81c88a.ts.net` permanently. KU's web filter blocked it on 6 November 2026; on KU Wi-Fi students could then not answer the polls.
 - Live slides: S opens them in the browser at `http://eumel:8444/` (Tailscale only, not public), not from a downloaded file, because the polls and sliders don't run from a file. **C** renders them with `live-slides` (all decks) or `live-slides 5` (one lecture) after every change.
-- [ ] **S:** add the Claude API key on eumel (`~/.config/live-poll.env`). **C:** then the end-to-end test of the AI grouping; an hourly reminder is set.
+- [ ] **S:** add the Claude API key on eumel (`~/.config/live-poll.env`). **C:** then the end-to-end test of the AI grouping.
 
 ## Waiting for others
 
