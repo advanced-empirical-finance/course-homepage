@@ -44,6 +44,16 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 - [ ] **C:** alignment table on one page: each learning outcome of the course description, with the lectures, exercises and assignments that teach and assess it. Draft for S.
 - [ ] **C:** automatic feedback before the deadline: a check in the team repositories (course-homepage#81) that renders each report and tests it against the assignment quality criteria (runs from a clean session, chunk labels, numbers from inline code, captions and axis labels), so that teams see problems before they hand in.
 
+## Lecture notes from transcripts
+
+Instead of video recordings: a transcript of each lecture, turned into notes and published as a PDF with the slides and the whiteboard sheets.
+
+- [ ] **S:** request a clip-on microphone that records to a file (built-in recording, or into the phone or laptop).
+- [ ] **S:** check KU's rules for recording teaching; tell students in lecture 1 that only the lecturer's microphone records, that names never appear in the notes, and that the audio is deleted after transcription.
+- [ ] **C:** transcription on eumel with Whisper (the audio never leaves eumel); test the speed and quality on a sample recording before the semester.
+- [ ] **C:** the live decks report slide changes to eumel, so that the transcript splits by slide.
+- [ ] **C:** lecture notes PDF per lecture: each slide, what was said (cleaned up, in S's words, student questions without names), and the whiteboard sheets.
+
 ## Exercises
 
 Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
