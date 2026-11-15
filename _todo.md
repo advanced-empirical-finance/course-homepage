@@ -30,7 +30,7 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 
 ## Lectures
 
-- [ ] **S:** review the drafts: decks 5–15 on main, 16 in course-repository#58.
+- [ ] **S:** review the drafts: decks 5–16.
 - [ ] **C:** 07 portfolio sorts, the second hour (placeholder).
 - [ ] **C:** 08 multifactor models, the Fama-French slide (placeholder).
 - [ ] **C:** 15 implementable portfolios: Sharpe ratios after costs, once the factor library with trading costs exists; check the publication year of Jensen, Kelly, Malamud & Pedersen.
@@ -70,15 +70,13 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 - [ ] **S:** conference on 20 May: selection rule (out-of-sample measure and period), discussants, jury, Nitor prize.
 - [ ] **S + C:** team repositories (course-homepage#81): the form on Absalon, then the repositories.
 
-## Live polls
+## Live polls and live slides
 
+- [ ] **S:** ask KU IT (serviceportal.ku.dk) to allowlist `eumel.tail81c88a.ts.net` permanently. KU's web filter blocked it on 6 November 2026; on KU Wi-Fi students could then not answer the polls.
+- Live slides: S opens them in the browser at `http://eumel:8444/` (Tailscale only, not public), not from a downloaded file, because the polls and sliders don't run from a file. **C** renders them with `live-slides` (all decks) or `live-slides 5` (one lecture) after every change.
 - [ ] **S:** add the Claude API key on eumel (`~/.config/live-poll.env`). **C:** then the end-to-end test of the AI grouping; an hourly reminder is set.
 
 ## Waiting for others
 
 - KU administration: kurser.ku.dk still shows the old exam (48-hour home assignment).
-- Open PRs to merge:
-  - course-repository#57 (lecture 1: assignment 3);
-  - course-repository#58 (lecture 16);
-  - course-homepage#102 (exercise 10 data);
-  - claude-skills#5 (live-poll docs).
+- Open PRs to merge: course-repository#59 (lecture 1 PDF without Type 3 fonts).
