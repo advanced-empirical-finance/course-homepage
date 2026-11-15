@@ -1,0 +1,446 @@
+---
+title: Data for machine learning
+eval: false
+aliases:
+  - gu_kelly_xiu.html
+---
+
+Lecture 13 and the second assignment predict stock returns from stock characteristics, following Gu, Kelly, and Xiu (2020, *Empirical Asset Pricing via Machine Learning*, Review of Financial Studies). On this page, you build that dataset once: the characteristics of the paper, prepared as in the paper and merged with the CRSP returns and the macroeconomic predictors from your `data` folder. The result, `data/stock_characteristics_monthly.parquet`, is the file the second assignment starts from. Absalon has the file that the solution below creates, so that everyone starts the assignment from the same data.
+
+The data are large: the download is about 1.5 GB, and the unzipped file holds 3.8 GB of text. Read into memory at once, it would need more memory than most laptops have. The solution therefore works through the data one year at a time. Start early: the download and the preparation take a while. Ask in the exercise class or on Absalon if your computer struggles.
+
+## The characteristics
+
+**Exercises:**
+
+1. Read Section 2.1 of the paper ("Data and the overall model"). Which three groups of predictors do the authors use, and how many covariates do they get?
+2. Download the 94 stock characteristics of the paper from [Dacheng Xiu's homepage](https://dachxiu.chicagobooth.edu/download/datashare.zip). The zip archive holds the file `datashare.csv` and a readme. Store the data in a form that lets you read one year at a time.
+3. How many stocks and months do the data cover? Which characteristics are missing most often, and how does the share of missing values change over time? Show it in a figure.
+4. Check the timing. The readme says that the characteristics in the row of a month predict the return of that same month. The characteristic `mom1m` is the return of the previous month. Merge it with the CRSP returns and compute its correlation with the return of the same month and with the return of the month before. What do you expect, and what do you find?
+
+**Solutions:**
+
+The solution uses the following packages.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-load-packages
+library(tidyverse)
+library(archive)
+library(nanoparquet)
+```
+
+## Python
+```{python}
+#| label: py-load-packages
+import urllib.request
+import zipfile
+
+import polars as pl
+from mizani.formatters import percent_format
+from plotnine import *
+```
+:::
+
+Section 2.1 of the paper describes 94 stock characteristics, 74 industry dummies from the first two digits of the SIC code (`sic2`), and eight macroeconomic predictors. With the interactions between characteristics and macroeconomic predictors, the paper has $94 \times (8 + 1) + 74 = 920$ covariates.
+
+The file runs until 2021, beyond the paper's sample that ends in 2016. We store the zip file in the `data` folder, so that you download it only once, and allow the download an hour (3,600 seconds). Many characteristics are missing in the first years of the sample, so the column types must not be guessed from the first rows of the file: we read every column as a number.
+
+The rows of `datashare.csv` are sorted by date, and everything on this page works within a month or a year. So we never need all rows in memory at once.
+
+- In R, `read_csv_chunked()` reads the file in chunks of 250,000 rows and calls a function on each chunk. Our function splits the chunk by year and stores each part as a parquet file in the folder `data/datashare_by_year`. A year that spans two chunks gets two files.
+- In Python, `scan_csv()` and `sink_parquet()` turn the .csv file into one parquet file without loading it, and a filter reads one year from it.
+
+Either way, the function `read_year()` returns the characteristics of one year. It also does three small things:
+
+- it turns the column `DATE`, which stores dates as numbers such as `19570329`, into the first day of the month, the convention of the course data;
+- it puts `characteristic_` in front of the names of the characteristics;
+- it drops the rows without an industry code.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-download-characteristics
+options(timeout = 3600)
+download.file(
+  "https://dachxiu.chicagobooth.edu/download/datashare.zip",
+  "data/datashare.zip", mode = "wb"
+)
+
+dir.create("data/datashare_by_year", showWarnings = FALSE)
+
+write_years <- function(chunk, position) {
+  chunk |>
+    mutate(year = DATE %/% 10000) |>
+    group_by(year) |>
+    group_walk(\(rows, key) {
+      write_parquet(rows, sprintf("data/datashare_by_year/%d_%09d.parquet", key$year, position))
+    })
+}
+
+read_csv_chunked(
+  archive_read("data/datashare.zip", file = "datashare.csv"),
+  callback = SideEffectChunkCallback$new(write_years),
+  chunk_size = 250000,
+  col_types = cols(.default = col_double())
+)
+
+read_year <- function(year) {
+  list.files("data/datashare_by_year", pattern = paste0("^", year, "_"), full.names = TRUE) |>
+    map(read_parquet) |>
+    list_rbind() |>
+    rename(date = DATE) |>
+    mutate(
+      date = floor_date(ymd(date), "month"),
+      permno = as.integer(permno),
+      sic2 = as.integer(sic2)
+    ) |>
+    rename_with(\(x) paste0("characteristic_", x), -c(permno, date, sic2)) |>
+    drop_na(sic2)
+}
+
+years <- list.files("data/datashare_by_year") |>
+  str_sub(1, 4) |>
+  unique() |>
+  as.integer()
+```
+
+## Python
+```{python}
+#| label: py-download-characteristics
+urllib.request.urlretrieve(
+    "https://dachxiu.chicagobooth.edu/download/datashare.zip", "data/datashare.zip"
+)
+with zipfile.ZipFile("data/datashare.zip") as z:
+    z.extract("datashare.csv", "data")
+
+(pl.scan_csv("data/datashare.csv", infer_schema=False)
+    .select(pl.all().cast(pl.Float64))
+    .sink_parquet("data/datashare.parquet")
+)
+
+datashare = pl.scan_parquet("data/datashare.parquet")
+char_cols = ["characteristic_" + c for c in datashare.collect_schema().names()
+             if c not in ("permno", "DATE", "sic2")]
+
+
+def read_year(year):
+    return (datashare
+        .filter(pl.col("DATE") // 10000 == year)
+        .collect()
+        .rename({"DATE": "date"})
+        .with_columns(
+            pl.col("date").cast(pl.Int64).cast(pl.String).str.to_date("%Y%m%d").dt.truncate("1mo"),
+            pl.col("permno", "sic2").cast(pl.Int64),
+        )
+        .select(
+            "permno", "date", "sic2",
+            pl.exclude("permno", "date", "sic2").name.prefix("characteristic_")
+        )
+        .drop_nulls("sic2")
+    )
+
+
+years = (datashare
+    .select((pl.col("DATE") // 10000).cast(pl.Int64).unique().sort())
+    .collect()
+    .to_series()
+    .to_list()
+)
+```
+:::
+
+Once the parquet data are written, you can delete `datashare.zip` (and in Python `datashare.csv`) to free about 5 GB of disk space. To describe the data, we summarize one year at a time and then combine the summaries.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-coverage
+characteristics_summary <- map(years, \(year) {
+  read_year(year) |>
+    summarize(
+      year = year,
+      stock_months = n(),
+      across(starts_with("characteristic_"), \(x) mean(is.na(x)))
+    )
+}) |>
+  list_rbind()
+
+stocks <- map(years, \(year) read_year(year) |> distinct(permno)) |>
+  list_rbind() |>
+  distinct(permno)
+
+tibble(
+  stocks = nrow(stocks),
+  stock_months = sum(characteristics_summary$stock_months),
+  first_year = min(years),
+  last_year = max(years)
+)
+
+missing_by_year <- characteristics_summary |>
+  pivot_longer(starts_with("characteristic_"), names_to = "characteristic", values_to = "missing")
+
+missing_by_year |>
+  summarize(missing = weighted.mean(missing, stock_months), .by = characteristic) |>
+  slice_max(missing, n = 5)
+
+missing_by_year |>
+  summarize(missing = mean(missing), .by = year) |>
+  ggplot(aes(x = year, y = missing)) +
+  geom_line() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    x = NULL, y = NULL,
+    title = "Share of missing values, averaged over the 94 characteristics"
+  )
+```
+
+## Python
+```{python}
+#| label: py-coverage
+characteristics_summary = pl.concat([
+    read_year(year).select(
+        year=pl.lit(year),
+        stock_months=pl.len(),
+        **{c: pl.col(c).is_null().mean() for c in char_cols},
+    )
+    for year in years
+])
+
+stocks = pl.concat([read_year(year).select("permno").unique() for year in years]).unique()
+
+pl.DataFrame({
+    "stocks": [stocks.height],
+    "stock_months": [characteristics_summary["stock_months"].sum()],
+    "first_year": [min(years)],
+    "last_year": [max(years)],
+})
+```
+
+```{python}
+#| label: py-missing
+missing_by_year = characteristics_summary.unpivot(
+    index=["year", "stock_months"], variable_name="characteristic", value_name="missing"
+)
+
+(missing_by_year
+    .group_by("characteristic")
+    .agg((pl.col("missing") * pl.col("stock_months")).sum() / pl.col("stock_months").sum())
+    .sort("missing", descending=True)
+    .head(5)
+)
+```
+
+```{python}
+#| label: py-missing-figure
+(
+    ggplot(
+        missing_by_year.group_by("year").agg(pl.col("missing").mean()).sort("year"),
+        aes(x="year", y="missing"),
+    )
+    + geom_line()
+    + scale_y_continuous(labels=percent_format())
+    + labs(x="", y="", title="Share of missing values, averaged over the 94 characteristics")
+)
+```
+:::
+
+The data cover 27,100 stocks and 3,816,941 stock-months with an industry code, from January 1957 to December 2021. The characteristics missing most often are `realestate` (72% of all stock-months), `rd_sale` and `rd_mve` (62% each), and `stdacc` and `stdcf` (58% each). In the first years, almost 80% of all values are missing (79% in 1957 and 1960). The share falls to 33% in 1970, 26% in 1980, 23% in 2000 and 18% in 2021: most characteristics come from accounting data, which cover few firms in the early years.
+
+For the timing check, we merge `mom1m` with the CRSP returns of the same month and of the month before. The return of the month before comes from the previous row of the same stock, but only if that row is really the previous month.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-timing
+crsp_returns <- read_parquet("data/crsp_monthly.parquet") |>
+  select(permno, date, ret) |>
+  arrange(permno, date) |>
+  mutate(
+    ret_previous_month = if_else(
+      lag(date) == date %m-% months(1), lag(ret), NA_real_
+    ),
+    .by = permno
+  )
+
+map(years, \(year) read_year(year) |> select(permno, date, characteristic_mom1m)) |>
+  list_rbind() |>
+  inner_join(crsp_returns, join_by(permno, date)) |>
+  summarize(
+    same_month = cor(characteristic_mom1m, ret, use = "complete.obs"),
+    previous_month = cor(characteristic_mom1m, ret_previous_month, use = "complete.obs")
+  )
+```
+
+## Python
+```{python}
+#| label: py-timing
+crsp_returns = (pl.read_parquet("data/crsp_monthly.parquet")
+    .select(pl.col("permno").cast(pl.Int64), pl.col("date").cast(pl.Date), "ret")
+    .sort("permno", "date")
+    .with_columns(
+        ret_previous_month=pl.when(
+            pl.col("date").shift(1).over("permno") == pl.col("date").dt.offset_by("-1mo")
+        ).then(pl.col("ret").shift(1).over("permno"))
+    )
+)
+
+(pl.concat([read_year(year).select("permno", "date", "characteristic_mom1m") for year in years])
+    .join(crsp_returns, on=["permno", "date"], how="inner")
+    .select(
+        same_month=pl.corr("characteristic_mom1m", "ret"),
+        previous_month=pl.corr("characteristic_mom1m", "ret_previous_month"),
+    )
+)
+```
+:::
+
+If the characteristics in the row of a month are known before that month's return, `mom1m` must be the return of the month before. It is: its correlation with the return of the month before is 0.92, with the return of the same month −0.01. So the row of March holds characteristics known at the end of February, and its return to predict is the return of March.
+
+## Preparing the characteristics
+
+**Exercises:**
+
+1. Rank all characteristics cross-sectionally, month by month, and map the ranks into the $[-1, 1]$ interval (footnote 29 of the paper). Replace missing characteristics with the cross-sectional median of the month (footnote 30). What do you do if a characteristic has no values at all in a month?
+2. Merge the characteristics with the excess returns `ret_excess` and the lagged market capitalization `mktcap_lag` from `crsp_monthly.parquet`, and with the eight macroeconomic predictors of the paper from `macro_predictors.parquet`: `dp`, `ep`, `bm`, `ntis`, `tbl`, `tms`, `dfy`, and `svar`. Make sure that every predictor in a row is known before the return in that row is realized.
+3. Store the result as `data/stock_characteristics_monthly.parquet`. Name the characteristics `characteristic_*` and the macroeconomic predictors `macro_*`, and keep `permno`, `date`, `sic2`, `ret_excess` and `mktcap_lag`. How many stock-months and stocks are left, and how large is the file?
+4. The paper's 920 covariates would not fit into the memory of most laptops. How can you work with this dataset anyway? Think of the columns you read, the years you keep, and when you build the interactions.
+
+**Solutions:**
+
+> We cross-sectionally rank all stock characteristics period-by-period and map these ranks into the [-1,1] interval following Kelly, Pruitt, and Su (2019) and Freyberger, Neuhierl, and Weber (2020). (footnote 29)
+
+In every month, the stock with the lowest value of a characteristic gets $-1$, the one with the highest value gets $1$, and the others lie in between according to their rank. Missing values keep a missing rank, so they do not distort the ranking of the others. If a characteristic has fewer than two values in a month, there is nothing to rank and the result is missing. Random forests do not care about the scaling of the predictors, but the elastic net and neural networks do.
+
+> Another issue is missing characteristics, which we replace with the cross-sectional median at each month for each stock, respectively. (footnote 30)
+
+One of the coauthors, however, writes in a [Q&A file](https://www.dropbox.com/s/4vsc4hakwvz2j31/ML_QandA.pdf?dl=0) that missing values are set to zero. The two statements fit together: in some months, a few characteristics have no values at all, so their cross-sectional median is undefined. We therefore first replace missing values with the median of the month and then set what is still missing to zero. After the rank transformation, zero is the middle of the range.
+
+> We also construct eight macroeconomic predictors following the variable definitions detailed in Welch and Goyal (2008), including dividend-price ratio (dp), earnings-price ratio (ep), book-to-market ratio (bm), net equity expansion (ntis), Treasury-bill rate (tbl), term spread (tms), default spread (dfy), and stock variance (svar). (p. 2248)
+
+The timing check above shows that the characteristics are already aligned with the returns they predict, so `ret_excess` from CRSP merges on the same month. The macroeconomic predictors of a month are only known at its end, so we lag them by one month: the values of February predict the returns of March. We keep `mktcap_lag` for value-weighted portfolios. `crsp_monthly.parquet` starts in 1960, three years after the paper's sample.
+
+The function `prepare_year()` does all three steps for one year. Ranks and medians are computed within each month, so preparing the data year by year gives the same result as preparing all years at once.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-prepare
+rank_transform <- function(x) {
+  n <- sum(!is.na(x))
+  if (n < 2) {
+    return(rep(NA_real_, length(x)))
+  }
+  (rank(x, na.last = "keep") - 1) / (n - 1) * 2 - 1
+}
+
+crsp_monthly <- read_parquet("data/crsp_monthly.parquet") |>
+  select(permno, date, ret_excess, mktcap_lag)
+
+macro_predictors <- read_parquet("data/macro_predictors.parquet") |>
+  select(date, dp, ep, bm, ntis, tbl, tms, dfy, svar) |>
+  rename_with(\(x) paste0("macro_", x), -date) |>
+  mutate(date = date %m+% months(1))
+
+prepare_year <- function(year) {
+  read_year(year) |>
+    group_by(date) |>
+    mutate(across(starts_with("characteristic_"), rank_transform)) |>
+    mutate(across(
+      starts_with("characteristic_"),
+      \(x) replace_na(x, median(x, na.rm = TRUE))
+    )) |>
+    ungroup() |>
+    mutate(across(starts_with("characteristic_"), \(x) replace_na(x, 0))) |>
+    inner_join(crsp_monthly, join_by(permno, date)) |>
+    inner_join(macro_predictors, join_by(date)) |>
+    arrange(permno, date) |>
+    select(
+      permno, date, ret_excess, mktcap_lag, sic2,
+      starts_with("macro_"), starts_with("characteristic_")
+    )
+}
+```
+
+## Python
+```{python}
+#| label: py-prepare
+def rank_transform(x):
+    n = x.count()
+    return pl.when(n >= 2).then((x.rank() - 1) / (n - 1) * 2 - 1)
+
+
+crsp_monthly = (pl.read_parquet("data/crsp_monthly.parquet")
+    .select(
+        pl.col("permno").cast(pl.Int64),
+        pl.col("date").cast(pl.Date),
+        "ret_excess", "mktcap_lag"
+    )
+)
+
+macro_predictors = (pl.read_parquet("data/macro_predictors.parquet")
+    .select(
+        pl.col("date").cast(pl.Date).dt.offset_by("1mo"),
+        pl.col("dp", "ep", "bm", "ntis", "tbl", "tms", "dfy", "svar").name.prefix("macro_")
+    )
+)
+
+
+def prepare_year(year):
+    return (read_year(year)
+        .with_columns(rank_transform(pl.col(char_cols)).over("date"))
+        .with_columns(pl.col(char_cols).fill_null(pl.col(char_cols).median().over("date")))
+        .with_columns(pl.col(char_cols).fill_null(0))
+        .join(crsp_monthly, how="inner", on=["permno", "date"])
+        .join(macro_predictors, how="inner", on="date")
+        .sort("permno", "date")
+        .select(
+            "permno", "date", "ret_excess", "mktcap_lag", "sic2",
+            pl.col("^macro_.*$"), pl.col("^characteristic_.*$")
+        )
+    )
+```
+:::
+
+polars joins only columns of the same type, so the Python code casts `permno` and `date` to the same types in all tables. We prepare one year after the other and write them into one file. In R, `write_parquet()` creates the file with the first year and `append_parquet()` adds the others; years without CRSP data, before 1960, add no rows. In Python, the prepared years are combined without copying them (`rechunk=False`) and written at once.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-write-characteristics
+output_file <- "data/stock_characteristics_monthly.parquet"
+unlink(output_file)
+
+for (year in years) {
+  prepared <- prepare_year(year)
+  if (nrow(prepared) == 0) next
+  if (file.exists(output_file)) {
+    append_parquet(prepared, output_file)
+  } else {
+    write_parquet(prepared, output_file)
+  }
+}
+
+read_parquet(output_file, col_select = c("permno", "date")) |>
+  summarize(stock_months = n(), stocks = n_distinct(permno))
+file.size(output_file) / 1e6
+```
+
+## Python
+```{python}
+#| label: py-write-characteristics
+(pl.concat([prepare_year(year) for year in years], rechunk=False)
+    .write_parquet("data/stock_characteristics_monthly.parquet")
+)
+
+(pl.scan_parquet("data/stock_characteristics_monthly.parquet")
+    .select(stock_months=pl.len(), stocks=pl.col("permno").n_unique())
+    .collect()
+)
+```
+:::
+
+CRSP starts in 1960, so the merged data run from February 1960 to December 2021: 3,059,477 stock-months of 21,474 stocks, with 107 columns. The file needs 1.6 GB on disk when R writes it and 1.2 GB when Python does; the two use different compression. R and Python write the same values; they differ by less than $10^{-15}$. On our computer, the whole page took about 9 minutes in R and 10 minutes in Python, without the download, and needed at most about 4.4 GB of memory in R and 3.7 GB in Python.
+
+The 920 covariates would multiply the size of this file by about nine. Three things keep the dataset manageable, and the second assignment uses all three. First, read only the columns you need: `read_parquet(..., col_select = ...)` in R, `pl.read_parquet(..., columns=...)` in Python. Second, keep only the years you need, or a random subset of the stocks while you develop your code. Third, build the interactions only for the characteristics and macroeconomic predictors you use, and only right before a model needs them, for instance with `step_interact()` in a `tidymodels` recipe.

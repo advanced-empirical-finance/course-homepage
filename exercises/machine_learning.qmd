@@ -1,21 +1,21 @@
 ---
-title: Shrinkage Estimation
+title: Shrinking the SDF
 ---
 
-In these exercises, you familiarize yourself with the details behind shrinkage regression methods such as Ridge and Lasso. Although *R* and *Python* provide amazing interfaces which perform the estimation flawlessly, you are first asked to implement Ridge and Lasso estimators from scratch before moving on to the package *glmnet* (R) or *scikit-learn* (Python).
+These exercises reproduce lectures 10 and 11: Ridge and Lasso, and how to choose their penalty. Packages estimate both in one line, but you first implement the two estimators yourself and then compare them with *glmnet* (R) or *scikit-learn* (Python).
 
 The application is the running example of the machine learning lectures: the *factor zoo*. Hundreds of published anomalies each come with a long-short portfolio. Which combination of them prices the cross-section of stock returns, and how much of it survives out of sample?
 
-## Shrinking the SDF: Ridge and Lasso on the factor zoo
+## Ridge and lasso on the factor zoo
 
 **Exercises:**
 
 -   Download the monthly long-short returns of the anomaly portfolios from [Open Source Asset Pricing](https://www.openassetpricing.com) (Chen and Zimmermann) and store them in the `data` folder. Keep the anomalies with a return in every month from January 1973 to December 2023. The years until 1999 are your *estimation sample*, the years from 2000 on your *test sample*. How many anomalies are left? Compute the annualized Sharpe ratio of the portfolio that holds all anomalies with equal weights, in both samples.
 -   The stochastic discount factor (SDF) is spanned by the mean-variance efficient (MVE) portfolio of the anomalies, with weights proportional to $\Sigma^{-1}\mu$. Britten-Jones (1999) shows that you get these weights from a regression: regress a vector of ones, `y`, on the excess returns, `X`, without an intercept. Run this regression in the estimation sample and compute the Sharpe ratio of the resulting portfolio in both samples. What do you find?
 -   Write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times N)$ matrix), and `lambda`, and which returns the **Ridge** estimator $\hat b = (X'X + T\lambda I)^{-1}X'y$. This scaling of the penalty is the one `glmnet()` uses, so you can compare your results with it later. Compute the $L_2$ norm ($b'b$) of the estimated weights and the Sharpe ratios in both samples for a range of $\lambda$'s, and illustrate the effect of the penalization in suitable figures. Which $\lambda$ would you choose, and why may you not use the test sample to choose it?
--   Choose $\lambda$ by 5-fold cross-validation within the estimation sample: estimate the weights on four folds and compute the Sharpe ratio on the fifth. What is the Sharpe ratio of the chosen Ridge portfolio in the test sample?
+-   Choose $\lambda$ by cross-validation within the estimation sample: split it into five consecutive blocks of months, estimate the weights on four blocks and compute the Sharpe ratio on the fifth, so that each block is the validation block once, and average the five Sharpe ratios. Which $\lambda$ gets the highest average, and what is the Sharpe ratio of this Ridge portfolio in the test sample?
 -   Now, write a function with the same three inputs which returns the **Lasso** estimator, the $b$ that minimizes $\frac{1}{2T}(y - Xb)'(y - Xb) + \lambda \sum_i |b_i|$. Use *coordinate descent*: go through the weights one by one and update each, keeping the others fixed, until nothing changes anymore. Check your function against `glmnet()` (in Python: `Lasso()` from `scikit-learn`).
--   Compute the whole Lasso path with `glmnet()` (in Python: `lasso_path()`). How many anomalies does the Lasso select for each $\lambda$, and how does the Sharpe ratio in the test sample change? Choose $\lambda$ by cross-validation as for Ridge. How many anomalies does a good SDF need? Kozak, Nagel, and Santosh (2020) discuss whether the SDF is sparse.
+-   Compute the Lasso for a grid of $\lambda$'s with `glmnet()` (in Python: `Lasso()`). How many anomalies does the Lasso select for each $\lambda$, and how does the Sharpe ratio in the test sample change? Choose $\lambda$ by cross-validation as for Ridge. How many anomalies does a good SDF need? Kozak, Nagel, and Santosh (2020) discuss whether the SDF is sparse.
 
 **Solutions:**
 
@@ -67,7 +67,7 @@ from datetime import date
 import numpy as np
 import polars as pl
 from plotnine import *
-from sklearn.linear_model import Lasso, lasso_path
+from sklearn.linear_model import Lasso
 
 osap_url = (
     "https://huggingface.co/datasets/OpenSourceAP/CrossSection/resolve/"
@@ -140,7 +140,7 @@ ridge <- function(y, X, lambda) {
   solve(crossprod(X) + nrow(X) * lambda * diag(ncol(X)), crossprod(X, y))
 }
 
-ridge_path <- tibble(lambda = 10^seq(-7, -2, length.out = 51)) |>
+ridge_path <- tibble(lambda = 10^seq(-7, -1, by = 0.25)) |>
   mutate(
     weights = map(lambda, \(lambda) ridge(y, X, lambda)),
     l2_norm = map_dbl(weights, \(b) sum(b^2)),
@@ -170,7 +170,7 @@ def ridge(y, X, lambda_):
     return np.linalg.solve(X.T @ X + X.shape[0] * lambda_ * np.eye(X.shape[1]), X.T @ y)
 
 
-lambdas = 10 ** np.linspace(-7, -2, 51)
+lambdas = 10 ** np.arange(-7, -0.99, 0.25)
 ridge_path = pl.DataFrame([
     {"lambda": lambda_, "l2_norm": float(np.sum(b**2)), **portfolio_sharpe(b)}
     for lambda_ in lambdas
@@ -201,20 +201,21 @@ ridge_path = pl.DataFrame([
 ```
 :::
 
-More shrinkage lowers the Sharpe ratio in the estimation sample, but raises it in the test sample, up to a point. Picking the $\lambda$ with the best test Sharpe ratio would use the test sample to build the portfolio, so its Sharpe ratio would no longer be out of sample. Instead, we choose $\lambda$ by cross-validation within the estimation sample. The folds are consecutive blocks of months, so each fold keeps the time series together. If a penalty sets all weights to zero, there is no portfolio, and the fold counts with a Sharpe ratio of zero.
+More shrinkage lowers the Sharpe ratio in the estimation sample, but raises it in the test sample, up to a point. Picking the $\lambda$ with the best test Sharpe ratio would use the test sample to build the portfolio, so its Sharpe ratio would no longer be out of sample. Instead, we choose $\lambda$ by cross-validation within the estimation sample, as in lecture 11. The folds are consecutive blocks of months, so each fold keeps the time series together. If a penalty sets all weights to zero, there is no portfolio and no Sharpe ratio, and that fold is left out of the average.
 
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
 #| label: r-ridge-cv
-folds <- cut(seq_len(nrow(X)), 5, labels = FALSE)
+n_folds <- 5
+folds <- ceiling(seq_len(nrow(X)) / (nrow(X) / n_folds))
 
 cv_sharpe <- function(estimator, lambda) {
-  map_dbl(1:5, \(k) {
+  map_dbl(seq_len(n_folds), \(k) {
     b <- estimator(y[folds != k], X[folds != k, ], lambda)
-    if (all(b == 0)) 0 else sharpe_ratio(X[folds == k, ] %*% b)
+    if (all(b == 0)) NA else sharpe_ratio(X[folds == k, ] %*% b)
   }) |>
-    mean()
+    mean(na.rm = TRUE)
 }
 
 ridge_path <- ridge_path |>
@@ -228,17 +229,16 @@ ridge_path |>
 ## Python
 ```{python}
 #| label: py-ridge-cv
-folds = np.array_split(np.arange(X.shape[0]), 5)
+n_folds = 5
+folds = np.ceil(np.arange(1, X.shape[0] + 1) / (X.shape[0] / n_folds))
 
 
 def cv_sharpe(estimator, lambda_):
     sharpe = []
-    for fold in folds:
-        keep = np.ones(X.shape[0], dtype=bool)
-        keep[fold] = False
-        b = estimator(y[keep], X[keep], lambda_)
-        sharpe.append(sharpe_ratio(X[fold] @ b) if np.any(b) else 0.0)
-    return np.mean(sharpe)
+    for k in range(1, n_folds + 1):
+        b = estimator(y[folds != k], X[folds != k], lambda_)
+        sharpe.append(sharpe_ratio(X[folds == k] @ b) if np.any(b) else np.nan)
+    return np.nanmean(sharpe)
 
 
 ridge_path = ridge_path.with_columns(
@@ -317,30 +317,35 @@ b_sklearn = Lasso(alpha=1e-3, fit_intercept=False, tol=1e-14, max_iter=100000).f
 ```
 :::
 
-Both packages minimize exactly this objective when the intercept and the internal standardization are switched off, so the weights agree up to the numerical tolerance. For the whole path, we let `glmnet()` (`lasso_path()`) choose the grid of $\lambda$'s, from the smallest penalty that sets all weights to zero downwards.
+Both packages minimize exactly this objective when the intercept and the internal standardization are switched off, so the weights agree up to the numerical tolerance. For the path, we use the grid of lecture 10, from $\lambda = 10^{-6}$, where almost every anomaly gets a weight, to $10^{-2.5}$, where only a few do. A tight convergence threshold makes `glmnet()` and `Lasso()` agree.
 
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
 #| label: r-lasso-path
-lasso_fit <- glmnet(X, y, alpha = 1, intercept = FALSE, standardize = FALSE)
+lasso_glmnet <- function(y, X, lambda) {
+  glmnet(X, y,
+    alpha = 1, lambda = lambda, intercept = FALSE, standardize = FALSE,
+    control = list(thresh = 1e-12)
+  ) |>
+    coef() |>
+    as.numeric() |>
+    tail(-1)
+}
 
-lasso_path <- tibble(lambda = lasso_fit$lambda, selected = lasso_fit$df) |>
+lasso_path <- tibble(lambda = 10^seq(-6, -2.5, by = 0.25)) |>
   mutate(
-    weights = map(seq_along(lambda), \(i) as.numeric(coef(lasso_fit)[-1, i])),
+    weights = map(lambda, \(lambda) lasso_glmnet(y, X, lambda)),
+    selected = map_int(weights, \(b) sum(b != 0)),
     sharpe = map(weights, portfolio_sharpe)
   ) |>
-  filter(selected > 0) |>
   unnest_wider(sharpe)
 
 lasso_path |>
   ggplot(aes(x = selected, y = test)) +
   geom_line() +
+  geom_point() +
   labs(x = "Number of selected anomalies", y = "Sharpe ratio in the test sample")
-
-lasso_glmnet <- function(y, X, lambda) {
-  as.numeric(coef(glmnet(X, y, alpha = 1, lambda = lambda, intercept = FALSE, standardize = FALSE))[-1])
-}
 
 lasso_path |>
   mutate(cv = map_dbl(lambda, \(lambda) cv_sharpe(lasso_glmnet, lambda))) |>
@@ -351,27 +356,26 @@ lasso_path |>
 ## Python
 ```{python}
 #| label: py-lasso-path
-alphas, coefs, _ = lasso_path(X, y, alphas=100, eps=1e-4)
+def lasso_sklearn(y, X, lambda_):
+    return Lasso(alpha=lambda_, fit_intercept=False, max_iter=100000).fit(X, y).coef_
+
 
 lasso_results = pl.DataFrame([
-    {"lambda": alpha, "selected": int((b != 0).sum()), **portfolio_sharpe(b)}
-    for alpha, b in zip(alphas, coefs.T)
-    if (b != 0).any()
+    {"lambda": lambda_, "selected": int((b != 0).sum()), **portfolio_sharpe(b)}
+    for lambda_ in 10 ** np.arange(-6, -2.49, 0.25)
+    for b in [lasso_sklearn(y, X, lambda_)]
 ])
 
 (
     ggplot(lasso_results, aes(x="selected", y="test"))
     + geom_line()
+    + geom_point()
     + labs(x="Number of selected anomalies", y="Sharpe ratio in the test sample")
 )
 ```
 
 ```{python}
 #| label: py-lasso-cv
-def lasso_sklearn(y, X, lambda_):
-    return Lasso(alpha=lambda_, fit_intercept=False, max_iter=100000).fit(X, y).coef_
-
-
 (lasso_results
     .with_columns(cv=pl.Series([cv_sharpe(lasso_sklearn, l) for l in lasso_results["lambda"]]))
     .sort("cv", descending=True)
@@ -381,49 +385,10 @@ def lasso_sklearn(y, X, lambda_):
 ```
 :::
 
-Cross-validation keeps 76 anomalies, with a Sharpe ratio of about 3.0 in the test sample, as good as Ridge. A handful of anomalies is not enough: with five or fewer selected anomalies, the Sharpe ratio in the test sample stays far below that of the Ridge portfolio. The Lasso needs dozens of anomalies before it catches up, so the SDF is not sparse in the anomalies. Kozak, Nagel, and Santosh (2020) reach the same conclusion and show that the SDF is much sparser in the principal components of the anomaly returns, which is where the next lecture starts.
-
-## Factor selection via machine learning
-
-In this Chapter, you get to know `tidymodels` (R) and `scikit-learn` (Python), a collection of packages for modeling and machine learning (ML) using tidy coding principles. From a finance perspective, you will apply penalized regressions to understand which factors and macroeconomic predictors may help to explain the cross-section of industry returns.
-
-**Exercises:**
-
--   In this analysis, we use four different data sources. Load the monthly Fama-French 3-factor returns, the monthly q-factor returns from Hou, Xue, and Zhang (2014), the macroeconomic predictors from Welch and Goyal (2008), and monthly portfolio returns from 10 different industries according to the definition from Kenneth French’s homepage as test assets. Your data should contain 22 columns of regressors with 13 macro variables and 8-factor returns for each month.\
--   Provide meaningful summary statistics for the test assets' excess returns.
-
-::: {.panel-tabset group="language"}
-## R
-
--   Familiarize yourself with the `tidymodels` workflow. First, restrict yourself to just one industry, e.g. `Manufacturing`. Use the function `initial_time_split` from the `rsample` package to split the sample into a training and a test set.
--   Preprocess the data by creating a `recipe` which performs the following steps: First, the aim is to explain the industry excess returns as a function of all predictors. Exclude the column month from the analysis. Include all interaction terms between factors and macroeconomic predictors. Demean and scale each regressor such that the standard deviation is one.
--   Build a model `linear_reg` with `tidymodels` with a fixed penalty term that performs lasso regression. Create a `workflow` that first applies the recipe steps to the training data and then fits the model. Illustrate the predicted industry returns for the in-sample and the out-of-sample period.
--   Next, tune the model such that the penalty term is flexibly chosen by cross-validation. For that purpose, update the model such that both, `penalty` and `mixture` are flexible tuning variables. Use the function `time_series_cv` to generate a time series cross-validation sample which allows tuning the model with 20 random samples of length five years with a validation period of four years. Tune the model for a grid of possible penalty and mixture values and visualize the mean-squared prediction errors for the industry returns across the range of possible tuning parameters.
--   Finally, write a function to parallelize the entire workflow. The function should split the data into a training and test set, create a cross-validation scheme, and tunes a lasso model for different penalty values. Finally, select the best model in terms of MSPE in the validation test set. Apply the function to every individual industry and illustrate for each industry which factor and macroeconomic variables are selected by the Lasso.
-
-## Python
-
--   Familiarize yourself with the `scikit-learn` workflow. First, restrict yourself to just one industry, e.g. `Manufacturing`. Use the function `train_test_split` to split the sample into a training and a test set.
--   Preprocess the data with `ColumnTransformer` which performs the following steps: First, the aim is to explain the industry excess returns as a function of all predictors. Exclude the column month from the analysis. Include all interaction terms between factors and macroeconomic predictors. Demean and scale each regressor such that the standard deviation is one.
--   Build a model `ElasticNet` with `sklearn.linear_model` with a fixed penalty term that performs lasso regression. Create a `Pipeline` that first applies the recipe steps to the training data and then fits the model. Illustrate the predicted industry returns for the in-sample and the out-of-sample period.
--   Next, tune the model such that the penalty term is flexibly chosen by cross-validation. For that purpose, update the model such that both, `penalty` and `mixture` are flexible tuning variables. Use the function `TimeSeriesSplit` to generate a time series cross-validation sample which allows tuning the model with 20 random samples of length five years with a validation period of four years. Tune the model for a grid of possible penalty and mixture values and visualize the mean-squared prediction errors for the industry returns across the range of possible tuning parameters.
--   Finally, write a function to parallelize the entire workflow. The function should split the data into a training and test set, create a cross-validation scheme, and tunes a lasso model for different penalty values. Finally, select the best model in terms of MSPE in the validation test set. Apply the function to every individual industry and illustrate for each industry which factor and macroeconomic variables are selected by the Lasso.
-:::
-
-**Solutions:** All solutions are provided in the book chapter [Factor selection via machine learning](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html).
-
-## Bayesian shrinkage of the SDF {#bayesian-sdf}
-
-::: {.callout-warning title="TBD"}
-Exercises to come on priors on mispricing (Pástor and Stambaugh, 2000) and model averaging over the factor zoo (Bryzgalova, Huang, and Julliard, 2023), as Bayesian counterparts of the ridge and lasso SDF.
-:::
+Cross-validation picks $\lambda = 3.2 \times 10^{-4}$, which keeps 74 of the 158 anomalies, with a Sharpe ratio of 2.96 in the test sample, about as good as Ridge (2.89). With fewer anomalies, the Sharpe ratio in the test sample falls: 2.79 with 31 anomalies and 2.15 with 18. A good SDF of the zoo needs dozens of anomalies, so it is not sparse in the anomalies. Kozak, Nagel, and Santosh (2020) ask whether it is sparser in the principal components of the anomaly returns; lecture 11 tries this on the zoo.
 
 ## Open question {#open-question}
 
 The solution above chooses the Ridge penalty with one particular cross-validation. How much does the Sharpe ratio in the test sample depend on that choice? Choose your own validation scheme within the estimation sample: the number of folds, random or consecutive blocks of months, and the criterion, for instance the Sharpe ratio or the pricing error. Never touch the test sample.
 
-**Submit:** your scheme in one line, the chosen penalty, and the Sharpe ratio in the test sample. The next lecture shows your results next to the scoreboard of the lectures.
-
-::: {.callout-warning title="TBD"}
-The submission link follows.
-:::
+**Submit by Wednesday 7 April:** your scheme (number of folds, how you split the months, the criterion), the chosen penalty, and the Sharpe ratio in the test sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-validation-scheme). Lecture 12 shows the results of the whole class next to the scoreboard of the lectures.

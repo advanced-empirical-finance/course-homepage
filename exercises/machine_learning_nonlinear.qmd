@@ -1,27 +1,471 @@
 ---
-title: Neural networks
+title: Neural networks and implementable portfolios
+eval: false
+aliases:
+  - implementable_portfolios.html
 ---
 
-# Machine Learning 2: Random Forests and (deep) neural networks
+This exercise reproduces the neural network of lecture 14 on the factor zoo and asks what the resulting portfolio trades, as in lecture 15. The data are the panel of lecture 13: one row per anomaly and month, with the return, last month's return, the average return over the last 12 months (factor momentum) and five macro predictors. The estimation sample runs until 1999, the test sample from 2000 to 2023.
 
-In this exercise set you familiarize yourself with the inner working of `tidymodels` (`scikit-learn` for Python) and `torch` for deep neural networks.
+The code on this page does not run when the website is built, because training the networks takes a few minutes. The results are stated in the text.
 
-You will apply well-known methods such as random forests and neural networks to a simple application in option pricing. More specifically, we are going to create an artificial dataset of option prices for different values based on the Black-Scholes pricing equation for call options. Then, we train different models to learn how to price call options without prior knowledge of the theoretical underpinnings of the famous option pricing equation.
+## Neural network forecasts {#neural-networks}
 
 **Exercises:**
 
-- Simulate prices for Call options based on a grid of different combinations of times to maturity (`T`), risk-free rates (`r`), volatilities (`sigma`), strike prices (`K`), and current stock prices (`S`). Compute the Black-Scholes option price for each combination of your grid. 
-- Add an idiosyncratic error term to each observation such that the prices considered do not exactly reflect the values implied by the Black-Scholes equation.
-- Split the data into a training set (which contains some of the *observed* option prices) and a test set that will only be used for the final evaluation
-- Create a `recipe` which normalizes all predictors to have zero mean and unit standard deviation.
-- Fit a neural network with one hidden layer on the training data. 
-- Fit a random forest (`rand_forest`) on the training data. 
-- Figure out how you create a deep neural network which predicts option prices from the set of input parameters. Figure out how to set the activation function, the number of neurons per layer and compile the model. 
-- Fit the deep neural network with the *pre-processed* training data 
-- Evaluate the predictive performance of your competing model. Which model performed best in the test sample to predict option prices? 
+1.  Build the panel of lecture 13 from the anomalies with complete returns from January 1973 to December 2023 ([exercise 5](machine_learning.qmd)) and the macro predictors `dp`, `tbl`, `tms`, `dfy` and `svar` in `macro_predictors.parquet`. Lag the macro predictors by one month, so that they are known when the month starts, and standardize them with their mean and standard deviation until 1999. How many anomaly-months are in the training sample (until 1999) and in the test sample?
+2.  Standardize the seven predictors with the means and standard deviations of the training sample, and divide the returns by their standard deviation in the training sample. Why does a value of the weight decay only mean something once the returns are scaled?
+3.  Fit a network with one hidden layer of five neurons, the logistic activation and a linear output: `nnet()` from the package `nnet` in R, `MLPRegressor()` with `solver="lbfgs"` from scikit-learn in Python. Choose the weight decay from the grid 1, 3, 10, 30, 100, 300, 1000: fit the network on 1974–1994 and compute the mean squared forecast error in the validation years 1995–1999. Which decay do you choose?
+4.  Fit five networks with the chosen decay on the whole training sample, each from a different random start (seeds 1 to 5), and average their forecasts. Compute the out-of-sample $R^2$ in the test sample, $R^2_{oos} = 1 - \sum (r_{i,t} - \hat r_{i,t})^2 / \sum r_{i,t}^2$, which compares the forecasts with a forecast of zero, as in Gu, Kelly, and Xiu (2020). Compare it with OLS on the same seven predictors.
+5.  Use the forecasts as expected returns in the mean-variance weights of lecture 13, $\omega_t = (\hat\Sigma + \lambda I)^{-1}\hat\mu_t$, with the covariance matrix of the estimation sample 1973–1999 and the ridge penalty $\lambda = 10^{-4}$ of [exercise 5](machine_learning.qmd). Compute the annualized Sharpe ratio of this forecast portfolio in the estimation sample (1974–1999) and in the test sample. How does it compare with the ridge SDF of exercise 5, whose weights stay constant?
 
 **Solutions:**
-All solutions are provided in the book chapter [Option pricing via machine learning](https://www.tidy-finance.org/chapters/option-pricing-via-machine-learning.html).
+
+The panel is built as in lecture 13. The forecasts need 12 months of past returns, so the panel starts in January 1974. `ridge_lambda` is the penalty that cross-validation chose in exercise 5.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-build-panel
+library(tidyverse)
+library(nanoparquet)
+library(nnet)
+
+sample_start <- ymd("1973-01-01")
+sample_end <- ymd("2023-12-31")
+test_start <- ymd("2000-01-01")
+validation_start <- ymd("1995-01-01")
+macro_names <- c("dp", "tbl", "tms", "dfy", "svar")
+features <- c("ret_lag_1", "momentum_12", macro_names)
+hidden_units <- 5
+decays <- c(1, 3, 10, 30, 100, 300, 1000)
+n_networks <- 5
+max_iterations <- 500
+ridge_lambda <- 1e-4
+months_per_year <- 12
+
+anomalies <- read_parquet("data/osap_long_short_returns.parquet") |>
+  mutate(date = floor_date(as.Date(date), "month")) |>
+  filter(between(date, sample_start, sample_end)) |>
+  select(date, where(\(x) !anyNA(x)))
+returns <- as.matrix(select(anomalies, -date)) / 100
+estimation_returns <- returns[anomalies$date < test_start, ]
+
+# Macro predictors of month t - 1 are known when month t starts
+macro <- read_parquet("data/macro_predictors.parquet") |>
+  transmute(date = date %m+% months(1), across(all_of(macro_names))) |>
+  mutate(across(all_of(macro_names), \(x) (x - mean(x[date < test_start])) / sd(x[date < test_start])))
+
+panel <- anomalies |>
+  pivot_longer(-date, names_to = "anomaly", values_to = "ret") |>
+  mutate(ret = ret / 100) |>
+  arrange(anomaly, date) |>
+  mutate(
+    ret_lag_1 = lag(ret),
+    momentum_12 = slider::slide_dbl(lag(ret), mean, .before = 11, .complete = TRUE),
+    .by = anomaly
+  ) |>
+  left_join(macro, join_by(date)) |>
+  drop_na()
+
+train <- filter(panel, date < test_start)
+test_rows <- panel$date >= test_start
+c(train = nrow(train), test = sum(test_rows))
+```
+
+## Python
+```{python}
+#| label: py-build-panel
+from datetime import date
+
+import numpy as np
+import polars as pl
+from mizani.formatters import percent_format
+from plotnine import *
+from sklearn.linear_model import LinearRegression
+from sklearn.neural_network import MLPRegressor
+
+sample_start = date(1973, 1, 1)
+sample_end = date(2023, 12, 31)
+test_start = date(2000, 1, 1)
+validation_start = date(1995, 1, 1)
+macro_names = ["dp", "tbl", "tms", "dfy", "svar"]
+features = ["ret_lag_1", "momentum_12", *macro_names]
+hidden_units = 5
+decays = [1, 3, 10, 30, 100, 300, 1000]
+n_networks = 5
+max_iterations = 500
+ridge_lambda = 1e-4
+months_per_year = 12
+
+anomalies = (pl.read_parquet("data/osap_long_short_returns.parquet")
+    .with_columns(pl.col("date").dt.truncate("1mo"))
+    .filter(pl.col("date").is_between(sample_start, sample_end))
+)
+complete = [c for c in anomalies.columns if c != "date" and anomalies[c].null_count() == 0]
+returns = anomalies.select(complete).to_numpy() / 100
+estimation_returns = returns[(anomalies["date"] < test_start).to_numpy()]
+
+# Macro predictors of month t - 1 are known when month t starts
+in_estimation = pl.col("date") < test_start
+macro = (pl.read_parquet("data/macro_predictors.parquet")
+    .select(pl.col("date").dt.offset_by("1mo"), *macro_names)
+    .with_columns(
+        ((pl.col(c) - pl.col(c).filter(in_estimation).mean()) / pl.col(c).filter(in_estimation).std()).alias(c)
+        for c in macro_names
+    )
+)
+
+panel = (anomalies.select("date", *complete)
+    .unpivot(index="date", variable_name="anomaly", value_name="ret")
+    .with_columns(pl.col("ret") / 100)
+    .sort("anomaly", "date")
+    .with_columns(
+        ret_lag_1=pl.col("ret").shift(1).over("anomaly"),
+        momentum_12=pl.col("ret").shift(1).rolling_mean(12).over("anomaly"),
+    )
+    .join(macro, on="date", how="left")
+    .drop_nulls()
+)
+
+train = panel.filter(pl.col("date") < test_start)
+test_rows = (panel["date"] >= test_start).to_numpy()
+{"train": train.height, "test": int(test_rows.sum())}
+```
+:::
+
+158 anomalies have complete returns. The panel runs from January 1974 to December 2023, with 49,296 anomaly-months in the training sample (158 anomalies times 312 months) and 45,504 in the test sample (288 months).
+
+The weight decay adds $\delta \sum_k w_k^2$, the decay times the sum of the squared weights of the network, to the sum of squared forecast errors. The squared errors depend on the unit of the returns: in percent, they are 10,000 times larger than in decimals, and the same decay would penalize the weights much less. Measured in units of their standard deviation, the returns have a variance of one, so a decay of 300 means the same whatever the unit of the returns. The predictors are standardized for a similar reason: the penalty treats all weights alike, so all inputs should be on the same scale.
+
+Both `nnet()` and `MLPRegressor()` minimize the sum of squared errors plus the decay times the sum of squared weights, so the same number means the same penalty. scikit-learn divides both terms by twice the number of observations (its documentation says that the penalty "is divided by the sample size"), which does not change the solution. One difference remains: `nnet()` also penalizes the constant of each neuron, scikit-learn does not.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-choose-decay
+centers <- colMeans(train[features])
+input_sd <- apply(train[features], 2, sd)
+scale_inputs <- function(data) scale(as.matrix(data[features]), centers, input_sd)
+# Returns in units of their standard deviation, so that the decay has a scale
+ret_sd <- sd(train$ret)
+
+fit_network <- function(data, decay, seed) {
+  set.seed(seed)
+  nnet(
+    scale_inputs(data), data$ret / ret_sd,
+    size = hidden_units, decay = decay, linout = TRUE, maxit = max_iterations, trace = FALSE
+  )
+}
+
+# The validation years are never used to fit the network that is evaluated on them
+fitting <- filter(train, date < validation_start)
+validation <- filter(train, date >= validation_start)
+validation_mse <- map_dbl(decays, \(decay) {
+  forecast <- predict(fit_network(fitting, decay, seed = 1), scale_inputs(validation)) * ret_sd
+  mean((validation$ret - forecast)^2)
+})
+decay <- decays[which.min(validation_mse)]
+tibble(decay = decays, validation_mse)
+```
+
+## Python
+```{python}
+#| label: py-choose-decay
+centers = train.select(features).mean().to_numpy()
+input_sd = train.select(features).std().to_numpy()
+
+
+def scale_inputs(data):
+    return (data.select(features).to_numpy() - centers) / input_sd
+
+
+# Returns in units of their standard deviation, so that the decay has a scale
+ret_sd = train["ret"].std()
+
+
+def fit_network(data, decay, seed):
+    network = MLPRegressor(
+        hidden_layer_sizes=(hidden_units,), activation="logistic", solver="lbfgs",
+        alpha=decay, max_iter=max_iterations, random_state=seed,
+    )
+    return network.fit(scale_inputs(data), data["ret"].to_numpy() / ret_sd)
+
+
+# The validation years are never used to fit the network that is evaluated on them
+fitting = train.filter(pl.col("date") < validation_start)
+validation = train.filter(pl.col("date") >= validation_start)
+validation_mse = [
+    np.mean((validation["ret"].to_numpy() - fit_network(fitting, decay, seed=1).predict(scale_inputs(validation)) * ret_sd) ** 2)
+    for decay in decays
+]
+decay = decays[int(np.argmin(validation_mse))]
+pl.DataFrame({"decay": decays, "validation_mse": validation_mse})
+```
+:::
+
+Both languages choose a decay of 300, as in lecture 14. In R, the mean squared error in the validation years falls from 0.00178 with a decay of 1 to 0.00139 with a decay of 300 and rises again to 0.00140 with 1000. With little weight decay, the network fits noise of 1974–1994 that does not come back in 1995–1999. Python's errors differ a little (0.00173 with a decay of 1, 0.00139 with 300), because its networks start from other random weights, but they are also lowest at 300. The errors for decays from 100 to 1000 are almost the same, so the exact choice in this range matters little.
+
+scikit-learn may warn that L-BFGS stopped after 500 iterations before it converged; in our run, this happens once while choosing the decay and does not change the choice. All fits of `nnet()` converge within 500 iterations.
+
+The ensemble averages five networks that differ only in their random starting weights. The forecasts are converted back to returns with `ret_sd`.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-ensemble
+network_forecast <- map(seq_len(n_networks), \(seed) {
+  as.vector(predict(fit_network(train, decay, seed), scale_inputs(panel))) * ret_sd
+}) |>
+  reduce(`+`) / n_networks
+ols_forecast <- predict(lm(ret ~ ret_lag_1 + momentum_12 + dp + tbl + tms + dfy + svar, data = train), panel)
+
+oos_r2 <- function(forecast) {
+  1 - sum((panel$ret[test_rows] - forecast[test_rows])^2) / sum(panel$ret[test_rows]^2)
+}
+c(ols = oos_r2(ols_forecast), network = oos_r2(network_forecast))
+```
+
+## Python
+```{python}
+#| label: py-ensemble
+network_forecast = np.mean(
+    [fit_network(train, decay, seed).predict(scale_inputs(panel)) * ret_sd for seed in range(1, n_networks + 1)],
+    axis=0,
+)
+ols_forecast = (LinearRegression()
+    .fit(train.select(features).to_numpy(), train["ret"].to_numpy())
+    .predict(panel.select(features).to_numpy())
+)
+
+
+def oos_r2(forecast):
+    realized = panel["ret"].to_numpy()[test_rows]
+    return 1 - np.sum((realized - forecast[test_rows]) ** 2) / np.sum(realized**2)
+
+
+{"ols": oos_r2(ols_forecast), "network": oos_r2(network_forecast)}
+```
+:::
+
+The ensemble of networks has an out-of-sample $R^2$ of 1.24% in R and 1.27% in Python, about twice the 0.65% of OLS. OLS has no random start, so its $R^2$ is the same in both languages; the networks differ somewhat, because R and Python draw different starting weights and use different optimizers. The numbers in R are those of lecture 14.
+
+For the portfolio, the forecasts go into a matrix with one row per month and one column per anomaly, in the order of the return matrix. Because $\hat\Sigma + \lambda I$ is symmetric, the weights of all months are the forecast matrix times its inverse.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-forecast-portfolio
+sharpe_ratio <- function(x) mean(x) / sd(x) * sqrt(months_per_year)
+
+panel_dates <- sort(unique(panel$date))
+to_matrix <- function(values) {
+  panel |>
+    transmute(date, anomaly, value = values) |>
+    pivot_wider(names_from = anomaly, values_from = value) |>
+    arrange(date) |>
+    select(all_of(colnames(returns))) |>
+    as.matrix()
+}
+panel_returns <- to_matrix(panel$ret)
+
+covariance <- cov(estimation_returns)
+forecast_weights <- function(forecast) {
+  to_matrix(forecast) %*% solve(covariance + ridge_lambda * diag(ncol(returns)))
+}
+forecast_sharpe <- function(forecast) {
+  portfolio_return <- rowSums(forecast_weights(forecast) * panel_returns)
+  c(
+    estimation = sharpe_ratio(portfolio_return[panel_dates < test_start]),
+    test = sharpe_ratio(portfolio_return[panel_dates >= test_start])
+  )
+}
+ridge_weights <- solve(
+  crossprod(estimation_returns) + nrow(estimation_returns) * ridge_lambda * diag(ncol(returns)),
+  colSums(estimation_returns)
+)
+
+rbind(
+  ols = forecast_sharpe(ols_forecast),
+  network = forecast_sharpe(network_forecast),
+  ridge_sdf = c(estimation = NA, test = sharpe_ratio(returns[anomalies$date >= test_start, ] %*% ridge_weights))
+)
+```
+
+## Python
+```{python}
+#| label: py-forecast-portfolio
+def sharpe_ratio(x):
+    return np.mean(x) / np.std(x, ddof=1) * np.sqrt(months_per_year)
+
+
+panel_dates = panel["date"].unique().sort().to_numpy()
+
+
+def to_matrix(values):
+    return (panel.select("date", "anomaly", value=pl.Series(values))
+        .pivot(on="anomaly", index="date", values="value")
+        .sort("date")
+        .select(complete)
+        .to_numpy()
+    )
+
+
+panel_returns = to_matrix(panel["ret"])
+
+covariance = np.cov(estimation_returns, rowvar=False)
+
+
+def forecast_weights(forecast):
+    return to_matrix(forecast) @ np.linalg.inv(covariance + ridge_lambda * np.eye(len(complete)))
+
+
+def forecast_sharpe(forecast):
+    portfolio_return = (forecast_weights(forecast) * panel_returns).sum(axis=1)
+    return {
+        "estimation": sharpe_ratio(portfolio_return[panel_dates < test_start]),
+        "test": sharpe_ratio(portfolio_return[panel_dates >= test_start]),
+    }
+
+
+ridge_weights = np.linalg.solve(
+    estimation_returns.T @ estimation_returns + estimation_returns.shape[0] * ridge_lambda * np.eye(len(complete)),
+    estimation_returns.sum(axis=0),
+)
+
+{
+    "ols": forecast_sharpe(ols_forecast),
+    "network": forecast_sharpe(network_forecast),
+    "ridge_sdf": sharpe_ratio(returns[(anomalies["date"] >= test_start).to_numpy()] @ ridge_weights),
+}
+```
+:::
+
+| Portfolio | Out-of-sample $R^2$ | Sharpe ratio 1974–1999 | Sharpe ratio 2000–2023 |
+|:----------|----:|----:|----:|
+| Forecasts: OLS | 0.65% | 8.68 | 1.13 |
+| Forecasts: neural network, R | 1.24% | 9.23 | 1.36 |
+| Forecasts: neural network, Python | 1.27% | 9.20 | 1.37 |
+| Ridge SDF, constant weights | | | 2.89 |
+
+The better forecasts of the network also make a better portfolio than OLS. Both forecast portfolios, however, earn less than half the Sharpe ratio of the ridge SDF in the test sample, although they use the same covariance matrix and penalty: only the expected returns change every month. Their Sharpe ratios of around 9 until 1999 are in-sample, because the forecasts are fitted on these years.
+
+## What the portfolios trade {#turnover}
+
+**Exercises:**
+
+6.  Compute the monthly turnover between anomalies, as in lecture 15. Scale each month's weights to a gross position of one, $\sum_i |\omega_{i,t}| = 1$. During month $t$, the weights drift with the returns to $\omega_{i,t}(1 + r_{i,t})$, again scaled to a gross position of one; call these drifted weights $\tilde\omega_{i,t}$. The turnover in month $t+1$ is $\sum_i |\omega_{i,t+1} - \tilde\omega_{i,t}|$. Compute the average turnover in the test sample for two portfolios with constant weights, 1/N and the ridge SDF, and for the forecast portfolios of OLS and of the network.
+7.  Plot the monthly turnover of the ridge SDF and of the network portfolio from 2000 to 2023. Why does a portfolio with constant weights trade at all, and why does the forecast portfolio trade so much more?
+8.  Suppose every trade between anomalies costs a fixed fraction of the amount traded. What does the turnover imply for the returns of the ridge SDF and of the network portfolio after trading costs? Which trading costs does this turnover leave out?
+
+**Solutions:**
+
+The function `turnover()` returns one value per month of the panel; the first month has no previous weights.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-turnover
+turnover <- function(weights) {
+  gross <- weights / rowSums(abs(weights))
+  drifted <- gross[-nrow(gross), ] * (1 + panel_returns[-nrow(gross), ])
+  drifted <- drifted / rowSums(abs(drifted))
+  c(NA, rowSums(abs(gross[-1, ] - drifted)))
+}
+
+constant_weights <- function(w) matrix(w, nrow = length(panel_dates), ncol = length(w), byrow = TRUE)
+portfolio_weights <- list(
+  "1/N" = constant_weights(rep(1 / ncol(returns), ncol(returns))),
+  "Ridge SDF" = constant_weights(ridge_weights),
+  "Forecasts: OLS" = forecast_weights(ols_forecast),
+  "Forecasts: neural network" = forecast_weights(network_forecast)
+)
+monthly_turnover <- map(portfolio_weights, turnover) |>
+  as_tibble() |>
+  mutate(date = panel_dates) |>
+  filter(date >= test_start)
+
+monthly_turnover |>
+  summarize(across(-date, mean))
+```
+
+## Python
+```{python}
+#| label: py-turnover
+def turnover(weights):
+    gross = weights / np.abs(weights).sum(axis=1, keepdims=True)
+    drifted = gross[:-1] * (1 + panel_returns[:-1])
+    drifted = drifted / np.abs(drifted).sum(axis=1, keepdims=True)
+    return np.concatenate([[np.nan], np.abs(gross[1:] - drifted).sum(axis=1)])
+
+
+def constant_weights(w):
+    return np.tile(w, (len(panel_dates), 1))
+
+
+portfolio_weights = {
+    "1/N": constant_weights(np.full(len(complete), 1 / len(complete))),
+    "Ridge SDF": constant_weights(ridge_weights),
+    "Forecasts: OLS": forecast_weights(ols_forecast),
+    "Forecasts: neural network": forecast_weights(network_forecast),
+}
+monthly_turnover = (pl.DataFrame({name: turnover(w) for name, w in portfolio_weights.items()})
+    .with_columns(date=pl.Series(panel_dates))
+    .filter(pl.col("date") >= test_start)
+)
+
+monthly_turnover.drop("date").mean()
+```
+:::
+
+| Portfolio | Turnover between anomalies per month, 2000–2023 |
+|:----------|----:|
+| 1/N | 2.8% |
+| Ridge SDF | 2.8% |
+| Forecasts: OLS | 52.4% |
+| Forecasts: neural network | 44.7% (R), 44.9% (Python) |
+
+The portfolios with constant weights trade less than 3% of their gross position a month, the forecast portfolios 16 to 19 times as much. Lecture 15 shows the same numbers, rounded to 3%, 52% and 45%.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-plot-turnover
+monthly_turnover |>
+  select(date, `Ridge SDF`, `Forecasts: neural network`) |>
+  pivot_longer(-date, names_to = "portfolio", values_to = "turnover") |>
+  ggplot(aes(x = date, y = turnover, color = portfolio)) +
+  geom_line() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = NULL, y = "Turnover between anomalies per month", color = NULL) +
+  theme(legend.position = "bottom")
+```
+
+## Python
+```{python}
+#| label: py-plot-turnover
+(
+    ggplot(
+        monthly_turnover.select("date", "Ridge SDF", "Forecasts: neural network")
+            .unpivot(index="date", variable_name="portfolio", value_name="turnover"),
+        aes(x="date", y="turnover", color="portfolio"),
+    )
+    + geom_line()
+    + scale_x_date(date_labels="%Y")
+    + scale_y_continuous(labels=percent_format())
+    + labs(x="", y="Turnover between anomalies per month", color="")
+    + theme(legend_position="bottom")
+)
+```
+:::
+
+A portfolio with constant weights trades only because the anomalies earn different returns. After a month, the winners have a larger share of the portfolio than their target weight, so rebalancing sells part of the winners and buys the losers. The ridge SDF trades most after months in which the returns of the anomalies differ the most, at most 15% in February 2001.
+
+The forecast portfolio sets new weights every month. Last month's return and the average return over the last 12 months enter the forecasts, and both change every month; the mean-variance weights then react strongly to the changes in the expected returns. Its turnover never falls below 20% a month and peaks in May 2009 (101% in R, 103% in Python) and May 2020 (143% and 146%), during the financial crisis and the first months of the pandemic.
+
+If every unit traded costs a fraction $c$, a portfolio with a gross position of one loses $c$ times its turnover each month. At the same $c$, the network portfolio pays about 16 times as much as the ridge SDF. At 10 bps, the cost of the trading game (lecture 5), it loses about 0.54% of its gross position a year, against 0.03% for the ridge SDF; at 50 bps, it loses 2.7% a year, against 0.17%. The forecast portfolio has the lower Sharpe ratio already before costs, and the costs widen the gap.
+
+This turnover leaves out the trades inside each anomaly. Every long-short portfolio is itself rebalanced each month, and the returns from Open Source Asset Pricing are before these costs. Both kinds of portfolio pay them on top of the trades between anomalies. Lecture 15 discusses portfolios that take trading costs into account when they choose the weights.
 
 ## Open question {#open-question}
 
