@@ -39,6 +39,11 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 - [ ] **C:** a printable sample whiteboard for every whiteboard slide (28 in decks 2–16, more in 17–18): the drawing or derivation S shows, step by step, as a PDF to take to class.
 - [ ] **C:** after S's review, remove the 2026 decks from the course repository (aef-2 to aef-6, aef-4-machine-learning, aef-reproducibility-in-asset-pricing, the old mandatory assignment files).
 
+## Course quality
+
+- [ ] **C:** alignment table on one page: each learning outcome of the course description, with the lectures, exercises and assignments that teach and assess it. Draft for S.
+- [ ] **C:** automatic feedback before the deadline: a check in the team repositories (course-homepage#81) that renders each report and tests it against the assignment quality criteria (runs from a clean session, chunk labels, numbers from inline code, captions and axis labels), so that teams see problems before they hand in.
+
 ## Exercises
 
 Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
