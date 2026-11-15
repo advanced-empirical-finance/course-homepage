@@ -36,7 +36,7 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 - [ ] **C:** 15 implementable portfolios: Sharpe ratios after costs, once the factor library with trading costs exists; check the publication year of Jensen, Kelly, Malamud & Pedersen.
 - [ ] **C:** 17 realized volatility and 18 realized covariances, once the VOLARE files are on eumel (plan in course-homepage#101).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
-- [ ] **C:** a printable sample whiteboard for every whiteboard slide (28 in decks 2–16, more in 17–18): the drawing or derivation S shows, step by step, as a PDF to take to class.
+- [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
 - [ ] **C:** after S's review, remove the 2026 decks from the course repository (aef-2 to aef-6, aef-4-machine-learning, aef-reproducibility-in-asset-pricing, the old mandatory assignment files).
 
 ## Course quality
