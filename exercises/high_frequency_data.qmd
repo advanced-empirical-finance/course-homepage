@@ -15,7 +15,7 @@ These exercises go with the last three lectures: the order book data of SPY, the
 1. Download the SPY order book snapshots for March of every year from 2008 to 2025 with `download_data(domain = "Tidy Finance", dataset = "high_frequency_sp500")` from `tidyfinance`. What does one row contain, and in which units are the spread, the depth and the volume?
 2. Liquidity through the day: for March 2024, compute the average spread, the depth at the best quotes in USD, and the dollar volume per ten minutes of continuous trading, and plot them against the time of day. Leave out the snapshots of the opening and closing auctions. What pattern do you see, and why?
 3. Liquidity over the years: compute the average spread and depth for each March. How did they change since 2008, and which years stand out?
-4. Price impact (Kyle, 1985): aggregate the snapshots to one-minute midquote returns in basis points and one-minute order flow (the sum of `signed_volume`), scale the order flow by its standard deviation in each year, and regress the returns on the order flow, year by year. How does the slope $\lambda$ change over time, and how does the $R^2$? What do your results mean for the trading costs of a portfolio of large stocks, as in lecture 5?
+4. Price impact (Kyle, 1985): aggregate the snapshots to one-minute midquote returns in basis points and one-minute net buying in USD million (`signed_volume`, which is in shares, times the midquote), and regress the returns on the net buying, year by year. How does the slope $\lambda$, the price impact of USD 1 million of net buying, change over time, and how does the $R^2$? What do your results mean for the trading costs of a portfolio of large stocks, as in lecture 5?
 
 **Solutions:**
 
@@ -66,7 +66,7 @@ spy.glimpse()
 ```
 :::
 
-The 18 months have 1,815,840 snapshots. Each row is one snapshot `ts` of the order book: the `midquote` in USD, the `spread` in basis points of the midquote, the depth at the best ask and bid (`depth0_ask`, `depth0_bid`) and within 5 basis points of the midquote (`depth5_ask`, `depth5_bid`) in shares, the dollar volume traded in the five seconds before (`trading_volume`), and the signed order flow (`signed_volume`), buyer- minus seller-initiated volume. Depth in shares times the midquote gives depth in USD.
+The 18 months have 1,815,840 snapshots. Each row is one snapshot `ts` of the order book: the `midquote` in USD, the `spread` in basis points of the midquote, the depth at the best ask and bid (`depth0_ask`, `depth0_bid`) and within 5 basis points of the midquote (`depth5_ask`, `depth5_bid`) in shares, the dollar volume traded in the five seconds before (`trading_volume`), and the signed order flow (`signed_volume`), buyer- minus seller-initiated shares. Shares times the midquote give USD.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -164,7 +164,7 @@ yearly = (spy
 
 The spread fell from 0.91 basis points in March 2008 to 0.21 in March 2024. SPY trades at the minimum tick of one cent, and with a rising price, one cent became an ever smaller share of the price. The crisis month March 2009 stands out with 1.49 basis points. Depth at the best quotes fell as well, from about USD 1.1 million in 2008 to 0.3 million in 2024: orders are smaller and spread over more trading venues.
 
-For the price impact, the last midquote of each minute gives the minute's return, and the sum of the signed volume its order flow. Returns are computed within a day, so the overnight change does not count as a one-minute return. Scaling the order flow by its standard deviation in each year makes the slopes comparable across years.
+For the price impact, the last midquote of each minute gives the minute's return. The signed volume is in shares; times the midquote of its snapshot and summed over the minute, it gives the minute's net buying in USD million. Returns are computed within a day, so the overnight change does not count as a one-minute return.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -173,12 +173,11 @@ For the price impact, the last midquote of each minute gives the minute's return
 price_impact <- spy |>
   mutate(day = as_date(ts), minute = floor_date(ts, "minute")) |>
   summarize(
-    midquote = last(midquote), flow = sum(signed_volume),
+    midquote = last(midquote), flow = sum(signed_volume * midquote) / 1e6,
     .by = c(year, day, minute)
   ) |>
   mutate(ret = 1e4 * (log(midquote) - lag(log(midquote))), .by = c(year, day)) |>
   drop_na() |>
-  mutate(flow = flow / sd(flow), .by = year) |>
   nest(data = -year) |>
   mutate(
     fit = map(data, \(d) lm(ret ~ flow, data = d)),
@@ -196,11 +195,13 @@ price_impact
 minutes = (spy
     .with_columns(day=pl.col("ts").dt.date(), minute=pl.col("ts").dt.truncate("1m"))
     .group_by("year", "day", "minute", maintain_order=True)
-    .agg(midquote=pl.col("midquote").last(), flow=pl.col("signed_volume").sum())
+    .agg(
+        midquote=pl.col("midquote").last(),
+        flow=(pl.col("signed_volume") * pl.col("midquote")).sum() / 1e6,
+    )
     .sort("year", "day", "minute")
     .with_columns(ret=1e4 * pl.col("midquote").log().diff().over("year", "day"))
     .drop_nulls()
-    .with_columns(flow=pl.col("flow") / pl.col("flow").std().over("year"))
 )
 
 price_impact = (minutes
@@ -217,7 +218,7 @@ price_impact
 
 With one regressor, the slope is the covariance of returns and order flow divided by the variance of the order flow, and the $R^2$ is their squared correlation, so the Python code computes them directly.
 
-One standard deviation of a minute's order flow moved SPY by 2.5 basis points in March 2008 and by 0.5 in March 2024. The crisis months stand out again: 5.7 basis points in March 2009 and 4.1 in March 2020. The $R^2$ fell from between 12% and 40% until 2012 to between 1% and 8% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, both spreads and price impact are small today, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
+USD 1 million of net buying in a minute moved SPY by 0.34 basis points in March 2008 and by 0.24 in March 2024. In the other years it lay between 0.18 and 0.83 basis points, except in the crisis months: 1.19 basis points in March 2009 and 1.84 in March 2020. The $R^2$ fell from between 12% and 40% until 2012 to between 1% and 8% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, net buying of USD 1 million costs a fraction of a basis point in calm months, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
 
 ## Realized covariances for portfolio choice
 
