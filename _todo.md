@@ -59,7 +59,6 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 - [ ] **C:** exercise 7, the realized covariances part, with the VOLARE files.
 - [ ] **C:** figure upload and gallery for the open question of exercise 1 (#70).
 - [ ] **C:** exercise 5 should use tidyfinance's download of the anomaly returns once it works in Python.
-- [ ] **S:** decide whether the exercise classes on 1 March and 12 April (assignment weeks) become question time for the assignment.
 
 ## Assignments
 
@@ -78,7 +77,6 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 
 - [ ] **S:** ask KU IT (serviceportal.ku.dk) to allowlist `eumel.tail81c88a.ts.net` permanently. KU's web filter blocked it on 6 November 2026; on KU Wi-Fi students could then not answer the polls.
 - Live slides: S opens them in the browser at `http://eumel:8444/` (Tailscale only, not public), not from a downloaded file, because the polls and sliders don't run from a file. **C** renders them with `live-slides` (all decks) or `live-slides 5` (one lecture) after every change.
-- [ ] **S:** add the Claude API key on eumel (`~/.config/live-poll.env`). **C:** then the end-to-end test of the AI grouping.
 
 ## Waiting for others
 
