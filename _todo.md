@@ -22,11 +22,7 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 
 ## Data
 
-- [ ] **S:** copy the VOLARE files to eumel (`course-repository/data/`, not committed) and to Absalon:
-  - daily realized measures for the Dow stocks since 2015 (RV, realized kernel, bipower variation, semivariances);
-  - daily realized covariance matrices for the 30 Dow stocks.
 - [ ] **S + C:** review the lobsteR package (github.com/voigtstefan/lobsteR) and its cleaning steps: which messages are dropped, auctions and halts, the aggregation to 5-second snapshots. The SPY data in tidyfinance are built with it.
-- [ ] **S:** fix the dataset card of `voigtstefan/sp500` on Hugging Face: `signed_volume` is in shares and `trading_volume` in USD (5-second values; million USD only in the paper's 5-minute sample). C has the corrected card ready but no write token for that dataset.
 - [ ] **C:** a LOBSTER example for lecture 16: a few rows of a message file and an order book file. Use LOBSTER's public sample files or a day from KU's access, depending on the licence.
 - [ ] **S:** review and merge the fix of tidyfinance's Python `download_data_osap()` (py-tidyfinance#94, issue #93).
 
@@ -36,7 +32,7 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 - [ ] **C:** 07 portfolio sorts, the second hour (placeholder).
 - [ ] **C:** 08 multifactor models, the Fama-French slide (placeholder).
 - [ ] **C:** 15 implementable portfolios: Sharpe ratios after costs, once the factor library with trading costs exists; check the publication year of Jensen, Kelly, Malamud & Pedersen.
-- [ ] **C:** 17 realized volatility and 18 realized covariances, once the VOLARE files are on eumel (plan in course-homepage#101).
+- [ ] **C:** 17 realized volatility and 18 realized covariances (plan in course-homepage#101). The VOLARE data are on eumel as parquet files since 16 November 2026 (course-repository#64).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
 - [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
 - [ ] **C:** after S's review, remove the 2026 decks from the course repository (aef-2 to aef-6, aef-4-machine-learning, aef-reproducibility-in-asset-pricing, the old mandatory assignment files).
@@ -50,8 +46,7 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 
 Instead of video recordings: a transcript of each lecture, turned into notes and published as a PDF with the slides and the whiteboard sheets.
 
-- [ ] **S:** request a clip-on microphone that records to a file (built-in recording, or into the phone or laptop).
-- [ ] **S:** check KU's rules for recording teaching; tell students in lecture 1 that only the lecturer's microphone records, that names never appear in the notes, and that the audio is deleted after transcription.
+- [ ] **C:** lecture 1: tell students that only the lecturer's microphone records, that names never appear in the notes, and that the audio is deleted after transcription (KU's rules are checked; S has the recording solution).
 - [ ] **C:** transcription on eumel with Whisper (the audio never leaves eumel); test the speed and quality on a sample recording before the semester.
 - [ ] **C:** the live decks report slide changes to eumel, so that the transcript splits by slide.
 - [ ] **C:** lecture notes PDF per lecture: each slide, what was said (cleaned up, in S's words, student questions without names), and the whiteboard sheets.
@@ -61,7 +56,7 @@ Instead of video recordings: a transcript of each lecture, turned into notes and
 Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
 
 - [ ] **S:** review the eight exercise pages.
-- [ ] **C:** exercise 7, the realized covariances part, once the VOLARE files are on eumel.
+- [ ] **C:** exercise 7, the realized covariances part, with the VOLARE files.
 - [ ] **C:** figure upload and gallery for the open question of exercise 1 (#70).
 - [ ] **C:** exercise 5 should use tidyfinance's download of the anomaly returns once it works in Python.
 - [ ] **S:** decide whether the exercise classes on 1 March and 12 April (assignment weeks) become question time for the assignment.
