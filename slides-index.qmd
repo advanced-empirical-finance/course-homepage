@@ -2,7 +2,7 @@
 title: "Lecture plan"
 ---
 
-Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–15 (CSS 18-01-11). Two lectures are on Fridays, 5 March and 9 April; time and room follow. Every lecture has its own slides as a PDF. The exercises of a week are in its first row; while an assignment runs, there are none. The next lecture is highlighted.
+Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–15 (CSS 18-01-11). Three lectures are at other times: Friday 5 March, Wednesday 31 March and Monday 12 April; time and room follow. Every lecture has its own slides as a PDF. The exercises of a week are in its first row; while an assignment runs, there are none. The next lecture is highlighted.
 
 | Week | Date | Lecture | Slides | Exercises | Preparation |
 |:-----|:-----|:--------|:-------|:----------|:------------|
@@ -15,15 +15,15 @@ Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–
 | 9 | Thu 4 Mar | The SDF, the efficient frontier and the CAPM | [PDF](slides/aef-06-sdf-efficient-frontier-and-capm.pdf) |  | Cochrane (2005), chapters 1 and 5–6 |
 |  | Thu 4 Mar | [Assignment 1 deadline]{.plan-minor} |  |  |  |
 |  | Fri 5 Mar | Portfolio sorts | [PDF](slides/aef-07-portfolio-sorts.pdf) |  |  |
-| 10 | Thu 11 Mar | Multifactor models (first hour: assignment 1 discussion) | [PDF](slides/aef-08-multifactor-models.pdf) | [3](exercises/portfolio_sorts.qmd "CAPM, betas and portfolio sorts") | Fama & French (1993) |
-| 11 | Thu 18 Mar | Reproducibility and non-standard errors | [PDF](slides/aef-09-reproducibility-and-non-standard-errors.pdf) | [4](exercises/machine_learning_data.qmd "Data for machine learning") | Menkveld et al. (2024) |
+| 10 | Thu 11 Mar | Multifactor models (first hour: assignment 1 discussion) | [PDF](slides/aef-08-multifactor-models.pdf) | [3](exercises/portfolio_sorts.qmd "CAPM, betas and portfolio sorts"), [4](exercises/machine_learning_data.qmd "Data for machine learning") | Fama & French (1993) |
 | 12 | 22–26 Mar | [Easter break]{.plan-minor} |  |  |  |
-| 13 | Thu 1 Apr | Machine learning foundations | [PDF](slides/aef-10-machine-learning-foundations.pdf) | [5](exercises/machine_learning.qmd "Shrinking the SDF") |  |
+| 13 | Wed 31 Mar | Reproducibility and non-standard errors | [PDF](slides/aef-09-reproducibility-and-non-standard-errors.pdf) | [5](exercises/machine_learning.qmd "Shrinking the SDF") | Menkveld et al. (2024) |
+|  | Thu 1 Apr | Machine learning foundations | [PDF](slides/aef-10-machine-learning-foundations.pdf) |  |  |
 | 14 | Mon 5 Apr | Shrinking the SDF | [PDF](slides/aef-11-shrinking-the-sdf.pdf) |  | Kozak, Nagel & Santosh (2020) |
 |  | Thu 8 Apr | Latent factors | [PDF](slides/aef-12-latent-factors.pdf) |  | Lettau & Pelger (2020) |
 |  | Thu 8 Apr | [Assignment 2 released]{.plan-minor} |  |  |  |
-|  | Fri 9 Apr | Return prediction with trees and forests | [PDF](slides/aef-13-trees-and-forests.pdf) |  | Gu, Kelly & Xiu (2020) |
-| 15 | Thu 15 Apr | [Assignment 2 deadline]{.plan-minor} |  |  |  |
+| 15 | Mon 12 Apr | Return prediction with trees and forests | [PDF](slides/aef-13-trees-and-forests.pdf) |  | Gu, Kelly & Xiu (2020) |
+|  | Thu 15 Apr | [Assignment 2 deadline]{.plan-minor} |  |  |  |
 | 16 | Mon 19 Apr | Neural networks and learning the SDF | [PDF](slides/aef-14-neural-networks-and-learning-the-sdf.pdf) | [6](exercises/machine_learning_nonlinear.qmd "Neural networks and implementable portfolios") | Chen, Pelger & Zhu (2024) |
 |  | Thu 22 Apr | From predictions to implementable portfolios (first hour: assignment 2 discussion) | [PDF](slides/aef-15-implementable-portfolios.pdf) |  | Jensen, Kelly, Malamud & Pedersen (2026) |
 | 17 | Thu 29 Apr | Market microstructure and high-frequency data | [PDF](slides/aef-16-market-microstructure-and-high-frequency-data.pdf) |  |  |
