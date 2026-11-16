@@ -4,10 +4,11 @@ Updated 16 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 
 ## Calendar and rooms
 
-- [ ] **S:** book time and room for the two replacement lectures:
+- [ ] **S:** book time and room for the three replacement lectures (decided 16 November 2026; check with the study administration that they do not clash with the students' other courses):
   - Fri 5 Mar, portfolio sorts (for Mon 8 Mar);
-  - Fri 9 Apr, trees and forests (for Thu 15 Apr).
-- [ ] **C:** then update the lecture plan, which currently says "time and room follow", and the deck headers.
+  - Wed 31 Mar, reproducibility and non-standard errors (for Thu 18 Mar; S is away that week);
+  - Mon 12 Apr, trees and forests (for Thu 15 Apr). The exercise class is on Mon 12 Apr 8–10 (CSS 2-2-36), so the lecture needs another time.
+- [ ] **C:** then update the lecture plan, which currently says "time and room follow".
 
 ## Absalon
 
