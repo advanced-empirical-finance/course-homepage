@@ -35,7 +35,6 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 - [ ] **C:** 17 realized volatility and 18 realized covariances (plan in course-homepage#101). The VOLARE data are on eumel as parquet files since 16 November 2026 (course-repository#64).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
 - [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
-- [ ] **C:** after S's review, remove the 2026 decks from the course repository (aef-2 to aef-6, aef-4-machine-learning, aef-reproducibility-in-asset-pricing). The 2026 assignments are removed (course-repository#66).
 
 ## Course quality
 
