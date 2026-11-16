@@ -35,7 +35,6 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 - [ ] **C:** 17 realized volatility and 18 realized covariances (plan in course-homepage#101). The VOLARE data are on eumel as parquet files since 16 November 2026 (course-repository#64).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
 - [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
-- [ ] **C:** after S's review, remove the 2026 decks from the course repository (aef-2 to aef-6, aef-4-machine-learning, aef-reproducibility-in-asset-pricing, the old mandatory assignment files).
 
 ## Course quality
 
@@ -75,7 +74,7 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 
 ## Live polls and live slides
 
-- [ ] **S:** ask KU IT (serviceportal.ku.dk) to allowlist `eumel.tail81c88a.ts.net` permanently. KU's web filter blocked it on 6 November 2026; on KU Wi-Fi students could then not answer the polls.
+- [ ] **S + C:** in the week before lecture 1, open a poll page on KU Wi-Fi, from a laptop and a phone. KU IT (16 November 2026): new domains are blocked for up to 48 hours and then released if harmless; eumel's address works from KU now. Keep the address unchanged, or it is blocked again for up to 48 hours.
 - Live slides: S opens them in the browser at `http://eumel:8444/` (Tailscale only, not public), not from a downloaded file, because the polls and sliders don't run from a file. **C** renders them with `live-slides` (all decks) or `live-slides 5` (one lecture) after every change.
 
 ## Waiting for others
