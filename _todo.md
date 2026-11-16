@@ -1,6 +1,6 @@
 # AEF 2027: open tasks
 
-Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
+Updated 16 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
 ## Calendar and rooms
 
@@ -11,8 +11,9 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 
 ## Absalon
 
-- [ ] **S:** give Claude access to Absalon: a Canvas API token for the course, stored on eumel and never printed.
-- [ ] **C:** then create in Absalon:
+Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 2027 course does not exist yet.
+
+- [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
   - the three assignments with their deadlines (25 Feb – 4 Mar, 8–15 Apr, 29 Apr – 6 May);
   - peer feedback for five days after each deadline;
   - the GitHub username form for the team repositories (course-homepage#81);
@@ -24,9 +25,9 @@ Updated 15 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
   - daily realized measures for the Dow stocks since 2015 (RV, realized kernel, bipower variation, semivariances);
   - daily realized covariance matrices for the 30 Dow stocks.
 - [ ] **S + C:** review the lobsteR package (github.com/voigtstefan/lobsteR) and its cleaning steps: which messages are dropped, auctions and halts, the aggregation to 5-second snapshots. The SPY data in tidyfinance are built with it.
-- [ ] **S:** unit of `signed_volume` in the SPY data. The dataset card says million USD, but the values don't fit. **C:** then show the price impact in lecture 16 per $1m.
+- [ ] **S:** fix the dataset card of `voigtstefan/sp500` on Hugging Face: `signed_volume` is in shares and `trading_volume` in USD (5-second values; million USD only in the paper's 5-minute sample). C has the corrected card ready but no write token for that dataset.
 - [ ] **C:** a LOBSTER example for lecture 16: a few rows of a message file and an order book file. Use LOBSTER's public sample files or a day from KU's access, depending on the licence.
-- [ ] **S:** report the bug in tidyfinance's Python `download_data_osap()` ("division with 'String' datatypes") yourself, or let C open the issue. The R version works, with data until 2024.
+- [ ] **S:** review and merge the fix of tidyfinance's Python `download_data_osap()` (py-tidyfinance#94, issue #93).
 
 ## Lectures
 
@@ -58,7 +59,7 @@ Instead of video recordings: a transcript of each lecture, turned into notes and
 
 Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
 
-- [ ] **S:** review the eight pages (course-homepage PR for the new exercises).
+- [ ] **S:** review the eight exercise pages.
 - [ ] **C:** exercise 7, the realized covariances part, once the VOLARE files are on eumel.
 - [ ] **C:** figure upload and gallery for the open question of exercise 1 (#70).
 - [ ] **C:** exercise 5 should use tidyfinance's download of the anomaly returns once it works in Python.
@@ -86,4 +87,3 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 ## Waiting for others
 
 - KU administration: kurser.ku.dk still shows the old exam (48-hour home assignment).
-- Open PRs to merge: course-repository#59 (lecture 1 PDF without Type 3 fonts).
