@@ -2,7 +2,7 @@
 title: "Lecture plan"
 ---
 
-Lectures are on Mondays 8–10 in even weeks (CSS 1-1-18) and on Thursdays 13–15 (CSS 18-01-11). Three lectures are at other times: Friday 5 March, Wednesday 31 March and Monday 12 April; time and room follow. Every lecture has its own slides as a PDF. The exercises of a week are in its first row; while an assignment runs, there are none. The next lecture is highlighted.
+Lectures are on Mondays 10–12 in even weeks (CSS 7-0-28) and on Thursdays 13–15 (CSS 18-01-11). Three lectures are at other times: Friday 5 March, Wednesday 31 March and Monday 12 April; time and room follow. Every lecture has its own slides as a PDF. The exercises of a week are in its first row; while an assignment runs, there are none. The next lecture is highlighted.
 
 | Week | Date | Lecture | Slides | Exercises | Preparation |
 |:-----|:-----|:--------|:-------|:----------|:------------|
