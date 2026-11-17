@@ -27,7 +27,7 @@ Lectures are on Mondays 10â€“12 in odd weeks (CSS 35.3.12) and on Thursdays 13â€
 |  | Thu 22 Apr | Neural networks and learning the SDF | [PDF](slides/aef-14-neural-networks-and-learning-the-sdf.pdf) |  | Chen, Pelger & Zhu (2024) |
 | 17 | Mon 26 Apr | From predictions to implementable portfolios (first hour: assignment 2 discussion) | [PDF](slides/aef-15-implementable-portfolios.pdf) |  | Jensen, Kelly, Malamud & Pedersen (2026) |
 |  | Thu 29 Apr | Market microstructure and high-frequency data | [PDF](slides/aef-16-market-microstructure-and-high-frequency-data.pdf) |  |  |
-|  | Thu 29 Apr | [Assignment 3 released]{.plan-minor} |  |  |  |
+| 18 | Thu 6 May | [Assignment 3 released]{.plan-minor} |  |  |  |
 | 19 | Mon 10 May | Realized volatility | [PDF](slides/aef-17-realized-volatility.pdf) |  | Andersen, Bollerslev, Diebold & Labys (2003) |
 |  | Thu 13 May | Realized covariances for portfolio choice | [PDF](slides/aef-18-realized-covariances-for-portfolio-choice.pdf) | [7](exercises/high_frequency_data.qmd "High-frequency data") | Hautsch, Kyj & Oomen (2012) |
 |  | Thu 13 May | [Assignment 3 deadline]{.plan-minor} |  |  |  |
