@@ -471,4 +471,4 @@ This turnover leaves out the trades inside each anomaly. Every long-short portfo
 
 Can you beat the best model on the scoreboard of the lectures? Use any method from the course on the factor zoo, tuned with the estimation sample only, and compute the annualized Sharpe ratio of your SDF portfolio in the test sample.
 
-**Submit by Wednesday 21 April:** the kind of method you used and the Sharpe ratios of your SDF portfolio in the test and the estimation sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex08-scoreboard). The next lecture shows the scoreboard of the whole class.
+**Submit by Friday 23 April:** the kind of method you used and the Sharpe ratios of your SDF portfolio in the test and the estimation sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex08-scoreboard). The next lecture shows the scoreboard of the whole class.
