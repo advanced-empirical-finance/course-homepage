@@ -29,8 +29,6 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 ## Lectures
 
 - [ ] **S:** review the drafts: decks 5–16.
-- [ ] **C:** 07 portfolio sorts, the second hour (placeholder).
-- [ ] **C:** 08 multifactor models, the Fama-French slide (placeholder).
 - [ ] **C:** 15 implementable portfolios: Sharpe ratios after costs, once the factor library with trading costs exists; check the publication year of Jensen, Kelly, Malamud & Pedersen.
 - [ ] **C:** 17 realized volatility and 18 realized covariances (plan in course-homepage#101). The VOLARE data are on eumel as parquet files since 16 November 2026 (course-repository#64).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
