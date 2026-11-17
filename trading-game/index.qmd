@@ -28,7 +28,7 @@ Every submission carries a **rationale**: what you expect and why. Together they
 - Work alone or in a team of up to three. **Choose your team during the dry run.**
 - Each team gets one **token**: a key, like a password, that identifies your team to the trading game. The client packages and the dashboard use it to authenticate you. Keep it within your team.
 - Each team starts with **$1,000,000** in cash.
-- **Dry run:** from 25 January until 12 February 2027, one week after the first lecture, to try the tools and form your team; results are reset afterwards.
+- **Dry run:** from 25 January until 12 February 2027, the day after the first lecture, to try the tools and form your team; results are reset afterwards.
 - **Trading:** 16 February to 14 May 2027, every NYSE trading day (15 February is a US holiday).
 
 The rules tighten during the semester. Every response from the trading game tells you which rules apply to the next trade, so a change never catches you by surprise.
