@@ -16,7 +16,7 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 
 - [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
   - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
-  - peer feedback for five days after each deadline;
+  - peer feedback for seven days after each deadline;
   - the GitHub username form for the team repositories (course-homepage#81);
   - the data files for students (CRSP, VOLARE).
 
