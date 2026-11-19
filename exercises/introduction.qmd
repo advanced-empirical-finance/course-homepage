@@ -70,8 +70,4 @@ crsp_monthly = pl.read_parquet("data/crsp_monthly.parquet")
 
 Make one figure from the data in your `data` folder, with `ggplot2` (R) or `plotnine` (Python), that shows something you did not expect. Give it a title, labelled axes with units, and a one-line caption that says what the reader should see.
 
-**Submit:** the figure and its caption. The next lecture starts with a gallery of your figures.
-
-::: {.callout-warning title="TBD"}
-The upload link follows.
-:::
+**Submit:** post the figure as an image in a reply to the Absalon discussion *Exercise 1: a figure you did not expect*, with the caption as the text of your reply, by Sunday 14 February, 23:59. Lecture 2 starts with a gallery of your figures.
