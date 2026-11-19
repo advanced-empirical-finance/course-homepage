@@ -29,6 +29,7 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 ## Lectures
 
 - [ ] **S:** review the drafts: decks 8 and 10–18 (5–7 and 9 reviewed on 17 November 2026; 15, 17 and 18 in course-repository#76).
+- [ ] **C:** lecture 15: read the factor library and its trading costs with tidyfinance's Hugging Face download once they are released there (before the semester), instead of the private paper files, so that students can render the deck.
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
 - [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
 
