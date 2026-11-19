@@ -11,7 +11,7 @@ Positron Assistant gives you a chat (to ask, to edit files, or as an agent that 
 
 1. **A model provider.** GitHub Copilot is free for students with the [GitHub Student Developer Pack](https://education.github.com/pack). Alternatively, use an API key from Anthropic, which you pay per use.
 2. **Turn it on.** In Positron's settings, search for *Positron Assistant: Enable* and tick it. Then reload the window: *Ctrl+Shift+P* (*Cmd+Shift+P* on a Mac), *Developer: Reload Window*.
-3. **Sign in.** *Ctrl+Shift+P*, *Positron Assistant: Configure Language Model Providers*, choose your provider and sign in.
+3. **Sign in.** {{< kbd mac=Cmd-Shift-P win=Ctrl-Shift-P linux=Ctrl-Shift-P >}}, *Positron Assistant: Configure Language Model Providers*, choose your provider and sign in.
 
 The [Positron documentation](https://positron.posit.co/assistant) shows every step with screenshots. Other assistants, such as Claude Code or Copilot in VS Code, work in the same project and read the same rules.
 

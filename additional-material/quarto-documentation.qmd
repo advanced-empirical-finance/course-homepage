@@ -125,7 +125,7 @@ Check the interpreter at the top right of Positron: R 4.6.1 for R, the course re
 
 Replace `"JPM"` with `"MSFT"`, save, and preview again. Then change it back. This is the loop you use from now on: edit, render, look.
 
-While you write, you can also run code without rendering: click **Run Cell** above a chunk, or select lines and press Ctrl+Enter. The results appear in the Console, so you can look at `prices` there or in the Variables pane. Rendering is different: it starts a fresh R or Python session and runs the whole file from top to bottom.
+While you write, you can also run code without rendering: click **Run Cell** above a chunk, or select lines and press {{< kbd mac=Cmd-Enter win=Ctrl-Enter linux=Ctrl-Enter >}}. The results appear in the Console, so you can look at `prices` there or in the Variables pane. Rendering is different: it starts a fresh R or Python session and runs the whole file from top to bottom.
 
 **Checkpoint.** `quarto-practice/stock-report.pdf` sits next to your `.qmd`. It shows the title, your name, two headings, the code and a chart with three price series. In R it also shows package messages; [Section 3](#chunk-options) hides them. If the render fails, look up the message in [Troubleshooting](#troubleshooting).
 

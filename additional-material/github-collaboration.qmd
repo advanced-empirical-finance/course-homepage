@@ -115,7 +115,7 @@ git commit -m "Estimate the tangency portfolio with monthly returns"
 git push
 ```
 
-The *Source Control* panel in Positron (`Ctrl+Shift+G`) does the same with buttons. A commit message says what you changed and why, in one line.
+The *Source Control* panel in Positron ({{< kbd Ctrl-Shift-G >}}) does the same with buttons. A commit message says what you changed and why, in one line.
 
 ## Split the report so you do not get in each other's way
 

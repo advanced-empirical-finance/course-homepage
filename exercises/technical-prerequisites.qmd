@@ -31,11 +31,11 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
 
     Then close the terminal and open a new one, so it finds `uv` and `uvr`. If uv and uvr are already on your computer, for example from another course, update them instead with `uv self update` and `uvr upgrade`; the course needs uvr 0.4.8 or later.
 
-### Set Up the Course Repository
+### Set up the course repository
 
 5.  Configure Git in Positron:
-     - Open Positron, open the source control view `(Ctrl+Shift+G)`. *If Git is not yet installed, the Source Control view will show instructions on how to install it*
-     - Once Git is detected you can clone the course GitHub repository by opening the source control view `(Ctrl+Shift+G)` and clicking `Clone Repository`. Paste the address of the course repository:
+     - Open Positron, open the source control view {{< kbd Ctrl-Shift-G >}}. *If Git is not yet installed, the Source Control view will show instructions on how to install it*
+     - Once Git is detected you can clone the course GitHub repository by opening the source control view {{< kbd Ctrl-Shift-G >}} and clicking `Clone Repository`. Paste the address of the course repository:
 
        ```{.default}
        https://github.com/advanced-empirical-finance/course-repository.git
@@ -48,7 +48,7 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
 
 ### Install R, Python and the course packages
 
-7. Open the Terminal (not the Console) in Positron, inside the course repository, and run
+7. Open the Terminal (not the Console) in Positron. Because you opened the course repository as a project in step 6, the Terminal starts in the repository's folder, the one that holds `uvr.toml` and `pyproject.toml`. Check with `pwd` (macOS and Linux) or `Get-Location` (Windows). Then run
 
     ```sh
     uvr r install 4.6.1
@@ -56,7 +56,7 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
     uv sync
     ```
 
-    `uvr r install` installs R, `uvr sync` installs *all* R packages of the course, and `uv sync` installs Python and *all* Python packages of the course, including `aefsim`, the client for the [trading game](../trading-game/index.qmd). Everyone gets exactly the same package versions, because they are recorded in the course repository (`uvr.lock` for R, `uv.lock` for Python). If Positron asks which R or Python to use, choose the one in the course repository (`.uvr` for R, `.venv` for Python).
+    `uvr r install` installs R, `uvr sync` installs *all* R packages of the course, and `uv sync` installs Python and *all* Python packages of the course, including `aefsim`, the client for the [trading game](../trading-game/index.qmd). Everyone gets exactly the same package versions, because they are recorded in the course repository (`uvr.lock` for R, `uv.lock` for Python). If Positron asks which R or Python to use, choose R 4.6.1 for R. For Python, choose the environment that `uv sync` just created in the `.venv` folder of the course repository: its path ends in `course-repository/.venv`, not in a Python installed elsewhere on your computer.
 
     Adding a package works the same way in both: `uvr add tidymodels` for R, `uv add polars` for Python. To collaborate with your peers, commit the files `uvr.toml`, `uvr.lock`, `pyproject.toml` and `uv.lock`; your colleagues only have to run `uvr sync` and `uv sync` to replicate your exact package environment.
 
@@ -71,7 +71,7 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
             end_date = "2023-12-31")
     ```
 
-    Mark everything and press `Ctrl + Enter` to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error such as `there is no package called 'tidyfinance'`, Positron is not using the course's R: when R starts, the console should say `uvr: library linked (… packages)`. If it doesn't, choose R 4.6.1 with the interpreter icon on the top right, restart R (`Session` → `Restart R`), and run `uvr sync` in the Terminal again.
+    Mark everything and press {{< kbd mac=Cmd-Enter win=Ctrl-Enter linux=Ctrl-Enter >}} to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error such as `there is no package called 'tidyfinance'`, Positron is not using the course's R: when R starts, the console should say `uvr: library linked (… packages)`. If it doesn't, choose R 4.6.1 with the interpreter icon on the top right, restart R (`Session` → `Restart R`), and run `uvr sync` in the Terminal again.
 
 9. To verify that Python is working correctly, click on `New/New File` and select `Python file` to open a new Python script in Positron and type 
 
@@ -84,18 +84,18 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
             end_date="2023-12-31")
     ```
 
-    Mark everything and press `Ctrl + Enter` to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error, select the course's Python environment first: click on the interpreter icon on the top right and choose the one in the course repository's `.venv`.
+    Mark everything and press {{< kbd mac=Cmd-Enter win=Ctrl-Enter linux=Ctrl-Enter >}} to run the code. If everything is working correctly, you should see that you just downloaded financial data in the console. If you receive an error, select the course's Python environment first: click on the interpreter icon on the top right and choose the one in the course repository's `.venv`.
 
-## PDF output with TinyTeX (required)
+### Render PDFs with TinyTeX
 
 You hand in every mandatory assignment as a PDF that Quarto renders from your `.qmd` file. Quarto comes with Positron, but PDF output also needs LaTeX. Install TinyTeX, a small LaTeX distribution, once:
 
-1. In Positron's Terminal, run:
+10. In Positron's Terminal, run:
 
-   ```sh
-   quarto install tinytex
-   ```
+    ```sh
+    quarto install tinytex
+    ```
 
-1. Check the installation with `quarto check`. Under "Checking LaTeX", the output should name TinyTeX. If it says `Tex: (not detected)`, run the install command again, then restart Positron.
+11. Check the installation with `quarto check`. Under "Checking LaTeX", the output should name TinyTeX. If it says `Tex: (not detected)`, run the install command again, then restart Positron.
 
-1. Test it: open `mandatory-assignments/MA_R_template.qmd` (or `MA_python_template.qmd`) from the course repository and click **Preview**. Positron shows the PDF in the Viewer.
+12. Test it: open `mandatory-assignments/MA_R_template.qmd` (or `MA_python_template.qmd`) from the course repository and click **Preview**. Positron shows the PDF in the Viewer.

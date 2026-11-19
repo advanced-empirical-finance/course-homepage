@@ -19,7 +19,7 @@ These exercises start with the portfolio choice problem of a mean-variance inves
 
 **Solutions:** Tasks 1 to 4 are solved and described in detail in the book chapter [Modern portfolio theory](https://www.tidy-finance.org/chapters/modern-portfolio-theory.html), with data until 2024. The slides of [lecture 2](../slides/aef-02-mean-variance-optimization.pdf) show the code for all five tasks in R and Python, and the results.
   
-## Equivalence between Certainty equivalent maximization and minimum variance optimization {#equivalence-between-certainty-equivalent-maximization-and-minimum-variance-optimization}
+## Equivalence between certainty equivalent maximization and minimum variance optimization {#equivalence-between-certainty-equivalent-maximization-and-minimum-variance-optimization}
 
 In lecture 2 (Mean-variance optimization), I state that an investor with a quadratic utility function with a certainty equivalent $$\max_w CE(w) = \omega'\mu - \frac{\gamma}{2} \omega'\Sigma \omega \text{ s.t. } \iota'\omega = 1$$
 faces an equivalent optimization problem to a framework where portfolio weights are chosen to minimize volatility given a pre-specified level or expected returns
