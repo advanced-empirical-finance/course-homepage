@@ -10,7 +10,7 @@ The main aim of this chapter is to familiarize yourself with tidy coding princip
 
 **Exercises:**
 
-1. Download daily prices for one stock market ticker of your choice (e.g. *AAPL*) from Yahoo!Finance. Plot the time series of adjusted closing prices. To download the data you can use the command `download_data` from the `tidyfinance` package (R) or the `tidyfinance` library (Python). If you do not know how to use the functionalities, make sure you read the help file by calling `?download_data`. 
+1. Download daily prices for one stock market ticker of your choice (e.g. *AAPL*) from Yahoo!Finance. Plot the time series of adjusted closing prices. To download the data you can use the command `download_data` from the `tidyfinance` package (R) or the `tidyfinance` library (Python). If you do not know how to use it, read its help: `?download_data` in R, `help(tf.download_data)` in Python after `import tidyfinance as tf`.
 1. Compute daily net returns for the asset and visualize the distribution of daily returns in a histogram using `ggplot2` (R) or `plotnine` (Python). Also, use `geom_vline()` to add a dashed red line that indicates the 5\% quantile of the daily returns within the histogram. 
 1. Compute summary statistics (mean, standard deviation, minimum and maximum) for the daily returns.
 
@@ -26,6 +26,8 @@ As a next step, we generalize the code from before such that all the computation
 1. Consider the research question *Are days with high aggregate trading volume often followed by high aggregate trading volume days?* How would you investigate this question? Hint: Compute the aggregate daily trading volume (in USD) and find an appropriate visualization to analyze the question.
 1. Ask yourself how the visualization could be improved by adding further information (e.g., highlighting days with extreme trading volume), improving axis labels, changing the style (colors, themes, etc.). Implement your ideas and create a final version of the plot. Make sure the plot is self-explanatory (e.g., contains captions, legends, an appropriate title, etc.).
 
+**Submit:** post your final figure as an image in a reply to the Absalon discussion *Exercise 1: aggregate trading volume*, with a one-line caption that says what the reader should see, by Sunday 14 February, 23:59. Lecture 2 starts with a gallery of your figures.
+
 
 **Solutions:** All tasks are solved and described in detail in the sections [Scaling up the analysis](https://www.tidy-finance.org/chapters/working-with-stock-returns.html#scaling-up-the-analysis) and [Other forms of data aggregation](https://www.tidy-finance.org/chapters/working-with-stock-returns.html#other-forms-of-data-aggregation) of the book chapter *Working with stock returns*.
 
@@ -35,7 +37,28 @@ As a next step, we generalize the code from before such that all the computation
 
 1. Read the book chapters [Accessing and managing financial data](https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html) and [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) entirely; both show the R and the Python code side by side. They describe almost every dataset that matters for research in empirical finance. Since CRSP's update in July 2022, monthly returns already include delisting returns, so you no longer need to adjust for delistings yourself; the second chapter explains the details.
 
-2. The `data` folder of your course repository already contains the public data of the first chapter, so everyone in the course works with the same numbers: the Fama-French three factors (`factors_ff3_monthly.parquet`), the ten industry portfolios (`industries_ff_monthly.parquet`), the macroeconomic predictors of Welch and Goyal (`macro_predictors.parquet`), and the consumer price index (`cpi_monthly.parquet`). Download the CRSP data, `crsp_monthly.parquet`, from Absalon and store it in the same folder under exactly this name. The CRSP data are licensed: Git ignores the file, so it never ends up on GitHub. Later in the course, `stock_characteristics_monthly.parquet` follows the same way.
+2. Download the licensed data of the course from Absalon and save them in the `data` folder of your team repository, under exactly these names:
+
+    - `crsp_monthly.parquet`: monthly returns and market capitalizations of all US common stocks from CRSP (120 MB);
+    - `volare_stocks_realized_measures_daily.parquet`: daily realized variances of 40 US stocks from VOLARE (28 MB);
+    - `volare_stocks_realized_covariances_daily.parquet`: their daily realized covariances (117 MB);
+    - `volare_futures_realized_measures_daily.parquet`: daily realized variances of five futures, among them the E-mini S&P 500 (5 MB).
+
+    The files are licensed: Git ignores them, so they never end up on GitHub. The `data` folder already holds the public data of the first chapter, so everyone in the course works with the same numbers. When you are done, it looks like this:
+
+    ```{.default}
+    data/
+    ├── cpi_monthly.parquet                                 consumer price index
+    ├── crsp_monthly.parquet                                Absalon
+    ├── factors_ff3_monthly.parquet                         Fama-French three factors
+    ├── industries_ff_monthly.parquet                       ten industry portfolios
+    ├── macro_predictors.parquet                            Welch and Goyal predictors
+    ├── volare_futures_realized_measures_daily.parquet      Absalon
+    ├── volare_stocks_realized_covariances_daily.parquet    Absalon
+    └── volare_stocks_realized_measures_daily.parquet       Absalon
+    ```
+
+    Later exercises add files you build yourself, such as `stock_characteristics_monthly.parquet` in exercise 4.
 
 3. Almost all exercises from now on start by reading data from these files. This is all it takes, from a fresh R or Python session:
 
@@ -65,9 +88,3 @@ crsp_monthly = pl.read_parquet("data/crsp_monthly.parquet")
 4. Plot the number of stocks in the CRSP sample over time, by listing exchange (NYSE, NYSE American, formerly AMEX, and Nasdaq).
 
 **Solutions:** The book chapter [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) solves the figure in R and Python.
-
-## Open question {#open-question}
-
-Make one figure from the data in your `data` folder, with `ggplot2` (R) or `plotnine` (Python), that shows something you did not expect. Give it a title, labelled axes with units, and a one-line caption that says what the reader should see.
-
-**Submit:** post the figure as an image in a reply to the Absalon discussion *Exercise 1: a figure you did not expect*, with the caption as the text of your reply, by Sunday 14 February, 23:59. Lecture 2 starts with a gallery of your figures.
