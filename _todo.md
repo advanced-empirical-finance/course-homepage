@@ -1,6 +1,6 @@
 # AEF 2027: open tasks
 
-Updated 17 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
+Updated 19 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
 ## Calendar and rooms
 
@@ -12,26 +12,23 @@ Updated 17 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 
 ## Absalon
 
-Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 2027 course does not exist yet.
+Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbox course 57599). The 2027 course does not exist yet.
 
 - [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
   - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
   - peer feedback for seven days after each deadline;
-  - the GitHub username form for the team repositories (course-homepage#81);
+  - the GitHub username form for the team repositories (course-homepage#81) and the discussion for the figures of exercise 1 (#70): both are ready, unpublished, in the sandbox (assignment 277139, discussion 848551), to be copied;
   - the data files for students (CRSP, VOLARE).
 
 ## Data
 
 - [ ] **S + C:** review the lobsteR package (github.com/voigtstefan/lobsteR) and its cleaning steps: which messages are dropped, auctions and halts, the aggregation to 5-second snapshots. The SPY data in tidyfinance are built with it.
 - [ ] **C:** a LOBSTER example for lecture 16: a few rows of a message file and an order book file. Use LOBSTER's public sample files or a day from KU's access, depending on the licence.
-- [ ] **S:** review and merge the fix of tidyfinance's Python `download_data_osap()` (py-tidyfinance#94, issue #93).
 
 ## Lectures
 
-- [ ] **S:** review the drafts: decks 8 and 10–18 (5–7 and 9 reviewed on 17 November 2026; 15, 17 and 18 in course-repository#76).
 - [ ] **C:** lecture 15: read the factor library and its trading costs with tidyfinance's Hugging Face download once they are released there (before the semester), instead of the private paper files, so that students can render the deck.
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
-- [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
 
 ## Course quality
 
