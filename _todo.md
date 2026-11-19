@@ -1,6 +1,6 @@
 # AEF 2027: open tasks
 
-Updated 17 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
+Updated 19 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
 ## Calendar and rooms
 
@@ -12,37 +12,32 @@ Updated 17 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 
 ## Absalon
 
-Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 2027 course does not exist yet.
+Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbox course 57599). The 2027 course does not exist yet.
 
 - [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
   - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
   - peer feedback for seven days after each deadline;
-  - the GitHub username form for the team repositories (course-homepage#81);
+  - the GitHub username form for the team repositories (course-homepage#81) and the discussion for the figures of exercise 1 (#70): both are ready, unpublished, in the sandbox (assignment 277139, discussion 848551), to be copied;
   - the data files for students (CRSP, VOLARE).
 
 ## Data
 
 - [ ] **S + C:** review the lobsteR package (github.com/voigtstefan/lobsteR) and its cleaning steps: which messages are dropped, auctions and halts, the aggregation to 5-second snapshots. The SPY data in tidyfinance are built with it.
 - [ ] **C:** a LOBSTER example for lecture 16: a few rows of a message file and an order book file. Use LOBSTER's public sample files or a day from KU's access, depending on the licence.
-- [ ] **S:** review and merge the fix of tidyfinance's Python `download_data_osap()` (py-tidyfinance#94, issue #93).
 
 ## Lectures
 
-- [ ] **S:** review the drafts: decks 8 and 10–18 (5–7 and 9 reviewed on 17 November 2026; 15, 17 and 18 in course-repository#76).
 - [ ] **C:** lecture 15: read the factor library and its trading costs with tidyfinance's Hugging Face download once they are released there (before the semester), instead of the private paper files, so that students can render the deck.
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
-- [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
 
 ## Course quality
 
-- [ ] **C:** alignment table on one page: each learning outcome of the course description, with the lectures, exercises and assignments that teach and assess it. Draft for S.
 - [ ] **C:** automatic feedback before the deadline: a check in the team repositories (course-homepage#81) that renders each report and tests it against the assignment quality criteria (runs from a clean session, chunk labels, numbers from inline code, captions and axis labels), so that teams see problems before they hand in.
 
 ## Lecture notes from transcripts
 
 Instead of video recordings: a transcript of each lecture, turned into notes and published as a PDF with the slides and the whiteboard sheets.
 
-- [ ] **C:** lecture 1: tell students that only the lecturer's microphone records, that names never appear in the notes, and that the audio is deleted after transcription (KU's rules are checked; S has the recording solution).
 - [ ] **C:** transcription on eumel with Whisper (the audio never leaves eumel); test the speed and quality on a sample recording before the semester.
 - [ ] **C:** the live decks report slide changes to eumel, so that the transcript splits by slide.
 - [ ] **C:** lecture notes PDF per lecture: each slide, what was said (cleaned up, in S's words, student questions without names), and the whiteboard sheets.
@@ -63,7 +58,6 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 ## Trading game and conference
 
 - [ ] **C:** dry run 25 Jan – 12 Feb, and the runbook for the reset before 16 Feb.
-- [ ] **S:** conference on 20 May: selection rule (out-of-sample measure and period), discussants, jury, Nitor prize.
 - [ ] **S + C:** team repositories (course-homepage#81): the form on Absalon, then the repositories.
 
 ## Live polls and live slides
