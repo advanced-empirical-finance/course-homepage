@@ -334,7 +334,10 @@ simulated_tangency |>
   geom_histogram(binwidth = 0.05, boundary = 0) +
   geom_vline(xintercept = true_sharpe) +
   geom_vline(xintercept = naive_sharpe, linetype = "dashed") +
-  facet_wrap(~sample_length, labeller = label_both) +
+  facet_wrap(
+    ~sample_length,
+    labeller = as_labeller(\(x) paste(x, "months in each sample"))
+  ) +
   coord_cartesian(xlim = c(-0.5, 1.6)) +
   labs(
     x = "True Sharpe ratio of the estimated tangency portfolio (annualized)",
@@ -370,7 +373,7 @@ print(
     + geom_histogram(binwidth=0.05, boundary=0)
     + geom_vline(xintercept=true_sharpe)
     + geom_vline(xintercept=naive_sharpe, linetype="dashed")
-    + facet_wrap("sample_length", labeller="label_both")
+    + facet_wrap("sample_length", labeller=lambda x: f"{x} months in each sample")
     + coord_cartesian(xlim=(-0.5, 1.6))
     + labs(
         x="True Sharpe ratio of the estimated tangency portfolio (annualized)",
@@ -424,7 +427,10 @@ ggplot(mapping = aes(x = sigma, y = mu)) +
     alpha = 0.6
   ) +
   geom_path(data = true_frontier, linewidth = 1) +
-  facet_wrap(~sample_length, labeller = label_both) +
+  facet_wrap(
+    ~sample_length,
+    labeller = as_labeller(\(x) paste(x, "months in each sample"))
+  ) +
   coord_cartesian(xlim = c(0, 0.6), ylim = c(-0.2, 0.5)) +
   labs(
     x = "True volatility (annualized)",
@@ -472,7 +478,7 @@ simulated_frontiers = pl.concat(
         alpha=0.6,
     )
     + geom_path(data=true_frontier, size=1)
-    + facet_wrap("sample_length", labeller="label_both")
+    + facet_wrap("sample_length", labeller=lambda x: f"{x} months in each sample")
     + coord_cartesian(xlim=(0, 0.6), ylim=(-0.2, 0.5))
     + labs(
         x="True volatility (annualized)",
