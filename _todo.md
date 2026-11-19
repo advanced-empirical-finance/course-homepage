@@ -62,7 +62,6 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 
 ## Trading game and conference
 
-- [ ] **C:** trading game page: describe the role of the game as decided in course-repository#5.
 - [ ] **C:** dry run 25 Jan – 12 Feb, and the runbook for the reset before 16 Feb.
 - [ ] **S:** conference on 20 May: selection rule (out-of-sample measure and period), discussants, jury, Nitor prize.
 - [ ] **S + C:** team repositories (course-homepage#81): the form on Absalon, then the repositories.

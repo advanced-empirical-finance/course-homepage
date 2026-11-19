@@ -19,8 +19,8 @@ title: "The trading game"
 Over the semester your team runs a paper portfolio of US stocks. Whenever you like, you send a new **weight vector** from R or Python. **You only decide and submit; everything else happens automatically:** the trading game trades your weights at the next US market open, charges transaction costs and values your portfolio every evening. Your team's [dashboard](dashboard.qmd) shows how you are doing against simple benchmarks and the cohort.
 
 ::: {.callout-note}
-## What counts is how you decide, not what you earn
-Every submission carries a **rationale**: what you expect and why. Together they form your decision log. The course assesses that log, how you manage risk as the rules change, and your final reflection, not your return. A good process with bad luck beats a lucky gamble.
+## What the game is for
+The game gives us shared material to discuss in class. Every submission carries a **rationale**: what you expect and why. Together they form your decision log. Each of the three mandatory assignments has one part about your team's decisions in the game. There, your log and how you manage risk as the rules change count, not your return. A good process with bad luck beats a lucky gamble.
 :::
 
 ## Teams and timeline
