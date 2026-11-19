@@ -52,7 +52,6 @@ Instead of video recordings: a transcript of each lecture, turned into notes and
 Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
 
 - [ ] **S:** review the eight exercise pages.
-- [ ] **C:** figure upload and gallery for the open question of exercise 1 (#70).
 - [ ] **C:** exercise 5 should use tidyfinance's download of the anomaly returns once it works in Python.
 
 ## Assignments
