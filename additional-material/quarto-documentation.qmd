@@ -38,7 +38,7 @@ Code appears in R and Python. Pick your language in any tab; all tabs on the pag
 
 **Before you start**, you need:
 
-- the [technical prerequisites](../exercises/technical-prerequisites.qmd): Positron, your team repository open in Positron, and `uvr sync` (R) or `uv sync` (Python) run in it;
+- the [technical prerequisites](../exercises/technical-prerequisites.qmd): Positron, the course repository open in Positron, and `uvr sync` (R) or `uv sync` (Python) run in it;
 - TinyTeX for PDF output, a required step of the technical prerequisites. Run `quarto check` in Positron's Terminal: if the output under "Checking LaTeX" says `Tex: (not detected)`, install TinyTeX with `quarto install tinytex`.
 
 ## 1. Quick start: from zero to PDF (15 min) {#quick-start}
@@ -47,7 +47,7 @@ Code appears in R and Python. Pick your language in any tab; all tabs on the pag
 
 ### Step 1: create the file (2 min)
 
-In Positron's Explorer, inside your team repository, create a folder `quarto-practice` and in it a file `stock-report.qmd`. Keep the folder inside your team repository: Quarto then uses the course's R and Python packages.
+In Positron's Explorer, inside the course repository, create a folder `quarto-practice` and in it a file `stock-report.qmd`. Keep the folder inside the course repository: Quarto then uses the course's R and Python packages.
 
 ### Step 2: paste the code (3 min)
 
@@ -119,7 +119,7 @@ ggplot(prices, aes(x="date", y="adjusted_close", color="symbol")) + geom_line()
 
 ### Step 3: render (5 min)
 
-Check the interpreter at the top right of Positron: R 4.6.1 for R, your team repository's `.venv` for Python. Then click **Preview** at the top right of the editor, or press {{< kbd mac=Cmd-Shift-K win=Ctrl-Shift-K linux=Ctrl-Shift-K >}}. The first render downloads the prices and can take a minute. Positron shows the PDF in the Viewer.
+Check the interpreter at the top right of Positron: R 4.6.1 for R, the course repository's `.venv` for Python. Then click **Preview** at the top right of the editor, or press {{< kbd mac=Cmd-Shift-K win=Ctrl-Shift-K linux=Ctrl-Shift-K >}}. The first render downloads the prices and can take a minute. Positron shows the PDF in the Viewer.
 
 ### Step 4: change something (5 min)
 
@@ -800,7 +800,7 @@ AI assistants invent references that look real: plausible authors, journal and y
 :::
 
 ::: {.callout-note title="Task 7 (8 min)"}
-1. Copy `mandatory-assignments/references.bib` from your team repository into `quarto-practice/`, and add `bibliography: references.bib` to your header.
+1. Copy `mandatory-assignments/references.bib` from the course repository into `quarto-practice/`, and add `bibliography: references.bib` to your header.
 2. Cite Markowitz (1952) in your introduction.
 3. Get the BibTeX entry for Sharpe (1966), "Mutual Fund Performance", from its DOI `10.1086/294846`. Add it to `references.bib` with the key `Sharpe1966`, check it against the DOI page, and cite it where you introduce the Sharpe ratio.
 4. Add the references block at the end of your file. Render.
@@ -838,7 +838,7 @@ uv run quarto render quarto-practice/stock-report.qmd
 
 **2. Fix the sample.** Always pass both `start_date` and `end_date`. With an open end, or with today's date as the end, your numbers change every day.
 
-**3. Use relative paths from the repository root.** In your team repository, Quarto runs the code from the root of the repository (its `_quarto.yml` says `execute-dir: project`), wherever the `.qmd` file lives. So every file reads the data the same way:
+**3. Use relative paths from the repository root.** In the course repository, Quarto runs the code from the root of the repository (its `_quarto.yml` says `execute-dir: project`), wherever the `.qmd` file lives. So every file reads the data the same way:
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -856,11 +856,11 @@ crsp_monthly = pl.read_parquet("data/crsp_monthly.parquet")
 
 :::
 
-A path like `C:/Users/anna/Desktop/data/crsp_monthly.parquet` exists only on Anna's laptop. The CRSP files from Absalon are licensed: keep them in `data/`, which your team repository's `.gitignore` keeps out of Git, and never push them to GitHub.
+A path like `C:/Users/anna/Desktop/data/crsp_monthly.parquet` exists only on Anna's laptop. The CRSP files from Absalon are licensed: keep them in `data/`, which the course repository's `.gitignore` keeps out of Git, and never push them to GitHub.
 
 **4. Set seeds.** Whenever randomness enters (simulations, cross-validation folds, random forests), set a seed once in the setup chunk: `set.seed(2027)` in R; in Python, `rng = np.random.default_rng(2027)` and `random_state=2027` in scikit-learn. Without a seed, each render gives slightly different results from the ones you describe.
 
-**5. Keep the environment.** Your team repository pins every package version in `uvr.lock` and `uv.lock`, and everything you need for the assignments is in it. Load packages in the setup chunk, and never put `install.packages()`, `pip install` or `uv add` into the document.
+**5. Keep the environment.** The course repository pins every package version in `uvr.lock` and `uv.lock`, and everything you need for the assignments is in it. Load packages in the setup chunk, and never put `install.packages()`, `pip install` or `uv add` into the document.
 
 ### Caching and its risks
 
@@ -889,7 +889,7 @@ The safer pattern in both languages: download once in a separate script, save th
 **Checkpoint.** You have seen both failure modes, no `_cache` folder is left, and the Terminal render gives the same PDF as Preview.
 
 ::: {.callout-tip collapse="true" title="Self-check: your teammate's render stops because it cannot find C:/Users/anna/Desktop/data/crsp_monthly.parquet. What is wrong?"}
-The code uses an absolute path that exists only on Anna's laptop. Use the relative path `data/crsp_monthly.parquet`, and keep the same folder structure, your team repository with its `data/` folder, on every computer.
+The code uses an absolute path that exists only on Anna's laptop. Use the relative path `data/crsp_monthly.parquet`, and keep the same folder structure, the course repository with its `data/` folder, on every computer.
 :::
 
 ::: {.callout-tip collapse="true" title="Self-check: why is today's date as end_date wrong in a hand-in, but fine for the trading game?"}
@@ -1055,9 +1055,9 @@ Read the render output from the top: the first error is usually the real one. Qu
 |---|---|---|
 | `No TeX installation was detected` | TinyTeX is missing. | Run `quarto install tinytex` in the Terminal, then restart Positron. |
 | `Unable to locate an installed version of R` | Quarto does not find the course's R. | Select R 4.6.1 as interpreter. In the Terminal, run `source .uvr/activate` before `quarto render`. |
-| `.uvr/activate: No such file or directory` | uvr has not written the activation script yet. | Run `uvr activate --write-shim` once, in your team repository. |
-| `there is no package called 'tidyfinance'` | Quarto uses an R without the course packages, for example because the file is outside your team repository. | Keep the file inside your team repository, run `uvr sync`, and render from the Terminal after `source .uvr/activate`. |
-| `ModuleNotFoundError: No module named 'polars'` | Quarto uses a Python without the course packages. | Select your team repository's `.venv` as interpreter, or render with `uv run quarto render`. |
+| `.uvr/activate: No such file or directory` | uvr has not written the activation script yet. | Run `uvr activate --write-shim` once, in the course repository. |
+| `there is no package called 'tidyfinance'` | Quarto uses an R without the course packages, for example because the file is outside the course repository. | Keep the file inside the course repository, run `uvr sync`, and render from the Terminal after `source .uvr/activate`. |
+| `ModuleNotFoundError: No module named 'polars'` | Quarto uses a Python without the course packages. | Select the course repository's `.venv` as interpreter, or render with `uv run quarto render`. |
 | `object 'x' not found` or `NameError: name 'x' is not defined` | `x` exists only in your Console, or a later chunk creates it. | Create `x` in a chunk above the place where you use it. |
 | `?@fig-growth` in the PDF, `Unable to resolve crossref` in the output | The label is missing, misspelled or lacks the `fig-` or `tbl-` prefix. | Make the label and the reference identical. |
 | **(Sharpe1966?)** in the PDF, `Citeproc: citation ... not found` | The key is not in the `.bib` file (keys are case-sensitive), or `bibliography` is missing. | Fix the key or the header. With the template's natbib setting, a missing key shows as (?). |
@@ -1103,10 +1103,10 @@ Still stuck? Post the full error message and the chunk that causes it on the Abs
 - [ ] You can explain every line, including the ones an AI assistant wrote.
 - [ ] You checked the report against the [assignment quality criteria](assignment-quality-criteria.qmd).
 
-**Optional peer check (15 min).** Swap `.qmd` files with a fellow student. Render each other's file in your own team repository and give three pieces of feedback based on the quality criteria. Peer review of the mandatory assignments works the same way.
+**Optional peer check (15 min).** Swap `.qmd` files with a fellow student. Render each other's file in your own course repository and give three pieces of feedback based on the quality criteria. Peer review of the mandatory assignments works the same way.
 
 ::: {.callout-tip collapse="true" title="Reference solution: stock-report.qmd after Tasks 1 to 8"}
-Your text will differ; your results should not. The same files are in the course repository, in `quarto-practice/solution/` (`stock-report-r.qmd`, `stock-report-python.qmd`, and `references.bib`): pull the latest course material (`git pull upstream main`) and compare your file with the solution side by side in Positron. The `references.bib` file below the code sits next to the `.qmd`.
+Your text will differ; your results should not. The same files are in the course repository, in `quarto-practice/solution/` (`stock-report-r.qmd`, `stock-report-python.qmd`, and `references.bib`): pull the latest course material (`git pull`, or `git pull upstream main` in a team repository) and compare your file with the solution side by side in Positron. The `references.bib` file below the code sits next to the `.qmd`.
 
 ::: {.panel-tabset group="language"}
 ## R

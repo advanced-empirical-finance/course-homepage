@@ -37,7 +37,7 @@ As a next step, we generalize the code from before such that all the computation
 
 1. Read the book chapters [Accessing and managing financial data](https://www.tidy-finance.org/chapters/accessing-and-managing-financial-data.html) and [WRDS, CRSP, and Compustat](https://www.tidy-finance.org/chapters/wrds-crsp-and-compustat.html) entirely; both show the R and the Python code side by side. They describe almost every dataset that matters for research in empirical finance. Since CRSP's update in July 2022, monthly returns already include delisting returns, so you no longer need to adjust for delistings yourself; the second chapter explains the details.
 
-2. Download the licensed data of the course from Absalon and save them in the `data` folder of your team repository, under exactly these names:
+2. Download the licensed data of the course from Absalon and save them in the `data` folder of your repository, under exactly these names:
 
     - `crsp_monthly.parquet`: monthly returns and market capitalizations of all US common stocks from CRSP (120 MB);
     - `volare_stocks_realized_measures_daily.parquet`: daily realized variances of 40 US stocks from VOLARE (28 MB);

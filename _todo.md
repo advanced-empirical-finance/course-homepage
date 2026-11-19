@@ -17,7 +17,7 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 - [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
   - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
   - peer feedback for seven days after each deadline;
-  - the GitHub username form for the team repositories (course-homepage#81) and the discussion for the figures of exercise 1 (#70): both are ready, unpublished, in the sandbox (assignment 277139, discussion 848551), to be copied;
+  - the discussion for the figures of exercise 1 (#70): ready, unpublished, in the sandbox (discussion 848551), to be copied;
   - the data files for students (CRSP, VOLARE).
 
 ## Data
@@ -32,7 +32,6 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 
 ## Course quality
 
-- [ ] **C:** automatic feedback before the deadline: a check in the team repositories (course-homepage#81) that renders each report and tests it against the assignment quality criteria (runs from a clean session, chunk labels, numbers from inline code, captions and axis labels), so that teams see problems before they hand in.
 
 ## Lecture notes from transcripts
 
@@ -58,7 +57,6 @@ Eight pages since 15 November 2026 (plan in course-homepage#74), none while an a
 ## Trading game and conference
 
 - [ ] **C:** dry run 25 Jan – 12 Feb, and the runbook for the reset before 16 Feb.
-- [ ] **S + C:** team repositories (course-homepage#81): the form on Absalon, then the repositories.
 
 ## Live polls and live slides
 

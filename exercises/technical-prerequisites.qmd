@@ -31,31 +31,45 @@ Before we begin working with R, Python, and Quarto in Advanced Empirical Finance
 
     Then close the terminal and open a new one, so it finds `uv` and `uvr`. If uv and uvr are already on your computer, for example from another course, update them instead with `uv self update` and `uvr upgrade`; the course needs uvr 0.4.8 or later.
 
-### Set up your team repository
+### Set up the course repository
 
-Every student works in a team, and a team of one is fine. Teams form during the dry run of the trading game, 25 January to 5 February. One person per team sends the team's name and the GitHub usernames of all members through the form on Absalon. We then create your team's private repository on GitHub, `aef27-<team>`: a copy of the [course repository](https://github.com/advanced-empirical-finance/course-repository) with the slides, the templates for the mandatory assignments, the R and Python environment and the `data` folder. GitHub emails each member an invitation; accept it within seven days.
-
-5.  Clone your team repository in Positron:
+5.  Clone the course repository in Positron:
      - Open the Source Control view {{< kbd Ctrl-Shift-G >}}. *If Git is not yet installed, the view shows how to install it.*
-     - Click `Clone Repository` and paste the address of your team repository, with `<team>` replaced by your team's name:
+     - Click `Clone Repository` and paste the address of the course repository:
 
        ```{.default}
-       https://github.com/advanced-empirical-finance/aef27-<team>.git
+       https://github.com/advanced-empirical-finance/course-repository.git
        ```
 
-       Sign in to GitHub when your browser asks, and choose a local folder for the repository. Cloning means creating your own copy of a shared project on your computer, so you can work on it without affecting the original.
-6. Open the cloned repository in Positron with `File` → `Open Folder`. Then open the Terminal (`Terminal` → `New Terminal`) and connect your repository to the course repository, so that new course material reaches you later:
+       Choose a local folder for the repository. Cloning means creating your own copy of a shared project on your computer, so you can work on it without affecting the original.
+6. Open the cloned repository in Positron with `File` → `Open Folder`. The folder holds the slides, the templates for the mandatory assignments, the R and Python environment and the `data` folder; the licensed data from Absalon go there, too (see [the exercises on financial data](introduction.qmd#financial-data)). When we announce new course material, get it with `git pull` in the Terminal, or *Pull* in the Source Control view.
+
+::: {.callout-note collapse="true" title="Working with your team on GitHub (optional)"}
+We encourage you to use Git and GitHub for your team work, but you do not have to. If you want to, one of you creates the team's repository; it stays connected to the course repository, so new course material still reaches you.
+
+1. On GitHub, create a new **private** repository, without a README, for example `aef27-<team>`. Under *Settings* → *Collaborators*, invite your teammates.
+2. In the Terminal of your clone of the course repository, run (with your username and repository name):
+
+    ```sh
+    git remote rename origin upstream
+    git remote add origin https://github.com/<username>/aef27-<team>.git
+    git push -u origin main
+    git config pull.rebase false
+    ```
+
+3. Your teammates accept the invitation, clone the team repository instead of the course repository, and run
 
     ```sh
     git remote add upstream https://github.com/advanced-empirical-finance/course-repository.git
     git config pull.rebase false
     ```
 
-    How your team works with the repository and how course updates arrive: [collaboration with Git and GitHub](../additional-material/github-collaboration.qmd). The licensed data from Absalon go into the `data` folder; see [the exercises on financial data](introduction.qmd#financial-data).
+From then on, `git pull` and `git push` work with your team's repository, and `git pull upstream main` brings new course material. How to split the work and check each other's reports: [collaboration with Git and GitHub](../additional-material/github-collaboration.qmd).
+:::
 
 ### Install R, Python and the course packages
 
-7. In the Terminal (not the Console) of Positron: because you opened your team repository in step 6, the Terminal starts in the repository's folder, the one that holds `uvr.toml` and `pyproject.toml`. Check with `pwd` (macOS and Linux) or `Get-Location` (Windows). Then run
+7. In the Terminal (not the Console) of Positron: because you opened the course repository in step 6, the Terminal starts in the repository's folder, the one that holds `uvr.toml` and `pyproject.toml`. Check with `pwd` (macOS and Linux) or `Get-Location` (Windows). Then run
 
     ```sh
     uvr r install 4.6.1
@@ -63,7 +77,7 @@ Every student works in a team, and a team of one is fine. Teams form during the 
     uv sync
     ```
 
-    `uvr r install` installs R, `uvr sync` installs *all* R packages of the course, and `uv sync` installs Python and *all* Python packages of the course, including `aefsim`, the client for the [trading game](../trading-game/index.qmd). Everyone gets exactly the same package versions, because they are recorded in the repository (`uvr.lock` for R, `uv.lock` for Python). If Positron asks which R or Python to use, choose R 4.6.1 for R. For Python, choose the environment that `uv sync` just created in the `.venv` folder of your team repository: its path ends in `aef27-<team>/.venv`, not in a Python installed elsewhere on your computer.
+    `uvr r install` installs R, `uvr sync` installs *all* R packages of the course, and `uv sync` installs Python and *all* Python packages of the course, including `aefsim`, the client for the [trading game](../trading-game/index.qmd). Everyone gets exactly the same package versions, because they are recorded in the repository (`uvr.lock` for R, `uv.lock` for Python). If Positron asks which R or Python to use, choose R 4.6.1 for R. For Python, choose the environment that `uv sync` just created in the `.venv` folder of the course repository: its path ends in `course-repository/.venv`, not in a Python installed elsewhere on your computer.
 
     Adding a package works the same way in both: `uvr add tidymodels` for R, `uv add polars` for Python. To collaborate with your peers, commit the files `uvr.toml`, `uvr.lock`, `pyproject.toml` and `uv.lock`; your colleagues only have to run `uvr sync` and `uv sync` to replicate your exact package environment.
 
@@ -105,4 +119,4 @@ You hand in every mandatory assignment as a PDF that Quarto renders from your `.
 
 11. Check the installation with `quarto check`. Under "Checking LaTeX", the output should name TinyTeX. If it says `Tex: (not detected)`, run the install command again, then restart Positron.
 
-12. Test it: open `mandatory-assignments/MA_R_template.qmd` (or `MA_python_template.qmd`) from your team repository and click **Preview**. Positron shows the PDF in the Viewer.
+12. Test it: open `mandatory-assignments/MA_R_template.qmd` (or `MA_python_template.qmd`) from the course repository and click **Preview**. Positron shows the PDF in the Viewer.
