@@ -2,15 +2,8 @@
 title: Exercises
 ---
 
-There are eight exercise pages, numbered 0 to 7. The [lecture plan](../slides-index.qmd) shows which week each one belongs to. While an assignment runs, there are no exercises.
+There are eight exercise pages, numbered 0 to 7. The [lecture plan](../slides-index.qmd) shows which week each one belongs to.
 
-Most pages have two parts:
-
-- **Reproduce:** work through a lecture, a chapter of [Tidy Finance](https://www.tidy-finance.org) or a paper, in R or Python. Try the tasks on your own before you read the solutions, which are right below the tasks or in the book chapter.
-- **Open question:** a question without a fixed solution, close to the current lecture. You submit a figure or a number, and a later lecture discusses the results of the whole class.
-
-Exercise 4 prepares the data for the second assignment instead: you build the file of stock characteristics that the assignment starts from.
-
-The exercise classes are open: bring your questions and discuss them with your peers and the TA. You can also post on Absalon. Grolemund and Wickham's [R for Data Science](https://r4ds.hadley.nz/) is a good reference for the R basics.
+Try the tasks on your own before you read the solutions. If you have questions, discuss them with your peers or your TA: the exercise classes are open office hours. You can also post on Absalon.
 
 The exercise sets partially subsume work I created with my colleagues Christoph Scheuch and Patrick Weiss for the books *Tidy Finance with R* and *Tidy Finance with Python* ([tidy-finance.org](https://www.tidy-finance.org)). Feedback on *every* aspect is very welcome: if you spot typos, mistakes, or anything that deserves more attention, contact me or my colleagues at [contact@tidy-finance.org](mailto:contact@tidy-finance.org).
