@@ -32,7 +32,6 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 
 ## Course quality
 
-- [ ] **C:** alignment table on one page: each learning outcome of the course description, with the lectures, exercises and assignments that teach and assess it. Draft for S.
 - [ ] **C:** automatic feedback before the deadline: a check in the team repositories (course-homepage#81) that renders each report and tests it against the assignment quality criteria (runs from a clean session, chunk labels, numbers from inline code, captions and axis labels), so that teams see problems before they hand in.
 
 ## Lecture notes from transcripts
