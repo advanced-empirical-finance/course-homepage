@@ -7,11 +7,11 @@ description: "Your team's repository: one place for the course material, your as
 
 ![Bad file management can be a burden](figures/git-file-versions.png){fig-align="center" width="70%"}
 
-You get the course material through your team's repository, so every student uses Git and GitHub from the first week. Beyond that, we strongly encourage you to use them for your team work: you hand in your assignments on Absalon either way.
+We strongly encourage you to use Git and GitHub for your team work in this course. It is not required: you hand in your assignments on Absalon either way.
 
 ## Your team repository
 
-Each team gets one private repository on GitHub for the whole semester, which we create for you: `advanced-empirical-finance/aef27-<team>`. It starts as a copy of the [course repository](https://github.com/advanced-empirical-finance/course-repository), with the R and Python environment, the `data` folder, the templates and the slides, and it stays connected to it, so new course material reaches you with one command. Only your team and the teaching team can see it.
+Your team keeps one private repository on GitHub for the whole semester, for example `aef27-<team>`. One of you creates it as a copy of your clone of the [course repository](https://github.com/advanced-empirical-finance/course-repository), with the R and Python environment, the `data` folder, the templates and the slides. It stays connected to the course repository, so new course material reaches you with one command. Only the members you invite can see it.
 
 ```{=html}
 <style>
@@ -77,13 +77,11 @@ Each team gets one private repository on GitHub for the whole semester, which we
 </svg>
 ```
 
-1. Create a free [GitHub account](https://github.com/signup), if you do not have one. Your username does not have to be your real name. As a student, you can also apply for the [GitHub Student Developer Pack](https://education.github.com/pack), which includes GitHub Copilot.
-2. Every student is in a team; a team of one is fine. During the dry run, 25 January to 5 February, one of you sends us your team's name and the GitHub usernames of all members, through the form linked on Absalon.
-3. Each of you receives an invitation from GitHub by email. Accept it within seven days.
+1. Each of you needs a free [GitHub account](https://github.com/signup). Your username does not have to be your real name. As a student, you can also apply for the [GitHub Student Developer Pack](https://education.github.com/pack), which includes GitHub Copilot.
+2. One of you creates the repository and invites the others, as described in the [technical prerequisites](../exercises/technical-prerequisites.qmd) (exercise 0, *Working with your team on GitHub*): a new private repository on GitHub, then `git remote rename origin upstream`, `git remote add origin …` and `git push -u origin main` in the clone of the course repository.
+3. The others accept the invitation, clone the team repository and connect it to the course repository with `git remote add upstream https://github.com/advanced-empirical-finance/course-repository.git`.
 
-## Get the repository onto your computer
-
-Each team member does this once, in the [technical prerequisites](../exercises/technical-prerequisites.qmd) (exercise 0): clone your team repository, connect it to the course repository with `git remote add upstream`, install the environment with `uvr sync` and `uv sync`, and put the licensed data from Absalon into the `data` folder. Git ignores those data, so they never end up on GitHub.
+Everyone then installs the environment with `uvr sync` and `uv sync`, and puts the licensed data from Absalon into the `data` folder. Git ignores those data, so they never end up on GitHub.
 
 ## Where your work goes
 
@@ -209,7 +207,7 @@ The [quality criteria](assignment-quality-criteria.qmd) recommend that a teammat
 2. **A teammate** gets that version in a new folder, installs the environment from scratch, adds the licensed data and renders the report:
 
    ```bash
-   git clone --branch assignment-1-check https://github.com/advanced-empirical-finance/aef27-<team>.git check-assignment-1
+   git clone --branch assignment-1-check https://github.com/<username>/aef27-<team>.git check-assignment-1
    cd check-assignment-1
    uvr sync
    uv sync
