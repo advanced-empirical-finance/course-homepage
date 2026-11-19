@@ -6,7 +6,7 @@ aliases:
   - realized_covariances.html
 ---
 
-These exercises reproduce lecture 16 with the order book data of SPY, the exchange-traded fund on the S&P 500: liquidity through the day and over the years, price impact, and the bid-ask bounce, which leads to the microstructure noise of lecture 17. Realized volatility and its forecasts, the rest of lecture 17, are the topic of the third assignment, so this page has no exercises on them. All tasks come with complete solutions, so you can work through them on your own.
+These exercises reproduce lectures 16 and 17. The first two parts use the order book data of SPY, the exchange-traded fund on the S&P 500: liquidity through the day and over the years, price impact, and the bid-ask bounce, which leads to the microstructure noise of lecture 17. The last two parts use VOLARE, the daily realized measures of the E-mini S&P 500 futures (ES) and the 30 Dow Jones stocks: they measure volatility and forecast it with the HAR model. The third assignment works with the same data. All tasks come with complete solutions, so you can work through them on your own.
 
 ## Liquidity and price impact of SPY
 
@@ -388,3 +388,614 @@ pl.DataFrame(
 | Every 100th trade | 34.6 (28.2) | 30.9 (25.1) | 11% (11%) |
 
 The changes of the true price have a variance of $0.5^2 = 0.25$ cents² per trade, and the bounce adds about $s^2/2 = 2$ cents². Sampled every trade, the bounce makes up 89% of the variance of the price changes; sampled every 100th trade, only 11%. In the terms of lecture 17, the bounce is microstructure noise with variance $\omega^2 = s^2/4$, and every price change carries $2\omega^2$ of it. Realized variance, the sum of $n$ squared intraday returns, therefore has a bias of $2n\omega^2$, which grows with the number of returns: sampled too often, it mostly measures noise. Sampling less often removes most of the bias, but leaves fewer returns, so the measure becomes less precise; lecture 17 discusses this trade-off.
+
+## Realized measures from VOLARE
+
+**Exercises:**
+
+7. Read the VOLARE realized measures of the E-mini S&P 500 futures (ES) from `data/volare_futures_realized_measures_daily.parquet`. In which units are the variances? Compute every day's annualized volatility from `rv5`, plot it over time on a log scale, and compute the volatility of the median day and the median of each year. Which year was the calmest, and which day the most volatile?
+8. Noise and jumps: for the 30 Dow Jones stocks in `data/volare_stocks_realized_measures_daily.parquet` (column `dow30`), compute the means of `rv1`, `rk`, `bv5`, `rsp5` and `rsn5` relative to the mean of `rv5`, and do the same for ES. What do the ratios tell you about microstructure noise and jumps? Then compute the ratio of the means of `rv1` and `rv5` for each stock and plot it against the stock's median number of trades per day.
+9. Compute the realized variance of SPY from five-minute midquote returns of the snapshots of the first part, as in lecture 17, and compare it with `rv5` of ES on the same days. How large are the two volatilities in each March, and how closely do they move together from day to day? Why is the volatility of ES higher? Compare `open_price` of ES with the previous day's `close_price`.
+
+**Solutions:**
+
+VOLARE (Cipollini et al., 2026) is not public: download the files from Absalon into your `data` folder. The files hold one row per asset and trading day. Variances are daily, in squared decimal returns, so $\sqrt{252 \cdot \text{rv5}}$ is the annualized volatility and $10^4 \cdot \text{rv5}$ the variance in squared percent.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-volare-es
+library(nanoparquet)
+library(slider)
+
+days_per_year <- 252
+
+es <- read_parquet("data/volare_futures_realized_measures_daily.parquet") |>
+  filter(symbol == "ES") |>
+  arrange(date) |>
+  mutate(volatility = sqrt(days_per_year * rv5))
+
+es |>
+  ggplot(aes(x = date, y = volatility)) +
+  geom_line(linewidth = 0.2) +
+  scale_y_log10(labels = percent) +
+  labs(x = NULL, y = "Annualized volatility (log scale)")
+
+es |>
+  summarize(
+    first_day = min(date),
+    last_day = max(date),
+    days = n(),
+    median_volatility = median(volatility),
+    most_volatile_day = date[which.max(volatility)],
+    highest_volatility = max(volatility)
+  )
+
+es |>
+  mutate(year = year(date)) |>
+  summarize(median_volatility = median(volatility), .by = year)
+```
+
+## Python
+```{python}
+#| label: py-volare-es
+from datetime import time
+
+import statsmodels.formula.api as smf
+from mizani.formatters import percent_format
+from statsmodels.tsa.stattools import acf
+
+days_per_year = 252
+
+es = (
+    pl.read_parquet("data/volare_futures_realized_measures_daily.parquet")
+    .filter(pl.col("symbol") == "ES")
+    .sort("date")
+    .with_columns(volatility=(days_per_year * pl.col("rv5")).sqrt())
+)
+
+(
+    ggplot(es, aes(x="date", y="volatility"))
+    + geom_line(size=0.2)
+    + scale_y_log10(labels=percent_format())
+    + labs(x="", y="Annualized volatility (log scale)")
+)
+
+es.select(
+    first_day=pl.col("date").min(),
+    last_day=pl.col("date").max(),
+    days=pl.len(),
+    median_volatility=pl.col("volatility").median(),
+    most_volatile_day=pl.col("date").get(pl.col("volatility").arg_max()),
+    highest_volatility=pl.col("volatility").max(),
+)
+
+es.group_by(year=pl.col("date").dt.year()).agg(
+    median_volatility=pl.col("volatility").median()
+).sort("year")
+```
+:::
+
+ES has 4,419 trading days, from 30 September 2009 to 30 October 2026. The median day has an annualized volatility of 11.5%. Volatility changes a lot over time, with calm years such as 2017 (median 6.2%) and turbulent ones such as 2022 (20.4%) and 2020 (17.3%). The most volatile day is 16 March 2020, during the COVID-19 crash, with 126.8%, eleven times the median day.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-volare-measures
+dow <- read_parquet("data/volare_stocks_realized_measures_daily.parquet") |>
+  filter(dow30)
+
+measures <- c("rv1", "rk", "bv5", "rsp5", "rsn5")
+relative_to_rv5 <- \(data) {
+  data |>
+    summarize(across(all_of(measures), \(measure) mean(measure) / mean(rv5)))
+}
+bind_rows(
+  "Dow Jones stocks" = relative_to_rv5(dow),
+  ES = relative_to_rv5(es),
+  .id = "asset"
+)
+
+noise_by_stock <- dow |>
+  summarize(
+    rv1_to_rv5 = mean(rv1) / mean(rv5),
+    trades = median(trades),
+    .by = symbol
+  )
+
+noise_by_stock |>
+  ggplot(aes(x = trades, y = rv1_to_rv5, label = symbol)) +
+  geom_text(size = 3) +
+  scale_x_log10(labels = comma) +
+  labs(x = "Median trades per day (log scale)", y = "Mean rv1 / mean rv5")
+
+cor(noise_by_stock$rv1_to_rv5, log(noise_by_stock$trades))
+```
+
+## Python
+```{python}
+#| label: py-volare-measures
+dow = pl.read_parquet("data/volare_stocks_realized_measures_daily.parquet").filter(
+    pl.col("dow30")
+)
+
+measures = ["rv1", "rk", "bv5", "rsp5", "rsn5"]
+
+
+def relative_to_rv5(data):
+    return data.select(pl.col(measures).mean() / pl.col("rv5").mean())
+
+
+pl.concat(
+    [
+        relative_to_rv5(dow).with_columns(asset=pl.lit("Dow Jones stocks")),
+        relative_to_rv5(es).with_columns(asset=pl.lit("ES")),
+    ]
+)
+
+noise_by_stock = dow.group_by("symbol").agg(
+    rv1_to_rv5=pl.col("rv1").mean() / pl.col("rv5").mean(),
+    trades=pl.col("trades").median(),
+)
+
+(
+    ggplot(noise_by_stock, aes(x="trades", y="rv1_to_rv5", label="symbol"))
+    + geom_text(size=8)
+    + scale_x_log10()
+    + labs(x="Median trades per day (log scale)", y="Mean rv1 / mean rv5")
+)
+
+noise_by_stock.select(pl.corr("rv1_to_rv5", pl.col("trades").log())).item()
+```
+:::
+
+The stock file covers 2,975 trading days from 2 January 2015. Relative to `rv5`, the means of the 30 Dow Jones stocks are:
+
+| | `rv1` | `rk` | `bv5` | `rsp5` | `rsn5` |
+|:--|--:|--:|--:|--:|--:|
+| Dow Jones stocks | 1.09 | 0.97 | 0.89 | 0.50 | 0.50 |
+| ES | 1.02 | 0.99 | 0.93 | 0.50 | 0.50 |
+
+- **Noise:** with one-minute returns, the variance is 9% higher than with five-minute returns. This is the bias $2n\omega^2$ of lecture 17, which grows with the number of returns $n$. The realized kernel `rk` removes the noise from one-minute returns and lies close to `rv5`. ES trades far more often than any stock, and its `rv1` is only 2% above `rv5`.
+- **Jumps:** bipower variation `bv5` is robust to jumps, `rv5` is not. Their difference suggests that jumps make up about 11% of the variance of the stocks and 7% of ES.
+- **Semivariances:** `rsp5` and `rsn5` add up to `rv5`. On average, positive and negative returns contribute the same.
+
+The stocks with few trades have the most noise: the ratio of `rv1` to `rv5` has a correlation of −0.57 with the log number of trades. It is lowest for Amazon (1.02), Microsoft (1.02) and Apple (1.03), and highest for Sherwin-Williams (1.33), the stock with the fewest trades (a median of 16,401 per day).
+
+For SPY, the code of lecture 17 keeps the snapshots of continuous trading, takes the last midquote of every five-minute interval and sums the squared log returns between them within each day.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-spy-es
+first_snapshot <- hms::parse_hms("09:30:10")
+last_snapshot <- hms::parse_hms("15:59:55")
+sampling_interval <- "5 minutes"
+
+spy_rv <- spy |>
+  filter(between(hms::as_hms(ts), first_snapshot, last_snapshot)) |>
+  mutate(day = as_date(ts), interval = floor_date(ts, sampling_interval)) |>
+  summarize(log_price = log(last(midquote)), .by = c(year, day, interval)) |>
+  mutate(ret = log_price - lag(log_price), .by = day) |>
+  summarize(
+    rv = sum(ret^2, na.rm = TRUE),
+    n_returns = sum(!is.na(ret)),
+    .by = c(year, day)
+  )
+
+spy_rv |> filter(rv == 0)
+
+spy_es <- spy_rv |>
+  filter(rv > 0) |>
+  inner_join(es |> select(day = date, rv5), join_by(day))
+
+spy_es |>
+  summarize(
+    SPY = sqrt(days_per_year * mean(rv)),
+    ES = sqrt(days_per_year * mean(rv5)),
+    .by = year
+  ) |>
+  pivot_longer(-year) |>
+  ggplot(aes(x = year, y = value, color = name)) +
+  geom_line() +
+  geom_point() +
+  scale_y_log10(labels = percent) +
+  labs(x = NULL, y = "Annualized volatility (log scale)", color = NULL)
+
+spy_es |>
+  summarize(
+    days = n(),
+    marches = n_distinct(year),
+    es_to_spy = mean(rv5) / mean(rv),
+    correlation = cor(log(rv), log(rv5))
+  )
+
+es |>
+  mutate(
+    weekday = wday(date, label = TRUE, week_start = 1),
+    overnight_change = 100 * abs(log(open_price / lag(close_price)))
+  ) |>
+  summarize(
+    median_overnight_change = median(overnight_change, na.rm = TRUE),
+    .by = weekday
+  ) |>
+  arrange(weekday)
+```
+
+## Python
+```{python}
+#| label: py-spy-es
+first_snapshot = time(9, 30, 10)
+last_snapshot = time(15, 59, 55)
+sampling_interval = "5m"
+
+spy_rv = (
+    spy.filter(pl.col("ts").dt.time().is_between(first_snapshot, last_snapshot))
+    .with_columns(
+        day=pl.col("ts").dt.date(),
+        interval=pl.col("ts").dt.truncate(sampling_interval),
+    )
+    .group_by("year", "day", "interval", maintain_order=True)
+    .agg(log_price=pl.col("midquote").last().log())
+    .with_columns(ret=pl.col("log_price").diff().over("day"))
+    .group_by("year", "day", maintain_order=True)
+    .agg(rv=(pl.col("ret") ** 2).sum(), n_returns=pl.col("ret").count())
+)
+
+spy_rv.filter(pl.col("rv") == 0)
+
+spy_es = spy_rv.filter(pl.col("rv") > 0).join(
+    es.select(pl.col("date").alias("day"), "rv5"), on="day"
+)
+
+spy_es_by_year = spy_es.group_by("year").agg(
+    SPY=(days_per_year * pl.col("rv").mean()).sqrt(),
+    ES=(days_per_year * pl.col("rv5").mean()).sqrt(),
+)
+(
+    ggplot(
+        spy_es_by_year.unpivot(index="year"),
+        aes(x="year", y="value", color="variable"),
+    )
+    + geom_line()
+    + geom_point()
+    + scale_y_log10(labels=percent_format())
+    + labs(x="", y="Annualized volatility (log scale)", color="")
+)
+
+spy_es.select(
+    days=pl.len(),
+    marches=pl.col("year").n_unique(),
+    es_to_spy=pl.col("rv5").mean() / pl.col("rv").mean(),
+    correlation=pl.corr(pl.col("rv").log(), pl.col("rv5").log()),
+)
+
+(
+    es.with_columns(
+        weekday=pl.col("date").dt.weekday(),
+        overnight_change=100
+        * (pl.col("open_price") / pl.col("close_price").shift(1)).log().abs(),
+    )
+    .group_by("weekday")
+    .agg(median_overnight_change=pl.col("overnight_change").median())
+    .sort("weekday")
+)
+```
+:::
+
+SPY has 388 days with 77 five-minute returns each. One day, 31 March 2022, has a realized variance of zero: in the snapshots of that day, the midquote stops moving a few minutes after the open, a gap in the data. The code leaves this day out. ES starts in September 2009, so the two overlap on 345 days in the 16 Marches from 2010 to 2025.
+
+The two volatilities move together closely: the daily log RVs have a correlation of 0.98, and both are highest in March 2020, with 59.7% for SPY and 83.5% for ES. On the log scale, the two lines run almost parallel: ES is more volatile in every March by a similar factor, for example 9.7% against 7.9% in March 2024. On average, `rv5` of ES is 1.85 times the RV of SPY, between 1.40 (2025) and 2.21 (2011). Both follow the S&P 500, so the difference lies in the hours. From Tuesday to Friday, ES opens at the previous day's close (the median change is zero); only on Mondays, after the weekend, it opens with a gap (median 0.23%). So a day of ES in VOLARE covers the trading of the futures from the evening before, almost 24 hours. The RV of SPY covers only the 6.5 hours of continuous trading, from 9:35 to 16:00. The hours outside, mostly the night, carry about 46% of the variance of ES ($1 - 1/1.85$).
+
+## Forecasting volatility
+
+**Exercises:**
+
+10. Long memory: compute the autocorrelations of $\log \text{rv5}$ of ES up to 252 lags, one year of trading days, and plot them against the lag. Add the autocorrelations of an AR(1) with the same first autocorrelation. What do you see after a week (5 days) and after a month (22 days)?
+11. The HAR model (Corsi, 2009): with $RV_t = 10^4 \cdot \text{rv5}$ in squared percent, compute $RV^w_t$ and $RV^m_t$, the averages of the last 5 and 22 days' RV, today included, and the next day's $RV_{t+1}$. Estimate $RV_{t+1} = b_0 + b_d\, RV_t + b_w\, RV^w_t + b_m\, RV^m_t + e_{t+1}$ and the log-HAR, the same regression in $\log RV$, on ES until 31 December 2020. Report the slopes $b_d$, $b_w$ and $b_m$ of both models. Then forecast the next day's RV on every day with these coefficients. Why does the log-HAR forecast need the term $\hat\sigma_e^2/2$?
+12. Evaluate the forecasts out of sample, on every day from 2021 on: compute the MSE, $(RV_{t+1} - h_t)^2$, and QLIKE, $RV_{t+1}/h_t - \log(RV_{t+1}/h_t) - 1$, of HAR and log-HAR, and of two simple forecasts: today's RV (a random walk) and the average of the last 22 days. Which forecast wins for ES? Then repeat the steps of tasks 11 and 12 for each of the 30 Dow Jones stocks. For how many stocks does each forecast beat HAR?
+
+**Solutions:**
+
+For an AR(1), the autocorrelation at lag $k$ is the first autocorrelation to the power $k$.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-long-memory
+max_lag <- days_per_year
+
+memory <- tibble(
+  lag = seq_len(max_lag),
+  autocorrelation = acf(log(es$rv5), lag.max = max_lag, plot = FALSE)$acf[-1],
+  ar1 = autocorrelation[1]^lag
+)
+
+memory |>
+  ggplot(aes(x = lag)) +
+  geom_hline(yintercept = 0, linewidth = 0.3) +
+  geom_line(aes(y = autocorrelation)) +
+  geom_line(aes(y = ar1), linetype = "dashed") +
+  labs(x = "Lag (trading days)", y = "Autocorrelation of log RV")
+
+memory |> filter(lag %in% c(1, 5, 22, 66, 125, 252))
+```
+
+## Python
+```{python}
+#| label: py-long-memory
+max_lag = days_per_year
+
+autocorrelation = acf(es["rv5"].log().to_numpy(), nlags=max_lag)[1:]
+memory = pl.DataFrame(
+    {"lag": np.arange(1, max_lag + 1), "autocorrelation": autocorrelation}
+).with_columns(ar1=autocorrelation[0] ** pl.col("lag"))
+
+(
+    ggplot(memory, aes(x="lag"))
+    + geom_hline(yintercept=0, size=0.3)
+    + geom_line(aes(y="autocorrelation"))
+    + geom_line(aes(y="ar1"), linetype="dashed")
+    + labs(x="Lag (trading days)", y="Autocorrelation of log RV")
+)
+
+memory.filter(pl.col("lag").is_in([1, 5, 22, 66, 125, 252]))
+```
+:::
+
+The autocorrelation of log RV is 0.81 at lag 1, 0.63 after a week, 0.39 after a month, 0.19 after a quarter (66 days) and 0.11 after half a year (125 days); it reaches zero only after about a year. An AR(1) with the same first autocorrelation is at 0.35 after a week and at 0.01 after a month. Shocks to volatility die out far more slowly than geometrically: volatility has long memory, the pattern the HAR model approximates.
+
+The code follows lecture 17: the rolling means of 5 and 22 days need complete windows, so the first 21 days have no $RV^m_t$, and the last day has no $RV_{t+1}$.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-har
+days_week <- 5
+days_month <- 22
+estimation_end <- ymd("2020-12-31")
+
+har_data <- es |>
+  transmute(
+    date,
+    rv = 1e4 * rv5,
+    rv_week = slide_dbl(rv, mean, .before = days_week - 1, .complete = TRUE),
+    rv_month = slide_dbl(rv, mean, .before = days_month - 1, .complete = TRUE),
+    rv_next = lead(rv)
+  ) |>
+  drop_na()
+
+estimation <- har_data |> filter(date <= estimation_end)
+har <- lm(rv_next ~ rv + rv_week + rv_month, data = estimation)
+log_har <- lm(
+  log(rv_next) ~ log(rv) + log(rv_week) + log(rv_month),
+  data = estimation
+)
+coef(har)
+coef(log_har)
+sigma(log_har)^2
+
+har_forecasts <- har_data |>
+  mutate(
+    har = predict(har, newdata = har_data),
+    log_har = exp(predict(log_har, newdata = har_data) + sigma(log_har)^2 / 2)
+  )
+```
+
+## Python
+```{python}
+#| label: py-har
+days_week = 5
+days_month = 22
+estimation_end = date(2020, 12, 31)
+
+har_data = (
+    es.select("date", rv=1e4 * pl.col("rv5"))
+    .with_columns(
+        rv_week=pl.col("rv").rolling_mean(days_week),
+        rv_month=pl.col("rv").rolling_mean(days_month),
+        rv_next=pl.col("rv").shift(-1),
+    )
+    .drop_nulls()
+)
+
+estimation = har_data.filter(pl.col("date") <= estimation_end).to_pandas()
+har = smf.ols("rv_next ~ rv + rv_week + rv_month", data=estimation).fit()
+log_har = smf.ols(
+    "np.log(rv_next) ~ np.log(rv) + np.log(rv_week) + np.log(rv_month)",
+    data=estimation,
+).fit()
+print(har.params, log_har.params, log_har.scale)
+
+har_forecasts = har_data.with_columns(
+    har=pl.Series(har.predict(har_data.to_pandas())),
+    log_har=pl.Series(
+        np.exp(log_har.predict(har_data.to_pandas()) + log_har.scale / 2)
+    ),
+)
+```
+:::
+
+The estimation sample has 2,888 days. The slopes $b_d, b_w, b_m$ are 0.53, 0.40 and −0.06 for HAR ($b_0 = 0.15$, $R^2$ of 70%) and 0.55, 0.28 and 0.10 for the log-HAR, as in lecture 17. Both put most weight on today's RV, but the weekly and monthly averages matter as well: the forecast reacts to today's RV and returns slowly to the average of the past weeks. The HAR slope $b_m$ is negative because the COVID-19 crash in March 2020 dominates the regression in levels; lecture 17 shows that the HAR slopes change a lot if the sample ends in 2019, the log-HAR slopes hardly.
+
+The log-HAR forecasts $\log RV_{t+1}$. With normal residuals of variance $\sigma_e^2$, $RV_{t+1}$ is lognormal, and its mean is $\exp(E[\log RV_{t+1}] + \sigma_e^2/2)$. Without the term, $\exp(\widehat{\log RV}_{t+1})$ forecasts the median, which is lower than the mean. The residual variance is 0.30, so the term raises every forecast by 16%.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-forecast-losses
+forecast_models <- c("today", "last_22_days", "har", "log_har")
+
+forecast_losses <- function(forecasts) {
+  forecasts |>
+    filter(date > estimation_end) |>
+    mutate(today = rv, last_22_days = rv_month) |>
+    pivot_longer(
+      all_of(forecast_models),
+      names_to = "model",
+      values_to = "forecast"
+    ) |>
+    summarize(
+      mse = mean((rv_next - forecast)^2),
+      qlike = mean(rv_next / forecast - log(rv_next / forecast) - 1),
+      .by = model
+    )
+}
+
+forecast_losses(har_forecasts)
+```
+
+## Python
+```{python}
+#| label: py-forecast-losses
+forecast_models = ["today", "last_22_days", "har", "log_har"]
+
+
+def forecast_losses(forecasts):
+    rv_next = pl.col("rv_next")
+    forecast = pl.col("forecast")
+    return (
+        forecasts.filter(pl.col("date") > estimation_end)
+        .with_columns(today=pl.col("rv"), last_22_days=pl.col("rv_month"))
+        .unpivot(
+            forecast_models,
+            index="rv_next",
+            variable_name="model",
+            value_name="forecast",
+        )
+        .group_by("model", maintain_order=True)
+        .agg(
+            mse=((rv_next - forecast) ** 2).mean(),
+            qlike=(rv_next / forecast - (rv_next / forecast).log() - 1).mean(),
+        )
+    )
+
+
+forecast_losses(har_forecasts)
+```
+:::
+
+The test sample has 1,509 days, from 4 January 2021 to 29 October 2026. For ES:
+
+| Forecast | MSE | QLIKE |
+|:--|--:|--:|
+| Today's RV | 3.56 | 0.318 |
+| Last 22 days | 3.57 | 0.329 |
+| HAR | 2.78 | 0.215 |
+| log-HAR | 2.53 | 0.213 |
+
+Both HAR models beat the two simple forecasts by far on both losses, and the log-HAR is a little better than HAR. Today's RV alone is too noisy as a forecast, and the average of the last 22 days reacts too slowly; HAR combines both. The QLIKE of HAR is the 0.215 of lecture 17.
+
+For the Dow Jones stocks, the function `har_forecasts_for()` repeats the steps of task 11 for one stock. The losses of each forecast are then divided by those of HAR for the same stock, so a ratio below 1 means the forecast beats HAR.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-dow-forecasts
+har_forecasts_for <- function(data) {
+  har_data <- data |>
+    arrange(date) |>
+    transmute(
+      date,
+      rv = 1e4 * rv5,
+      rv_week = slide_dbl(rv, mean, .before = days_week - 1, .complete = TRUE),
+      rv_month = slide_dbl(
+        rv,
+        mean,
+        .before = days_month - 1,
+        .complete = TRUE
+      ),
+      rv_next = lead(rv)
+    ) |>
+    drop_na()
+  estimation <- har_data |> filter(date <= estimation_end)
+  har <- lm(rv_next ~ rv + rv_week + rv_month, data = estimation)
+  log_har <- lm(
+    log(rv_next) ~ log(rv) + log(rv_week) + log(rv_month),
+    data = estimation
+  )
+  har_data |>
+    mutate(
+      har = predict(har, newdata = har_data),
+      log_har = exp(predict(log_har, newdata = har_data) + sigma(log_har)^2 / 2)
+    )
+}
+
+dow_losses <- dow |>
+  nest(data = -symbol) |>
+  mutate(
+    losses = map(data, \(data) forecast_losses(har_forecasts_for(data)))
+  ) |>
+  select(symbol, losses) |>
+  unnest(losses)
+
+dow_losses |>
+  mutate(
+    across(c(mse, qlike), \(loss) loss / loss[model == "har"]),
+    .by = symbol
+  ) |>
+  summarize(
+    stocks_better_mse = sum(mse < 1),
+    stocks_better_qlike = sum(qlike < 1),
+    median_mse = median(mse),
+    median_qlike = median(qlike),
+    .by = model
+  )
+```
+
+## Python
+```{python}
+#| label: py-dow-forecasts
+def har_forecasts_for(data):
+    har_data = (
+        data.sort("date")
+        .select("date", rv=1e4 * pl.col("rv5"))
+        .with_columns(
+            rv_week=pl.col("rv").rolling_mean(days_week),
+            rv_month=pl.col("rv").rolling_mean(days_month),
+            rv_next=pl.col("rv").shift(-1),
+        )
+        .drop_nulls()
+    )
+    estimation = har_data.filter(pl.col("date") <= estimation_end).to_pandas()
+    har = smf.ols("rv_next ~ rv + rv_week + rv_month", data=estimation).fit()
+    log_har = smf.ols(
+        "np.log(rv_next) ~ np.log(rv) + np.log(rv_week) + np.log(rv_month)",
+        data=estimation,
+    ).fit()
+    return har_data.with_columns(
+        har=pl.Series(har.predict(har_data.to_pandas())),
+        log_har=pl.Series(
+            np.exp(log_har.predict(har_data.to_pandas()) + log_har.scale / 2)
+        ),
+    )
+
+
+dow_losses = pl.concat(
+    forecast_losses(har_forecasts_for(data)).with_columns(symbol=pl.lit(symbol))
+    for (symbol,), data in dow.group_by("symbol")
+)
+
+losses = pl.col("mse", "qlike")
+(
+    dow_losses.with_columns(
+        losses / losses.filter(pl.col("model") == "har").first().over("symbol")
+    )
+    .group_by("model", maintain_order=True)
+    .agg(
+        stocks_better_mse=(pl.col("mse") < 1).sum(),
+        stocks_better_qlike=(pl.col("qlike") < 1).sum(),
+        median_mse=pl.col("mse").median(),
+        median_qlike=pl.col("qlike").median(),
+    )
+)
+```
+:::
+
+| Forecast | Stocks better than HAR, MSE | Stocks better than HAR, QLIKE | Median MSE relative to HAR | Median QLIKE relative to HAR |
+|:--|--:|--:|--:|--:|
+| Today's RV | 0 | 1 | 1.37 | 1.28 |
+| Last 22 days | 7 | 0 | 1.07 | 1.23 |
+| log-HAR | 29 | 27 | 0.92 | 0.96 |
+
+The results for the stocks are the same as for ES. Today's RV beats HAR only once, on QLIKE for Amazon. The average of the last 22 days beats HAR on MSE for 7 stocks, but never on QLIKE. The log-HAR beats HAR for almost every stock, on QLIKE for 27 of the 30 stocks, as in lecture 17. MSE depends mostly on the few days with extreme RV, QLIKE on the ratio of RV to the forecast, so QLIKE gives every day a similar weight. Lecture 17 also compares the forecasts with GARCH(1,1), which uses only daily returns: HAR beats it on QLIKE for all 30 stocks and for ES.
