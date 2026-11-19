@@ -38,7 +38,6 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 
 Instead of video recordings: a transcript of each lecture, turned into notes and published as a PDF with the slides and the whiteboard sheets.
 
-- [ ] **C:** lecture 1: tell students that only the lecturer's microphone records, that names never appear in the notes, and that the audio is deleted after transcription (KU's rules are checked; S has the recording solution).
 - [ ] **C:** transcription on eumel with Whisper (the audio never leaves eumel); test the speed and quality on a sample recording before the semester.
 - [ ] **C:** the live decks report slide changes to eumel, so that the transcript splits by slide.
 - [ ] **C:** lecture notes PDF per lecture: each slide, what was said (cleaned up, in S's words, student questions without names), and the whiteboard sheets.
