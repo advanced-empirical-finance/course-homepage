@@ -7,7 +7,7 @@ description: "Your team's repository: one place for the course material, your as
 
 ![Bad file management can be a burden](figures/git-file-versions.png){fig-align="center" width="70%"}
 
-We strongly encourage you to use Git and GitHub for your team work in this course. It is not required: you can hand in your assignments without it.
+You get the course material through your team's repository, so every student uses Git and GitHub from the first week. Beyond that, we strongly encourage you to use them for your team work: you hand in your assignments on Absalon either way.
 
 ## Your team repository
 
@@ -78,23 +78,12 @@ Each team gets one private repository on GitHub for the whole semester, which we
 ```
 
 1. Create a free [GitHub account](https://github.com/signup), if you do not have one. Your username does not have to be your real name. As a student, you can also apply for the [GitHub Student Developer Pack](https://education.github.com/pack), which includes GitHub Copilot.
-2. Once your team is formed, one of you sends us your team's name and the GitHub usernames of all members, through the form linked on Absalon.
+2. Every student is in a team; a team of one is fine. During the dry run, 25 January to 5 February, one of you sends us your team's name and the GitHub usernames of all members, through the form linked on Absalon.
 3. Each of you receives an invitation from GitHub by email. Accept it within seven days.
 
 ## Get the repository onto your computer
 
-Each team member does this once.
-
-1. In Positron, click *New*, then *New Folder from Git*, and paste the address of your team repository: `https://github.com/advanced-empirical-finance/aef27-<team>.git`. Sign in to GitHub when your browser asks.
-2. Open the Terminal in that folder and connect the repository to the course repository, so you can pull new material later:
-
-   ```bash
-   git remote add upstream https://github.com/advanced-empirical-finance/course-repository.git
-   git config pull.rebase false   # pulling merges, as described below
-   ```
-
-3. Install the environment, as in the [technical prerequisites](../exercises/technical-prerequisites.qmd): `uvr sync` and `uv sync`.
-4. Put the licensed data from Absalon into the `data` folder, such as `crsp_monthly.parquet`. Git ignores them, so they never end up on GitHub.
+Each team member does this once, in the [technical prerequisites](../exercises/technical-prerequisites.qmd) (exercise 0): clone your team repository, connect it to the course repository with `git remote add upstream`, install the environment with `uvr sync` and `uv sync`, and put the licensed data from Absalon into the `data` folder. Git ignores those data, so they never end up on GitHub.
 
 ## Where your work goes
 
@@ -115,7 +104,7 @@ git commit -m "Estimate the tangency portfolio with monthly returns"
 git push
 ```
 
-The *Source Control* panel in Positron (`Ctrl+Shift+G`) does the same with buttons. A commit message says what you changed and why, in one line.
+The *Source Control* panel in Positron ({{< kbd Ctrl-Shift-G >}}) does the same with buttons. A commit message says what you changed and why, in one line.
 
 ## Split the report so you do not get in each other's way
 
