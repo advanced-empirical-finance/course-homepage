@@ -28,9 +28,7 @@ Access works since 16 November 2026 (token on eumel; sandbox course 57599). The 
 
 ## Lectures
 
-- [ ] **S:** review the drafts: decks 8 and 10–16 (5–7 and 9 reviewed on 17 November 2026).
-- [ ] **C:** 15 implementable portfolios: Sharpe ratios after costs, once the factor library with trading costs exists; check the publication year of Jensen, Kelly, Malamud & Pedersen.
-- [ ] **C:** 17 realized volatility and 18 realized covariances (plan in course-homepage#101). The VOLARE data are on eumel as parquet files since 16 November 2026 (course-repository#64).
+- [ ] **S:** review the drafts: decks 8 and 10–18 (5–7 and 9 reviewed on 17 November 2026; 15, 17 and 18 in course-repository#76).
 - [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
 - [ ] **C:** printable sample whiteboards for lectures 17 and 18, once their decks exist. The 28 sheets of lectures 2–16 are done (private, on eumel: `~/data/aef-whiteboards`; PDFs at `http://eumel:8444/whiteboards/`).
 
@@ -53,7 +51,6 @@ Instead of video recordings: a transcript of each lecture, turned into notes and
 Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
 
 - [ ] **S:** review the eight exercise pages.
-- [ ] **C:** exercise 7, the realized covariances part, with the VOLARE files.
 - [ ] **C:** figure upload and gallery for the open question of exercise 1 (#70).
 - [ ] **C:** exercise 5 should use tidyfinance's download of the anomaly returns once it works in Python.
 

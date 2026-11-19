@@ -6,20 +6,20 @@ aliases:
   - realized_covariances.html
 ---
 
-These exercises go with the last three lectures: the order book data of SPY, the exchange-traded fund on the S&P 500 (lecture 16), and realized covariances for portfolio choice (lecture 18). Realized volatility itself (lecture 17) is the topic of the third assignment.
+These exercises reproduce lecture 16 with the order book data of SPY, the exchange-traded fund on the S&P 500: liquidity through the day and over the years, price impact, and the bid-ask bounce, which leads to the microstructure noise of lecture 17. Realized volatility and its forecasts, the rest of lecture 17, are the topic of the third assignment, so this page has no exercises on them. All tasks come with complete solutions, so you can work through them on your own.
 
 ## Liquidity and price impact of SPY
 
 **Exercises:**
 
 1. Download the SPY order book snapshots for March of every year from 2008 to 2025 with `download_data(domain = "Tidy Finance", dataset = "high_frequency_sp500")` from `tidyfinance`. What does one row contain, and in which units are the spread, the depth and the volume?
-2. Liquidity through the day: for March 2024, compute the average spread, the depth at the best quotes in USD, and the dollar volume per ten minutes of continuous trading, and plot them against the time of day. Leave out the snapshots of the opening and closing auctions. What pattern do you see, and why?
+2. Liquidity through the day: for March 2024, compute the median spread, the median depth at the best quotes in USD, and the median dollar volume per five seconds in each ten-minute interval of continuous trading, and plot them against the time of day. Leave out the snapshots of the opening and closing auctions. What pattern do you see, and why? Why do the lecture's figures show medians instead of means?
 3. Liquidity over the years: compute the average spread and depth for each March. How did they change since 2008, and which years stand out?
 4. Price impact (Kyle, 1985): aggregate the snapshots to one-minute midquote returns in basis points and one-minute net buying in USD million (`signed_volume`, which is in shares, times the midquote), and regress the returns on the net buying, year by year. How does the slope $\lambda$, the price impact of USD 1 million of net buying, change over time, and how does the $R^2$? What do your results mean for the trading costs of a portfolio of large stocks, as in lecture 5?
 
 **Solutions:**
 
-The snapshots are taken every five seconds during regular trading hours, from LOBSTER data. One month of SPY has about 100,000 rows, so the 18 months take a moment to download.
+The snapshots are taken every five seconds during regular trading hours of NASDAQ, built from LOBSTER data. One month of SPY has about 100,000 rows, so the 18 months take a moment to download.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -35,12 +35,14 @@ sample_month <- 3
 spy <- map(years, \(year) {
   start <- make_date(year, sample_month, 1)
   download_data(
-    domain = "Tidy Finance", dataset = "high_frequency_sp500",
-    start_date = start, end_date = ceiling_date(start, "month") - days(1)
+    domain = "Tidy Finance",
+    dataset = "high_frequency_sp500",
+    start_date = start,
+    end_date = ceiling_date(start, "month") - days(1)
   ) |>
     mutate(year = year)
 }) |>
-  list_rbind()
+  bind_rows()
 
 glimpse(spy)
 ```
@@ -48,19 +50,26 @@ glimpse(spy)
 ## Python
 ```{python}
 #| label: py-download-spy
+from calendar import monthrange
+from datetime import date
+
+import numpy as np
 import polars as pl
 import tidyfinance as tf
 from plotnine import *
 
 years = range(2008, 2026)
+sample_month = 3
 
-spy = pl.concat([
+spy = pl.concat(
     tf.download_data(
-        domain="Tidy Finance", dataset="high_frequency_sp500",
-        start_date=f"{year}-03-01", end_date=f"{year}-03-31"
+        domain="Tidy Finance",
+        dataset="high_frequency_sp500",
+        start_date=date(year, sample_month, 1),
+        end_date=date(year, sample_month, monthrange(year, sample_month)[1]),
     ).with_columns(year=pl.lit(year))
     for year in years
-])
+)
 
 spy.glimpse()
 ```
@@ -72,15 +81,21 @@ The 18 months have 1,815,840 snapshots. Each row is one snapshot `ts` of the ord
 ## R
 ```{r}
 #| label: r-intraday
+recent_year <- 2024
+bucket_minutes <- 10
+
 intraday <- spy |>
-  filter(year == 2024) |>
+  filter(year == recent_year) |>
   mutate(clock_exact = hour(ts) + minute(ts) / 60 + second(ts) / 3600) |>
   filter(clock_exact > 9.5 + 5 / 3600, clock_exact < 16) |>
-  mutate(time = floor_date(ts, "10 minutes"), clock = hour(time) + minute(time) / 60) |>
+  mutate(
+    time = floor_date(ts, paste(bucket_minutes, "minutes")),
+    clock = hour(time) + minute(time) / 60
+  ) |>
   summarize(
-    spread = mean(spread),
-    depth = mean((depth0_ask + depth0_bid) / 2 * midquote),
-    volume = mean(trading_volume),
+    spread = median(spread),
+    depth = median((depth0_ask + depth0_bid) / 2 * midquote),
+    volume = median(trading_volume),
     .by = clock
   )
 
@@ -95,16 +110,27 @@ intraday |>
 ## Python
 ```{python}
 #| label: py-intraday
-clock_exact = pl.col("ts").dt.hour() + pl.col("ts").dt.minute() / 60 + pl.col("ts").dt.second() / 3600
-time = pl.col("ts").dt.truncate("10m")
+recent_year = 2024
+bucket_minutes = 10
 
-intraday = (spy
-    .filter(pl.col("year") == 2024, clock_exact > 9.5 + 5 / 3600, clock_exact < 16)
+clock_exact = (
+    pl.col("ts").dt.hour()
+    + pl.col("ts").dt.minute() / 60
+    + pl.col("ts").dt.second() / 3600
+)
+time = pl.col("ts").dt.truncate(f"{bucket_minutes}m")
+
+intraday = (
+    spy.filter(
+        pl.col("year") == recent_year, clock_exact > 9.5 + 5 / 3600, clock_exact < 16
+    )
     .group_by(clock=time.dt.hour() + time.dt.minute() / 60)
     .agg(
-        spread=pl.col("spread").mean(),
-        depth=((pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")).mean(),
-        volume=pl.col("trading_volume").mean(),
+        spread=pl.col("spread").median(),
+        depth=(
+            (pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")
+        ).median(),
+        volume=pl.col("trading_volume").median(),
     )
     .sort("clock")
 )
@@ -118,7 +144,9 @@ intraday = (spy
 ```
 :::
 
-The first snapshot of the day comes right after the opening auction at 9:30 and the last ones before the closing auction at 16:00, so the filter keeps continuous trading only. In March 2024, trading is heaviest at the open and at the close: the dollar volume per five seconds falls from about USD 2.0 million in the first ten minutes to USD 0.6 million around noon and rises to USD 6.5 million in the last ten minutes (the U-shape). The spread is widest right after the open (0.24 basis points), when uncertainty about the day's news is largest, and narrowest at the close (0.21). Depth at the best quotes builds up during the day, from about USD 0.23 million to 0.51 million.
+The snapshot at 9:30:05 still holds the opening auction and the one at 16:00:00 the closing auction, so the filter keeps the continuous trading from 9:30:10 to 15:59:55, as in lectures 16 and 17. In March 2024, trading is heaviest at the open and at the close: the median dollar volume per five seconds falls from about USD 1.5 million in the first ten minutes to about USD 0.4 million in the early afternoon and rises to USD 4.7 million in the last ten minutes (the U-shape). The spread is widest right after the open (0.23 basis points), when uncertainty about the day's news is largest, and stays close to 0.20 basis points from noon on. Depth at the best quotes builds up during the day, from about USD 0.22 million in the first ten minutes to 0.30 million in the afternoon and 0.43 million in the last ten minutes.
+
+The figures show medians, as in lecture 16, because a mean follows the few days with news in an interval, such as the Fed's statement on 20 March 2024 (lecture 16). The means are higher: USD 2.0 million instead of 1.5 million in the first ten minutes, and USD 6.5 million instead of 4.7 million in the last ten.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -143,11 +171,13 @@ yearly |>
 ## Python
 ```{python}
 #| label: py-yearly
-yearly = (spy
-    .group_by("year")
+yearly = (
+    spy.group_by("year")
     .agg(
         spread=pl.col("spread").mean(),
-        depth=((pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")).mean(),
+        depth=(
+            (pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")
+        ).mean(),
     )
     .sort("year")
 )
@@ -162,7 +192,7 @@ yearly = (spy
 ```
 :::
 
-The spread fell from 0.91 basis points in March 2008 to 0.21 in March 2024. SPY trades at the minimum tick of one cent, and with a rising price, one cent became an ever smaller share of the price. The crisis month March 2009 stands out with 1.49 basis points. Depth at the best quotes fell as well, from about USD 1.1 million in 2008 to 0.3 million in 2024: orders are smaller and spread over more trading venues.
+The spread fell from 0.91 basis points in March 2008 to 0.21 in March 2024, and rose again to 0.50 in March 2025. SPY trades at the minimum tick of one cent, and with a rising price, one cent became an ever smaller share of the price. The crisis months stand out: 1.49 basis points in March 2009, after the Lehman collapse, and 0.86 in March 2020, during the COVID-19 crash. Depth at the best quotes fell as well, from about USD 1.1 million in 2008 to 0.3 million in 2024, with a low of USD 0.05 million in March 2020: orders are smaller and spread over more trading venues.
 
 For the price impact, the last midquote of each minute gives the minute's return. The signed volume is in shares; times the midquote of its snapshot and summed over the minute, it gives the minute's net buying in USD million. Returns are computed within a day, so the overnight change does not count as a one-minute return.
 
@@ -170,13 +200,16 @@ For the price impact, the last midquote of each minute gives the minute's return
 ## R
 ```{r}
 #| label: r-price-impact
+interval_length <- "1 minute"
+
 price_impact <- spy |>
-  mutate(day = as_date(ts), minute = floor_date(ts, "minute")) |>
+  mutate(day = as_date(ts), minute = floor_date(ts, interval_length)) |>
   summarize(
-    midquote = last(midquote), flow = sum(signed_volume * midquote) / 1e6,
+    flow = sum(signed_volume * midquote) / 1e6,
+    midquote = last(midquote),
     .by = c(year, day, minute)
   ) |>
-  mutate(ret = 1e4 * (log(midquote) - lag(log(midquote))), .by = c(year, day)) |>
+  mutate(ret = 1e4 * log(midquote / lag(midquote)), .by = c(year, day)) |>
   drop_na() |>
   nest(data = -year) |>
   mutate(
@@ -192,25 +225,25 @@ price_impact
 ## Python
 ```{python}
 #| label: py-price-impact
-minutes = (spy
-    .with_columns(day=pl.col("ts").dt.date(), minute=pl.col("ts").dt.truncate("1m"))
+interval_length = "1m"
+
+price_impact = (
+    spy.with_columns(
+        day=pl.col("ts").dt.date(), minute=pl.col("ts").dt.truncate(interval_length)
+    )
     .group_by("year", "day", "minute", maintain_order=True)
     .agg(
-        midquote=pl.col("midquote").last(),
         flow=(pl.col("signed_volume") * pl.col("midquote")).sum() / 1e6,
+        midquote=pl.col("midquote").last(),
     )
     .sort("year", "day", "minute")
     .with_columns(ret=1e4 * pl.col("midquote").log().diff().over("year", "day"))
     .drop_nulls()
-)
-
-price_impact = (minutes
-    .group_by("year")
+    .group_by("year", maintain_order=True)
     .agg(
         lambda_=pl.cov("ret", "flow") / pl.col("flow").var(),
         r2=pl.corr("ret", "flow") ** 2,
     )
-    .sort("year")
 )
 price_impact
 ```
@@ -218,10 +251,140 @@ price_impact
 
 With one regressor, the slope is the covariance of returns and order flow divided by the variance of the order flow, and the $R^2$ is their squared correlation, so the Python code computes them directly.
 
-USD 1 million of net buying in a minute moved SPY by 0.34 basis points in March 2008 and by 0.24 in March 2024. In the other years it lay between 0.18 and 0.83 basis points, except in the crisis months: 1.19 basis points in March 2009 and 1.84 in March 2020. The $R^2$ fell from between 12% and 40% until 2012 to between 1% and 8% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, net buying of USD 1 million costs a fraction of a basis point in calm months, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
+USD 1 million of net buying in a minute moved SPY by 0.34 basis points in March 2008, by 0.24 in March 2024 and by 0.58 in March 2025. In the other years it lay between 0.18 and 0.83 basis points, except in the crisis months: 1.19 basis points in March 2009 and 1.84 in March 2020. The $R^2$ fell from between 12% and 40% until 2012 to between 1% and 8% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, net buying of USD 1 million costs a fraction of a basis point in calm months, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
 
-## Realized covariances for portfolio choice
+## The bid-ask bounce
 
-::: {.callout-warning title="TBD"}
-Exercises to come with the realized covariance matrices of the 30 Dow Jones stocks from [VOLARE](https://volare.unime.it): covariance forecasts and minimum-variance portfolios out of sample, compared with the rolling covariances of lecture 3 and Ledoit-Wolf shrinkage of lecture 4. The data will be on Absalon.
+**Exercises:**
+
+5. Roll (1984): the true price $m_t$ follows a random walk, and each trade happens at the bid or at the ask with equal probability, $p_t = m_t + \frac{s}{2} q_t$ with $q_t = \pm 1$. Simulate 10,000 trades with a spread $s$ of two cents, a true price that starts at USD 100 and moves by a normal change with a standard deviation of half a cent per trade. Plot the first 40 trade prices together with the true price, compute the autocovariance of the trade price changes, $\text{Cov}(\Delta p_t, \Delta p_{t-1})$, and recover the spread with Roll's formula $s = 2\sqrt{-\text{Cov}(\Delta p_t, \Delta p_{t-1})}$.
+6. Compute the variance of the trade price changes and of the changes of the true price. How much of the variance of the trade price changes is bid-ask bounce, and what happens to this share if you sample every 10th or every 100th trade instead of every trade? Why does this matter for volatility measured from high-frequency data (lecture 17)?
+
+**Solutions:**
+
+The simulation draws the true price changes and the sides of the trades; the seed makes the draws reproducible. Changes are in cents, as in lecture 16.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-roll
+n_trades <- 10000
+true_spread <- 0.02
+price_volatility <- 0.005
+start_price <- 100
+n_shown <- 40
+
+set.seed(1984)
+roll <- tibble(
+  trade = 1:n_trades,
+  true_price = start_price + cumsum(rnorm(n_trades, sd = price_volatility)),
+  side = sample(c(-1, 1), n_trades, replace = TRUE),
+  trade_price = true_price + true_spread / 2 * side
+) |>
+  mutate(
+    change = 100 * (trade_price - lag(trade_price)),
+    previous_change = lag(change)
+  )
+
+roll |>
+  filter(trade <= n_shown) |>
+  ggplot(aes(x = trade)) +
+  geom_line(aes(y = true_price)) +
+  geom_point(aes(y = trade_price), color = "#901A1E") +
+  labs(x = "Trade", y = "Price (USD)")
+
+autocovariance <- cov(roll$change, roll$previous_change, use = "complete.obs")
+c(autocovariance = autocovariance, roll_spread = 2 * sqrt(-autocovariance))
+```
+
+## Python
+```{python}
+#| label: py-roll
+n_trades = 10_000
+true_spread = 0.02
+price_volatility = 0.005
+start_price = 100
+n_shown = 40
+
+rng = np.random.default_rng(1984)
+true_price = start_price + np.cumsum(rng.normal(0, price_volatility, n_trades))
+side = rng.choice([-1, 1], n_trades)
+roll = (
+    pl.DataFrame(
+        {
+            "trade": np.arange(1, n_trades + 1),
+            "true_price": true_price,
+            "trade_price": true_price + true_spread / 2 * side,
+        }
+    )
+    .with_columns(change=100 * pl.col("trade_price").diff())
+    .with_columns(previous_change=pl.col("change").shift(1))
+)
+
+(
+    ggplot(roll.filter(pl.col("trade") <= n_shown), aes(x="trade"))
+    + geom_line(aes(y="true_price"))
+    + geom_point(aes(y="trade_price"), color="#901A1E")
+    + labs(x="Trade", y="Price (USD)")
+)
+```
+
+```{python}
+#| label: py-roll-spread
+autocovariance = roll.drop_nulls().select(pl.cov("change", "previous_change")).item()
+{"autocovariance": autocovariance, "roll_spread": 2 * np.sqrt(-autocovariance)}
+```
 :::
+
+In R, the autocovariance of the trade price changes is −0.97 cents² (theory: $-s^2/4 = -1$ cent²), so Roll's formula gives a spread of 1.97 cents, close to the true 2 cents; these are the numbers of lecture 16. Python draws other random numbers from the same seed, so its numbers differ a little: −1.03 cents² and 2.03 cents. In the figure, the trade price jumps between the bid and the ask around the true price: after a trade at the ask, the next trade price tends to fall, after a trade at the bid it tends to rise.
+
+For the variances, we keep every $k$-th trade and compute the price changes between the trades we keep. The bounce adds the same variance $s^2/2$ to every price change, however long the interval between the trades, while the variance of the true price grows with the number of trades in between.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-roll-sampling
+sampling_steps <- c(1, 10, 100)
+
+map(sampling_steps, \(step) {
+  sampled <- roll |> filter(trade %% step == 0)
+  tibble(
+    every_kth_trade = step,
+    trade_price_variance = var(100 * diff(sampled$trade_price)),
+    true_price_variance = var(100 * diff(sampled$true_price))
+  )
+}) |>
+  bind_rows() |>
+  mutate(bounce_share = 1 - true_price_variance / trade_price_variance)
+```
+
+## Python
+```{python}
+#| label: py-roll-sampling
+sampling_steps = [1, 10, 100]
+
+pl.DataFrame(
+    [
+        {
+            "every_kth_trade": step,
+            "trade_price_variance": np.var(
+                100 * np.diff(sampled["trade_price"]), ddof=1
+            ),
+            "true_price_variance": np.var(100 * np.diff(sampled["true_price"]), ddof=1),
+        }
+        for step in sampling_steps
+        for sampled in [roll.filter(pl.col("trade") % step == 0)]
+    ]
+).with_columns(
+    bounce_share=1 - pl.col("true_price_variance") / pl.col("trade_price_variance")
+)
+```
+:::
+
+| Trades | Variance of trade price changes (cents²) | Variance of true price changes (cents²) | Share of the bounce |
+|:-------|----:|----:|----:|
+| Every trade | 2.24 (Python: 2.27) | 0.25 (0.25) | 89% (89%) |
+| Every 10th trade | 4.58 (4.31) | 2.37 (2.55) | 48% (41%) |
+| Every 100th trade | 34.6 (28.2) | 30.9 (25.1) | 11% (11%) |
+
+The changes of the true price have a variance of $0.5^2 = 0.25$ cents² per trade, and the bounce adds about $s^2/2 = 2$ cents². Sampled every trade, the bounce makes up 89% of the variance of the price changes; sampled every 100th trade, only 11%. In the terms of lecture 17, the bounce is microstructure noise with variance $\omega^2 = s^2/4$, and every price change carries $2\omega^2$ of it. Realized variance, the sum of $n$ squared intraday returns, therefore has a bias of $2n\omega^2$, which grows with the number of returns: sampled too often, it mostly measures noise. Sampling less often removes most of the bias, but leaves fewer returns, so the measure becomes less precise; lecture 17 discusses this trade-off.

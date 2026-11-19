@@ -2,7 +2,7 @@
 title: Shrinking the SDF
 ---
 
-These exercises reproduce lectures 10 and 11: Ridge and Lasso, and how to choose their penalty. Packages estimate both in one line, but you first implement the two estimators yourself and then compare them with *glmnet* (R) or *scikit-learn* (Python).
+These exercises reproduce lectures 10 and 11: ridge regression and the lasso, and how to choose their penalty. You first implement the two estimators yourself. Then you estimate them with the machine learning workflow of the lectures, *tidymodels* in R and *scikit-learn* in Python, check them against your own functions, and let the workflow choose the penalty by cross-validation.
 
 The application is the running example of the machine learning lectures: the *factor zoo*. Hundreds of published anomalies each come with a long-short portfolio. Which combination of them prices the cross-section of stock returns, and how much of it survives out of sample?
 
@@ -10,16 +10,17 @@ The application is the running example of the machine learning lectures: the *fa
 
 **Exercises:**
 
--   Download the monthly long-short returns of the anomaly portfolios from [Open Source Asset Pricing](https://www.openassetpricing.com) (Chen and Zimmermann) and store them in the `data` folder. Keep the anomalies with a return in every month from January 1973 to December 2023. The years until 1999 are your *estimation sample*, the years from 2000 on your *test sample*. How many anomalies are left? Compute the annualized Sharpe ratio of the portfolio that holds all anomalies with equal weights, in both samples.
--   The stochastic discount factor (SDF) is spanned by the mean-variance efficient (MVE) portfolio of the anomalies, with weights proportional to $\Sigma^{-1}\mu$. Britten-Jones (1999) shows that you get these weights from a regression: regress a vector of ones, `y`, on the excess returns, `X`, without an intercept. Run this regression in the estimation sample and compute the Sharpe ratio of the resulting portfolio in both samples. What do you find?
--   Write a function that requires three inputs, `y` (a $T$ vector), `X` (a $(T \times N)$ matrix), and `lambda`, and which returns the **Ridge** estimator $\hat b = (X'X + T\lambda I)^{-1}X'y$. This scaling of the penalty is the one `glmnet()` uses, so you can compare your results with it later. Compute the $L_2$ norm ($b'b$) of the estimated weights and the Sharpe ratios in both samples for a range of $\lambda$'s, and illustrate the effect of the penalization in suitable figures. Which $\lambda$ would you choose, and why may you not use the test sample to choose it?
--   Choose $\lambda$ by cross-validation within the estimation sample: split it into five consecutive blocks of months, estimate the weights on four blocks and compute the Sharpe ratio on the fifth, so that each block is the validation block once, and average the five Sharpe ratios. Which $\lambda$ gets the highest average, and what is the Sharpe ratio of this Ridge portfolio in the test sample?
--   Now, write a function with the same three inputs which returns the **Lasso** estimator, the $b$ that minimizes $\frac{1}{2T}(y - Xb)'(y - Xb) + \lambda \sum_i |b_i|$. Use *coordinate descent*: go through the weights one by one and update each, keeping the others fixed, until nothing changes anymore. Check your function against `glmnet()` (in Python: `Lasso()` from `scikit-learn`).
--   Compute the Lasso for a grid of $\lambda$'s with `glmnet()` (in Python: `Lasso()`). How many anomalies does the Lasso select for each $\lambda$, and how does the Sharpe ratio in the test sample change? Choose $\lambda$ by cross-validation as for Ridge. How many anomalies does a good SDF need? Kozak, Nagel, and Santosh (2020) discuss whether the SDF is sparse.
+1.  Download the monthly long-short returns of the anomaly portfolios from [Open Source Asset Pricing](https://www.openassetpricing.com) (Chen and Zimmermann) and store them in the `data` folder. Keep the anomalies with a return in every month from January 1973 to December 2023. The years until 1999 are your *estimation sample*, the years from 2000 on your *test sample*. How many anomalies are left? Compute the annualized Sharpe ratio of the portfolio that holds all anomalies with equal weights (1/N), in both samples.
+2.  The stochastic discount factor (SDF) $M_{t+1} = 1 - \sum_{i=1}^{N} b_i F_{i,t+1}$ prices all $N$ anomalies if the weights $b_i$ are proportional to $\Sigma^{-1}\mu$, the weights of the mean-variance efficient portfolio of the anomalies (lecture 11). Britten-Jones (1999) shows that you get these weights from a regression: regress the number one on the vector $F_t$ of the anomaly returns in month $t$, without an intercept, $1 = b'F_t + u_t$. Run this regression in the estimation sample and compute the Sharpe ratio of the resulting portfolio in both samples. What do you find?
+3.  Write a function that requires three inputs, `y` (a vector of $T$ ones), `x` (the $T \times N$ matrix $F$ of the anomaly returns), and `lambda`, and which returns the **ridge** estimator $\hat b = (F'F + T\lambda I)^{-1}F'y$. This scaling of the penalty is the one of the packages, so you can compare your results with them later. Compute the $L_2$ norm ($b'b$) of the estimated weights and the Sharpe ratios in both samples for the penalties $\lambda = 10^{-7}, 10^{-6.75}, \dots, 10^{-1}$ of lecture 10, and illustrate the effect of the penalization in suitable figures. Which $\lambda$ would you choose, and why may you not use the test sample to choose it?
+4.  Estimate the same ridge regression with the workflow of lecture 10: `linear_reg(mixture = 0)` with the engine `glmnet` in R, `ElasticNet(l1_ratio=0)` in Python, both without an intercept, and in R without glmnet's standardization of the returns. Check that the workflow gives the same weights as your function.
+5.  Choose $\lambda$ by cross-validation within the estimation sample, as in lecture 11: split it into five consecutive blocks of months, estimate the weights on four blocks and compute the Sharpe ratio on the fifth, so that each block is the validation block once, and average the five Sharpe ratios. Let the workflow do this: the Sharpe ratio becomes a metric (a yardstick metric in R, a scorer from `make_scorer()` in Python), the blocks become folds (`group_vfold_cv()`, `GroupKFold()`), and `tune_grid()` or `GridSearchCV()` loops over the penalties and folds. Which $\lambda$ gets the highest average, and what is the Sharpe ratio of this ridge portfolio in the test sample?
+6.  Now, write a function with the same three inputs which returns the **lasso** estimator, the $b$ that minimizes $\frac{1}{2T}(y - Fb)'(y - Fb) + \lambda \sum_{i=1}^{N} |b_i|$, the objective of lecture 10 divided by $2T$. Use *coordinate descent*: go through the weights one by one and update each, keeping the others fixed, until nothing changes anymore. Check your function against the lasso of the workflow (`mixture = 1` in R, `l1_ratio=1` in Python).
+7.  Compute the lasso with the workflow for the penalties $\lambda = 10^{-6}, 10^{-5.75}, \dots, 10^{-2.5}$ of lecture 10. How many anomalies does the lasso select for each $\lambda$, and how does the Sharpe ratio in the test sample change? Choose $\lambda$ by cross-validation as for ridge. How many anomalies does a good SDF need? Kozak, Nagel, and Santosh (2020) discuss whether the SDF is sparse.
 
 **Solutions:**
 
-We read the long-short returns directly from the October 2026 data release of Open Source Asset Pricing; once `tidyfinance` supports this source, `download_data()` will do the same. The returns are in percent. `select(where(...))` (R) and the list of complete columns (Python) keep the anomalies without missing months.
+We read the long-short returns directly from the October 2026 data release of Open Source Asset Pricing; once `tidyfinance` supports this source, `download_data()` will do the same. The returns are in percent. `select(where(...))` (R) and the list of complete columns (Python) keep the anomalies without missing months. `y`, a one in every month, is the dependent variable of all regressions on this page. As in lecture 10, `make_splits()` (R) and `.filter()` (Python) split the months by date into the estimation and the test sample, and the matrices `x_estimation` and `x_test` hold the anomaly returns for our own functions.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -27,7 +28,12 @@ We read the long-short returns directly from the October 2026 data release of Op
 #| label: r-load-anomalies
 library(tidyverse)
 library(nanoparquet)
-library(glmnet)
+library(tidymodels)
+
+sample_start <- ymd("1973-01-01")
+sample_end <- ymd("2023-12-31")
+test_start <- ymd("2000-01-01")
+months_per_year <- 12
 
 osap_url <- paste0(
   "https://huggingface.co/datasets/OpenSourceAP/CrossSection/resolve/",
@@ -36,27 +42,37 @@ osap_url <- paste0(
 download.file(osap_url, "data/osap_long_short_returns.parquet", mode = "wb")
 
 anomalies <- read_parquet("data/osap_long_short_returns.parquet") |>
-  mutate(date = floor_date(as.Date(date), "month")) |>
-  filter(between(date, ymd("1973-01-01"), ymd("2023-12-31"))) |>
-  select(date, where(\(x) !anyNA(x)))
+  filter(between(date, sample_start, sample_end)) |>
+  select(date, where(\(x) !anyNA(x))) |>
+  mutate(across(-date, \(x) x / 100), y = 1)
+anomaly_names <- setdiff(names(anomalies), c("date", "y"))
+sample_split <- make_splits(
+  filter(anomalies, date < test_start),
+  assessment = filter(anomalies, date >= test_start)
+)
+estimation_months <- training(sample_split)
+test_months <- testing(sample_split)
+length(anomaly_names)
 
-returns <- anomalies |>
-  select(-date) |>
-  as.matrix() / 100
-estimation <- anomalies$date < ymd("2000-01-01")
-test <- !estimation
-ncol(returns)
+x_estimation <- as.matrix(estimation_months[anomaly_names])
+x_test <- as.matrix(test_months[anomaly_names])
+y <- estimation_months$y
 
-sharpe_ratio <- function(x) mean(x) / sd(x) * sqrt(12)
+# The annualized Sharpe ratio of the portfolio returns `estimate`. The
+# arguments are those of a yardstick metric, which cross-validation needs
+# below; `truth` does not enter
+sharpe_ratio_vec <- function(truth, estimate, ...) {
+  mean(estimate) / sd(estimate) * sqrt(months_per_year)
+}
 
 portfolio_sharpe <- function(weights) {
   c(
-    estimation = sharpe_ratio(returns[estimation, ] %*% weights),
-    test = sharpe_ratio(returns[test, ] %*% weights)
+    estimation = sharpe_ratio_vec(estimate = drop(x_estimation %*% weights)),
+    test = sharpe_ratio_vec(estimate = drop(x_test %*% weights))
   )
 }
 
-portfolio_sharpe(rep(1, ncol(returns)))
+portfolio_sharpe(rep(1, length(anomaly_names)))
 ```
 
 ## Python
@@ -67,7 +83,15 @@ from datetime import date
 import numpy as np
 import polars as pl
 from plotnine import *
-from sklearn.linear_model import Lasso
+from sklearn.base import clone
+from sklearn.linear_model import ElasticNet
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import GridSearchCV, GroupKFold
+
+sample_start = date(1973, 1, 1)
+sample_end = date(2023, 12, 31)
+test_start = date(2000, 1, 1)
+months_per_year = 12
 
 osap_url = (
     "https://huggingface.co/datasets/OpenSourceAP/CrossSection/resolve/"
@@ -75,74 +99,77 @@ osap_url = (
 )
 pl.read_parquet(osap_url).write_parquet("data/osap_long_short_returns.parquet")
 
-anomalies = (pl.read_parquet("data/osap_long_short_returns.parquet")
-    .with_columns(pl.col("date").dt.truncate("1mo"))
-    .filter(pl.col("date").is_between(date(1973, 1, 1), date(2023, 12, 31)))
+anomalies = pl.read_parquet("data/osap_long_short_returns.parquet").filter(
+    pl.col("date").is_between(sample_start, sample_end)
 )
-complete = [c for c in anomalies.columns if c != "date" and anomalies[c].null_count() == 0]
+anomaly_names = [
+    c for c in anomalies.columns if c != "date" and anomalies[c].null_count() == 0
+]
+anomalies = anomalies.select("date", pl.col(anomaly_names) / 100, y=pl.lit(1.0))
+estimation_months = anomalies.filter(pl.col("date") < test_start)
+test_months = anomalies.filter(pl.col("date") >= test_start)
+print(len(anomaly_names))
 
-returns = anomalies.select(complete).to_numpy() / 100
-estimation = (anomalies["date"] < date(2000, 1, 1)).to_numpy()
-test = ~estimation
-print(returns.shape[1])
+x_estimation = estimation_months.select(anomaly_names).to_numpy()
+x_test = test_months.select(anomaly_names).to_numpy()
+y_estimation = estimation_months["y"].to_numpy()
+y_test = test_months["y"].to_numpy()
 
 
-def sharpe_ratio(x):
-    return np.mean(x) / np.std(x, ddof=1) * np.sqrt(12)
+# The annualized Sharpe ratio of the portfolio returns y_pred. The arguments
+# are those of a scikit-learn metric, which cross-validation needs below; y
+# does not enter
+def sharpe_ratio(y, y_pred):
+    return y_pred.mean() / y_pred.std(ddof=1) * np.sqrt(months_per_year)
 
 
 def portfolio_sharpe(weights):
     return {
-        "estimation": sharpe_ratio(returns[estimation] @ weights),
-        "test": sharpe_ratio(returns[test] @ weights),
+        "estimation": sharpe_ratio(y_estimation, x_estimation @ weights),
+        "test": sharpe_ratio(y_test, x_test @ weights),
     }
 
 
-portfolio_sharpe(np.ones(returns.shape[1]))
+portfolio_sharpe(np.ones(len(anomaly_names)))
 ```
 :::
 
-158 anomalies have complete returns. The equal-weighted portfolio earns a Sharpe ratio of 2.8 until 1999, but only 1.4 afterwards: many anomalies weaken once they are published and traded on.
+158 anomalies have complete returns. The equal-weighted portfolio earns a Sharpe ratio of 2.79 until 1999, but only 1.43 afterwards: many anomalies weaken once they are published and traded on.
 
-The Britten-Jones regression has no intercept and a vector of ones as the dependent variable. Its coefficients are the weights of the MVE portfolio, up to a scaling factor that does not affect the Sharpe ratio.
+The Britten-Jones regression has no intercept and a vector of ones as the dependent variable. Its coefficients are the weights of the mean-variance efficient portfolio, up to a scaling factor that does not affect the Sharpe ratio.
 
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
 #| label: r-britten-jones
-X <- returns[estimation, ]
-y <- rep(1, nrow(X))
-
-b_ols <- solve(crossprod(X), crossprod(X, y))
+b_ols <- solve(crossprod(x_estimation), crossprod(x_estimation, y))
 portfolio_sharpe(b_ols)
 ```
 
 ## Python
 ```{python}
 #| label: py-britten-jones
-X = returns[estimation]
-y = np.ones(X.shape[0])
-
-b_ols = np.linalg.solve(X.T @ X, X.T @ y)
+b_ols = np.linalg.solve(x_estimation.T @ x_estimation, x_estimation.T @ y_estimation)
 portfolio_sharpe(b_ols)
 ```
 :::
 
-In the estimation sample, the unrestricted MVE portfolio reaches a Sharpe ratio of about 15.7, an impossible number. In the test sample, it falls to 2.5: with 158 weights estimated from 324 months, the portfolio mostly fits noise.
+In the estimation sample, the plug-in portfolio reaches a Sharpe ratio of about 15.7, an impossible number. In the test sample, it falls to 2.51: with 158 weights estimated from 324 months, the portfolio mostly fits noise.
 
-The Ridge estimator adds $T\lambda$ to the diagonal of $X'X$. We evaluate it on a grid of $\lambda$'s from almost no penalty to strong shrinkage.
+The ridge estimator adds $T\lambda$ to the diagonal of $F'F$. We evaluate it on the grid of lecture 10, from almost no penalty to strong shrinkage.
 
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
 #| label: r-ridge
-ridge <- function(y, X, lambda) {
-  solve(crossprod(X) + nrow(X) * lambda * diag(ncol(X)), crossprod(X, y))
+ridge <- function(y, x, lambda) {
+  solve(crossprod(x) + nrow(x) * lambda * diag(ncol(x)), crossprod(x, y))
 }
 
-ridge_path <- tibble(lambda = 10^seq(-7, -1, by = 0.25)) |>
+ridge_lambdas <- 10^seq(-7, -1, by = 0.25)
+ridge_path <- tibble(lambda = ridge_lambdas) |>
   mutate(
-    weights = map(lambda, \(lambda) ridge(y, X, lambda)),
+    weights = map(lambda, \(lambda) ridge(y, x_estimation, lambda)),
     l2_norm = map_dbl(weights, \(b) sum(b^2)),
     sharpe = map(weights, portfolio_sharpe)
   ) |>
@@ -153,36 +180,42 @@ ridge_path |>
   geom_line() +
   scale_x_log10() +
   scale_y_log10() +
-  labs(x = "Lambda", y = "L2 norm of the weights")
+  labs(x = "Penalty λ", y = "L2 norm of the weights")
 
 ridge_path |>
-  pivot_longer(c(estimation, test), names_to = "sample", values_to = "sharpe_ratio") |>
+  pivot_longer(
+    c(estimation, test),
+    names_to = "sample",
+    values_to = "sharpe_ratio"
+  ) |>
   ggplot(aes(x = lambda, y = sharpe_ratio, color = sample)) +
   geom_line() +
   scale_x_log10() +
-  labs(x = "Lambda", y = "Sharpe ratio (annualized)", color = NULL)
+  labs(x = "Penalty λ", y = "Sharpe ratio (annualized)", color = NULL)
 ```
 
 ## Python
 ```{python}
 #| label: py-ridge
-def ridge(y, X, lambda_):
-    return np.linalg.solve(X.T @ X + X.shape[0] * lambda_ * np.eye(X.shape[1]), X.T @ y)
+def ridge(y, x, lambda_):
+    return np.linalg.solve(x.T @ x + x.shape[0] * lambda_ * np.eye(x.shape[1]), x.T @ y)
 
 
-lambdas = 10 ** np.arange(-7, -0.99, 0.25)
-ridge_path = pl.DataFrame([
-    {"lambda": lambda_, "l2_norm": float(np.sum(b**2)), **portfolio_sharpe(b)}
-    for lambda_ in lambdas
-    for b in [ridge(y, X, lambda_)]
-])
+ridge_lambdas = 10 ** np.arange(-7, -0.99, 0.25)
+ridge_path = pl.DataFrame(
+    [
+        {"lambda": lambda_, "l2_norm": float(np.sum(b**2)), **portfolio_sharpe(b)}
+        for lambda_ in ridge_lambdas
+        for b in [ridge(y_estimation, x_estimation, lambda_)]
+    ]
+)
 
 (
     ggplot(ridge_path, aes(x="lambda", y="l2_norm"))
     + geom_line()
     + scale_x_log10()
     + scale_y_log10()
-    + labs(x="Lambda", y="L2 norm of the weights")
+    + labs(x="Penalty λ", y="L2 norm of the weights")
 )
 ```
 
@@ -190,68 +223,150 @@ ridge_path = pl.DataFrame([
 #| label: py-ridge-sharpe
 (
     ggplot(
-        ridge_path.unpivot(index="lambda", on=["estimation", "test"],
-                           variable_name="sample", value_name="sharpe_ratio"),
+        ridge_path.unpivot(
+            index="lambda",
+            on=["estimation", "test"],
+            variable_name="sample",
+            value_name="sharpe_ratio",
+        ),
         aes(x="lambda", y="sharpe_ratio", color="sample"),
     )
     + geom_line()
     + scale_x_log10()
-    + labs(x="Lambda", y="Sharpe ratio (annualized)", color="")
+    + labs(x="Penalty λ", y="Sharpe ratio (annualized)", color="")
 )
 ```
 :::
 
-More shrinkage lowers the Sharpe ratio in the estimation sample, but raises it in the test sample, up to a point. Picking the $\lambda$ with the best test Sharpe ratio would use the test sample to build the portfolio, so its Sharpe ratio would no longer be out of sample. Instead, we choose $\lambda$ by cross-validation within the estimation sample, as in lecture 11. The folds are consecutive blocks of months, so each fold keeps the time series together. If a penalty sets all weights to zero, there is no portfolio and no Sharpe ratio, and that fold is left out of the average.
+More shrinkage lowers the Sharpe ratio in the estimation sample, but raises it in the test sample, up to a point. Picking the $\lambda$ with the best test Sharpe ratio would use the test sample to build the portfolio, so its Sharpe ratio would no longer be out of sample. Instead, we choose $\lambda$ by cross-validation within the estimation sample, with the workflow of lectures 10 and 11.
+
+The workflow first specifies the model. In R, `workflow()` bundles the variables with the model: the regression of `y` on all anomalies without an intercept (`0 +`) of lecture 10, with the ridge penalty of glmnet (`mixture = 0`). `penalty = tune()` leaves $\lambda$ open, and `path_values` lets glmnet fit all penalties of the grid in one run. In Python, `ElasticNet()` with `l1_ratio=0` is the ridge regression; its penalty `alpha` is our $\lambda$. Both packages minimize the ridge objective divided by $2T$, $\frac{1}{2T}(y - Fb)'(y - Fb) + \frac{\lambda}{2} b'b$, whose solution is our closed form. Both find the weights iteratively, so a tight convergence threshold makes them agree with our function.
+
+::: {.panel-tabset group="language"}
+## R
+```{r}
+#| label: r-ridge-workflow
+plug_in_workflow <- workflow() |>
+  add_variables(outcomes = y, predictors = all_of(anomaly_names)) |>
+  add_model(linear_reg(), formula = y ~ 0 + .)
+ridge_model <- linear_reg(penalty = tune(), mixture = 0) |>
+  set_engine(
+    "glmnet",
+    intercept = FALSE,
+    standardize = FALSE,
+    path_values = ridge_lambdas,
+    control = list(thresh = 1e-12) # tight, so that R and Python agree
+  )
+ridge_workflow <- update_model(plug_in_workflow, ridge_model)
+
+# One penalty in the workflow and in our function
+check_lambda <- 1e-4
+b_workflow <- ridge_workflow |>
+  finalize_workflow(tibble(penalty = check_lambda)) |>
+  fit(estimation_months) |>
+  tidy() |>
+  filter(term != "(Intercept)") |>
+  pull(estimate)
+b_ridge <- ridge(y, x_estimation, check_lambda)
+max(abs(b_workflow - b_ridge)) / max(abs(b_ridge))
+```
+
+## Python
+```{python}
+#| label: py-ridge-workflow
+# l1_ratio=0: the ridge penalty; tight tolerance, so that R and Python agree
+ridge_model = ElasticNet(l1_ratio=0, fit_intercept=False, tol=1e-8, max_iter=1_000_000)
+
+# One penalty in the workflow and in our function
+check_lambda = 1e-4
+b_workflow = (
+    clone(ridge_model)
+    .set_params(alpha=check_lambda)
+    .fit(x_estimation, y_estimation)
+    .coef_
+)
+b_ridge = ridge(y_estimation, x_estimation, check_lambda)
+np.max(np.abs(b_workflow - b_ridge)) / np.max(np.abs(b_ridge))
+```
+:::
+
+The weights of the workflow differ from those of our function by less than 0.01% of the largest weight in R and by less than 0.0001% in Python. What remains comes from the convergence thresholds of the iterative solvers: the objective is very flat in some directions, so a tiny difference in the objective allows a small difference in the weights. For the portfolio, this does not matter: the Sharpe ratios of the two portfolios agree to four decimals.
+
+For cross-validation, the Sharpe ratio becomes a metric of the workflow, as in lecture 10: the fitted values $\hat b'F_t$ are the returns of the portfolio $\hat b$, so the Sharpe ratio of the predictions is the Sharpe ratio of the portfolio. The folds are five consecutive blocks of months, so each fold keeps the time series together. `tune_grid()` and `GridSearchCV()` loop over penalties and folds: they fit the weights on the other four blocks, compute the Sharpe ratio in the validation block, and average over the folds. `GridSearchCV()` then refits the best penalty on the whole estimation sample by itself; in R, `finalize_workflow()` and `fit()` do this step.
 
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
 #| label: r-ridge-cv
-n_folds <- 5
-folds <- ceiling(seq_len(nrow(X)) / (nrow(X) / n_folds))
-
-cv_sharpe <- function(estimator, lambda) {
-  map_dbl(seq_len(n_folds), \(k) {
-    b <- estimator(y[folds != k], X[folds != k, ], lambda)
-    if (all(b == 0)) NA else sharpe_ratio(X[folds == k, ] %*% b)
-  }) |>
-    mean(na.rm = TRUE)
+# A yardstick metric from the Sharpe ratio function, to be maximized
+sharpe_ratio <- function(data, truth, estimate, ...) {
+  numeric_metric_summarizer(
+    "sharpe_ratio",
+    sharpe_ratio_vec,
+    data,
+    !!enquo(truth),
+    !!enquo(estimate)
+  )
 }
+sharpe_ratio <- new_numeric_metric(sharpe_ratio, direction = "maximize")
 
-ridge_path <- ridge_path |>
-  mutate(cv = map_dbl(lambda, \(lambda) cv_sharpe(ridge, lambda)))
+# k = 5 consecutive blocks of the estimation months as folds
+n_folds <- 5
+block_folds <- estimation_months |>
+  mutate(block = ceiling(dense_rank(date) / (n_distinct(date) / n_folds))) |>
+  group_vfold_cv(group = block, v = n_folds)
 
-ridge_path |>
-  slice_max(cv) |>
-  select(lambda, cv, estimation, test)
+ridge_tuning <- tune_grid(
+  ridge_workflow,
+  block_folds,
+  grid = tibble(penalty = ridge_lambdas),
+  metrics = metric_set(sharpe_ratio)
+)
+show_best(ridge_tuning, metric = "sharpe_ratio", n = 3)
+
+# The Sharpe ratio of a fitted workflow in some months
+sharpe_in <- function(fit, months) {
+  augment(fit, months) |> sharpe_ratio(y, .pred) |> pull(.estimate)
+}
+ridge_fit <- ridge_workflow |>
+  finalize_workflow(select_best(ridge_tuning, metric = "sharpe_ratio")) |>
+  fit(estimation_months)
+c(
+  estimation = sharpe_in(ridge_fit, estimation_months),
+  test = sharpe_in(ridge_fit, test_months)
+)
 ```
 
 ## Python
 ```{python}
 #| label: py-ridge-cv
+sharpe_scorer = make_scorer(sharpe_ratio)
+
+# k = 5 consecutive blocks of the estimation months as folds
 n_folds = 5
-folds = np.ceil(np.arange(1, X.shape[0] + 1) / (X.shape[0] / n_folds))
+months = estimation_months["date"].rank("dense")
+blocks = np.ceil(months / (months.max() / n_folds)).to_numpy()
 
-
-def cv_sharpe(estimator, lambda_):
-    sharpe = []
-    for k in range(1, n_folds + 1):
-        b = estimator(y[folds != k], X[folds != k], lambda_)
-        sharpe.append(sharpe_ratio(X[folds == k] @ b) if np.any(b) else np.nan)
-    return np.nanmean(sharpe)
-
-
-ridge_path = ridge_path.with_columns(
-    cv=pl.Series([cv_sharpe(ridge, lambda_) for lambda_ in lambdas])
+ridge_search = GridSearchCV(
+    ridge_model,
+    {"alpha": ridge_lambdas},
+    scoring=sharpe_scorer,
+    cv=GroupKFold(n_splits=n_folds),
 )
+ridge_search.fit(x_estimation, y_estimation, groups=blocks)
 
-ridge_path.sort("cv", descending=True).head(1).select("lambda", "cv", "estimation", "test")
+{
+    "lambda": ridge_search.best_params_["alpha"],
+    "cv": ridge_search.best_score_,
+    "estimation": sharpe_scorer(ridge_search, x_estimation, y_estimation),
+    "test": sharpe_scorer(ridge_search, x_test, y_test),
+}
 ```
 :::
 
-Cross-validation picks $\lambda = 10^{-4}$. The Ridge portfolio reaches a Sharpe ratio of about 2.9 in the test sample, clearly above the 2.5 of the unrestricted MVE portfolio, while its Sharpe ratio in the estimation sample drops from 15.7 to 12.9.
+Cross-validation picks $\lambda = 10^{-4}$ in both languages, with an average Sharpe ratio of 8.48 in the five validation blocks. The ridge portfolio reaches a Sharpe ratio of 2.89 in the test sample, clearly above the 2.51 of the plug-in portfolio, while its Sharpe ratio in the estimation sample drops from 15.7 to 12.9. These are the numbers of lecture 11. The validation blocks lie in the years until 1999, when the anomalies earned much more than after 2000, so their average Sharpe ratio says little about the test sample; it only ranks the penalties.
 
-Coordinate descent updates one weight at a time. Given the other weights, the optimal $b_j$ has a closed form: compute the correlation of $X_j$ with the partial residual (the residual without $X_j$'s contribution), shrink it towards zero by $\lambda$ (*soft thresholding*), and divide by $X_j'X_j / T$. Weights whose correlation is smaller than $\lambda$ become exactly zero; this is how the Lasso selects.
+Coordinate descent updates one weight at a time. Given the other weights, the optimal $b_i$ has a closed form: compute the correlation of $F_i$, the returns of anomaly $i$, with the partial residual (the residual without $F_i$'s contribution), shrink it towards zero by $\lambda$ (*soft thresholding*), and divide by $F_i'F_i / T$. Weights whose correlation is smaller than $\lambda$ become exactly zero; this is how the lasso selects. The workflow's lasso is the ridge workflow with `mixture = 1` (R) or `l1_ratio=1` (Python) and the grid of penalties for the lasso.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -259,32 +374,47 @@ Coordinate descent updates one weight at a time. Given the other weights, the op
 #| label: r-lasso
 soft_threshold <- function(z, gamma) sign(z) * pmax(abs(z) - gamma, 0)
 
-lasso <- function(y, X, lambda, tolerance = 1e-10, max_iterations = 10000) {
-  n <- nrow(X)
-  b <- rep(0, ncol(X))
-  x_squared <- colSums(X^2) / n
+lasso <- function(y, x, lambda, tolerance = 1e-10, max_iterations = 10000) {
+  n <- nrow(x)
+  b <- rep(0, ncol(x))
+  x_squared <- colSums(x^2) / n
   residual <- y
   for (iteration in seq_len(max_iterations)) {
     b_old <- b
-    for (j in seq_along(b)) {
-      residual <- residual + X[, j] * b[j]
-      b[j] <- soft_threshold(sum(X[, j] * residual) / n, lambda) / x_squared[j]
-      residual <- residual - X[, j] * b[j]
+    for (i in seq_along(b)) {
+      residual <- residual + x[, i] * b[i]
+      b[i] <- soft_threshold(sum(x[, i] * residual) / n, lambda) / x_squared[i]
+      residual <- residual - x[, i] * b[i]
     }
     if (max(abs(b - b_old)) < tolerance) break
   }
   b
 }
 
-b_lasso <- lasso(y, X, lambda = 1e-3)
-b_glmnet <- glmnet(X, y,
-  alpha = 1, lambda = 1e-3, intercept = FALSE, standardize = FALSE,
-  control = list(thresh = 1e-14)
-) |>
-  coef() |>
-  as.numeric()
+lasso_lambdas <- 10^seq(-6, -2.5, by = 0.25)
+lasso_model <- linear_reg(penalty = tune(), mixture = 1) |>
+  set_engine(
+    "glmnet",
+    intercept = FALSE,
+    standardize = FALSE,
+    path_values = lasso_lambdas,
+    control = list(thresh = 1e-12)
+  )
+lasso_workflow <- update_model(plug_in_workflow, lasso_model)
 
-c(selected = sum(b_lasso != 0), max_difference = max(abs(b_lasso - b_glmnet[-1])))
+# One penalty in the workflow and in our function
+check_lambda <- 1e-3
+b_workflow <- lasso_workflow |>
+  finalize_workflow(tibble(penalty = check_lambda)) |>
+  fit(estimation_months) |>
+  tidy() |>
+  filter(term != "(Intercept)") |>
+  pull(estimate)
+b_lasso <- lasso(y, x_estimation, check_lambda)
+c(
+  selected = sum(b_lasso != 0),
+  max_relative_difference = max(abs(b_lasso - b_workflow)) / max(abs(b_lasso))
+)
 ```
 
 ## Python
@@ -294,80 +424,103 @@ def soft_threshold(z, gamma):
     return np.sign(z) * np.maximum(np.abs(z) - gamma, 0)
 
 
-def lasso(y, X, lambda_, tolerance=1e-10, max_iterations=10000):
-    n = X.shape[0]
-    b = np.zeros(X.shape[1])
-    x_squared = (X**2).sum(axis=0) / n
+def lasso(y, x, lambda_, tolerance=1e-10, max_iterations=10000):
+    n = x.shape[0]
+    b = np.zeros(x.shape[1])
+    x_squared = (x**2).sum(axis=0) / n
     residual = y.copy()
     for _ in range(max_iterations):
         b_old = b.copy()
-        for j in range(len(b)):
-            residual += X[:, j] * b[j]
-            b[j] = soft_threshold(X[:, j] @ residual / n, lambda_) / x_squared[j]
-            residual -= X[:, j] * b[j]
+        for i in range(len(b)):
+            residual += x[:, i] * b[i]
+            b[i] = soft_threshold(x[:, i] @ residual / n, lambda_) / x_squared[i]
+            residual -= x[:, i] * b[i]
         if np.max(np.abs(b - b_old)) < tolerance:
             break
     return b
 
 
-b_lasso = lasso(y, X, 1e-3)
-b_sklearn = Lasso(alpha=1e-3, fit_intercept=False, tol=1e-14, max_iter=100000).fit(X, y).coef_
+lasso_lambdas = 10 ** np.arange(-6, -2.49, 0.25)
+lasso_model = ElasticNet(l1_ratio=1, fit_intercept=False, tol=1e-8, max_iter=1_000_000)
 
-{"selected": int((b_lasso != 0).sum()), "max_difference": float(np.max(np.abs(b_lasso - b_sklearn)))}
+# One penalty in the workflow and in our function
+check_lambda = 1e-3
+b_workflow = (
+    clone(lasso_model)
+    .set_params(alpha=check_lambda)
+    .fit(x_estimation, y_estimation)
+    .coef_
+)
+b_lasso = lasso(y_estimation, x_estimation, check_lambda)
+{
+    "selected": int((b_lasso != 0).sum()),
+    "max_relative_difference": float(
+        np.max(np.abs(b_lasso - b_workflow)) / np.max(np.abs(b_lasso))
+    ),
+}
 ```
 :::
 
-Both packages minimize exactly this objective when the intercept and the internal standardization are switched off, so the weights agree up to the numerical tolerance. For the path, we use the grid of lecture 10, from $\lambda = 10^{-6}$, where almost every anomaly gets a weight, to $10^{-2.5}$, where only a few do. A tight convergence threshold makes `glmnet()` and `Lasso()` agree.
+With $\lambda = 10^{-3}$, the lasso keeps 31 of the 158 anomalies. Our coordinate descent and the workflow agree up to 0.002% of the largest weight in R and 0.00001% in Python: both packages minimize exactly this objective when the intercept, and in R glmnet's standardization, are switched off.
+
+For the path, each penalty of the grid gets its own fit on the estimation sample, as in lecture 10; cross-validation then works exactly as for ridge.
 
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
 #| label: r-lasso-path
-lasso_glmnet <- function(y, X, lambda) {
-  glmnet(X, y,
-    alpha = 1, lambda = lambda, intercept = FALSE, standardize = FALSE,
-    control = list(thresh = 1e-12)
-  ) |>
-    coef() |>
-    as.numeric() |>
-    tail(-1)
-}
-
-lasso_path <- tibble(lambda = 10^seq(-6, -2.5, by = 0.25)) |>
+lasso_path <- tibble(lambda = lasso_lambdas) |>
   mutate(
-    weights = map(lambda, \(lambda) lasso_glmnet(y, X, lambda)),
-    selected = map_int(weights, \(b) sum(b != 0)),
-    sharpe = map(weights, portfolio_sharpe)
-  ) |>
-  unnest_wider(sharpe)
+    fit = map(lambda, \(lambda) {
+      lasso_workflow |>
+        finalize_workflow(tibble(penalty = lambda)) |>
+        fit(estimation_months)
+    }),
+    selected = map_int(fit, \(fit) sum(tidy(fit)$estimate != 0)),
+    estimation = map_dbl(fit, \(fit) sharpe_in(fit, estimation_months)),
+    test = map_dbl(fit, \(fit) sharpe_in(fit, test_months))
+  )
 
 lasso_path |>
   ggplot(aes(x = selected, y = test)) +
   geom_line() +
   geom_point() +
-  labs(x = "Number of selected anomalies", y = "Sharpe ratio in the test sample")
+  labs(
+    x = "Number of selected anomalies",
+    y = "Sharpe ratio in the test sample"
+  )
 
+lasso_tuning <- tune_grid(
+  lasso_workflow,
+  block_folds,
+  grid = tibble(penalty = lasso_lambdas),
+  metrics = metric_set(sharpe_ratio)
+)
+best_lasso <- select_best(lasso_tuning, metric = "sharpe_ratio")
 lasso_path |>
-  mutate(cv = map_dbl(lambda, \(lambda) cv_sharpe(lasso_glmnet, lambda))) |>
-  slice_max(cv) |>
-  select(lambda, selected, cv, estimation, test)
+  filter(lambda == best_lasso$penalty) |>
+  select(lambda, selected, estimation, test)
 ```
 
 ## Python
 ```{python}
 #| label: py-lasso-path
-def lasso_sklearn(y, X, lambda_):
-    return Lasso(alpha=lambda_, fit_intercept=False, max_iter=100000).fit(X, y).coef_
-
-
-lasso_results = pl.DataFrame([
-    {"lambda": lambda_, "selected": int((b != 0).sum()), **portfolio_sharpe(b)}
-    for lambda_ in 10 ** np.arange(-6, -2.49, 0.25)
-    for b in [lasso_sklearn(y, X, lambda_)]
-])
+lasso_path = []
+for lambda_ in lasso_lambdas:
+    lasso_fit = clone(lasso_model).set_params(alpha=lambda_)
+    lasso_fit.fit(x_estimation, y_estimation)
+    lasso_path.append(
+        {
+            "lambda": lambda_,
+            "selected": int(np.sum(lasso_fit.coef_ != 0)),
+            "estimation": sharpe_scorer(lasso_fit, x_estimation, y_estimation),
+            "test": sharpe_scorer(lasso_fit, x_test, y_test),
+        }
+    )
+lasso_path = pl.DataFrame(lasso_path)
 
 (
-    ggplot(lasso_results, aes(x="selected", y="test"))
+    ggplot(lasso_path, aes(x="selected", y="test"))
     + geom_line()
     + geom_point()
     + labs(x="Number of selected anomalies", y="Sharpe ratio in the test sample")
@@ -376,19 +529,27 @@ lasso_results = pl.DataFrame([
 
 ```{python}
 #| label: py-lasso-cv
-(lasso_results
-    .with_columns(cv=pl.Series([cv_sharpe(lasso_sklearn, l) for l in lasso_results["lambda"]]))
-    .sort("cv", descending=True)
-    .head(1)
-    .select("lambda", "selected", "cv", "estimation", "test")
+lasso_search = GridSearchCV(
+    lasso_model,
+    {"alpha": lasso_lambdas},
+    scoring=sharpe_scorer,
+    cv=GroupKFold(n_splits=n_folds),
 )
+lasso_search.fit(x_estimation, y_estimation, groups=blocks)
+
+{
+    "lambda": lasso_search.best_params_["alpha"],
+    "selected": int(np.sum(lasso_search.best_estimator_.coef_ != 0)),
+    "estimation": sharpe_scorer(lasso_search, x_estimation, y_estimation),
+    "test": sharpe_scorer(lasso_search, x_test, y_test),
+}
 ```
 :::
 
-Cross-validation picks $\lambda = 3.2 \times 10^{-4}$, which keeps 74 of the 158 anomalies, with a Sharpe ratio of 2.96 in the test sample, about as good as Ridge (2.89). With fewer anomalies, the Sharpe ratio in the test sample falls: 2.79 with 31 anomalies and 2.15 with 18. A good SDF of the zoo needs dozens of anomalies, so it is not sparse in the anomalies. Kozak, Nagel, and Santosh (2020) ask whether it is sparser in the principal components of the anomaly returns; lecture 11 tries this on the zoo.
+Cross-validation picks $\lambda = 3.2 \times 10^{-4}$ in both languages, which keeps 74 of the 158 anomalies, with a Sharpe ratio of 2.96 in the test sample, about as good as ridge (2.89). With fewer anomalies, the Sharpe ratio in the test sample falls: 2.79 with 31 anomalies and 2.15 with 18. A good SDF of the zoo needs dozens of anomalies, so it is not sparse in the anomalies. Kozak, Nagel, and Santosh (2020) ask whether it is sparser in the principal components of the anomaly returns; lecture 11 tries this on the zoo.
 
 ## Open question {#open-question}
 
-The solution above chooses the Ridge penalty with one particular cross-validation. How much does the Sharpe ratio in the test sample depend on that choice? Choose your own validation scheme within the estimation sample: the number of folds, random or consecutive blocks of months, and the criterion, for instance the Sharpe ratio or the pricing error. Never touch the test sample.
+The solution above chooses the ridge penalty with one particular cross-validation. How much does the Sharpe ratio in the test sample depend on that choice? Choose your own validation scheme within the estimation sample: the number of folds, random or consecutive blocks of months, and the criterion, for instance the Sharpe ratio or the pricing error. Never touch the test sample.
 
 **Submit by Wednesday 7 April:** your scheme (number of folds, how you split the months, the criterion), the chosen penalty, and the Sharpe ratio in the test sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-validation-scheme). Lecture 12 shows the results of the whole class next to the scoreboard of the lectures.
