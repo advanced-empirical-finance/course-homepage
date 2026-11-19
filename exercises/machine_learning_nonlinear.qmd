@@ -13,15 +13,15 @@ The code on this page does not run when the website is built, because training t
 
 **Exercises:**
 
-1.  Build the panel of lecture 13 from the anomalies with complete returns from January 1973 to December 2023 ([exercise 5](machine_learning.qmd)) and the macro predictors `dp`, `tbl`, `tms`, `dfy` and `svar` in `macro_predictors.parquet`. Lag the macro predictors by one month, so that they are known when the month starts, and standardize them with their mean and standard deviation until 1999. How many anomaly-months are in the training sample (until 1999) and in the test sample?
+1.  Build the panel of lecture 13 from the anomalies with complete returns from January 1973 to December 2023 ([exercise 6](machine_learning.qmd)) and the macro predictors `dp`, `tbl`, `tms`, `dfy` and `svar` in `macro_predictors.parquet`. Lag the macro predictors by one month, so that they are known when the month starts, and standardize them with their mean and standard deviation until 1999. How many anomaly-months are in the training sample (until 1999) and in the test sample?
 2.  Standardize the seven predictors with the means and standard deviations of the training sample, and divide the returns by their standard deviation in the training sample. Why does a value of the weight decay only mean something once the returns are scaled?
 3.  Specify the network of lecture 14, with one hidden layer of five neurons, the logistic activation and a linear output: `mlp()` with the engine `nnet` in R, `MLPRegressor()` with `solver="lbfgs"` from scikit-learn in Python, at most 500 iterations. Choose the weight decay from the grid 1, 3, 10, 30, 100, 300, 1000 with `tune_grid()` or `GridSearchCV()`: fit the network on 1974–1994 and compute the forecast error in the validation years 1995–1999. Which decay do you choose?
 4.  Fit five networks with the chosen decay on the whole training sample, each from a different random start (seeds 1 to 5), and average their forecasts. Compute the out-of-sample $R^2$ in the test sample, $R^2_{oos} = 1 - \sum (r_{i,t} - \hat r_{i,t})^2 / \sum r_{i,t}^2$, which compares the forecasts with a forecast of zero, as in Gu, Kelly, and Xiu (2020). Compare it with OLS on the same seven predictors.
-5.  Use the forecasts as expected returns in the mean-variance weights of lecture 13, $\omega_t = (\hat\Sigma + \lambda I)^{-1}\hat\mu_t$, with the covariance matrix of the estimation sample 1973–1999 and the ridge penalty $\lambda = 10^{-4}$ of [exercise 5](machine_learning.qmd). Compute the annualized Sharpe ratio of this forecast portfolio in the estimation sample (1974–1999) and in the test sample. How does it compare with the ridge SDF of exercise 5, whose weights stay constant?
+5.  Use the forecasts as expected returns in the mean-variance weights of lecture 13, $\omega_t = (\hat\Sigma + \lambda I)^{-1}\hat\mu_t$, with the covariance matrix of the estimation sample 1973–1999 and the ridge penalty $\lambda = 10^{-4}$ of [exercise 6](machine_learning.qmd). Compute the annualized Sharpe ratio of this forecast portfolio in the estimation sample (1974–1999) and in the test sample. How does it compare with the ridge SDF of exercise 6, whose weights stay constant?
 
 **Solutions:**
 
-The panel is built as in lecture 13. The forecasts need 12 months of past returns, so the panel starts in January 1974. `ridge_lambda` is the penalty that cross-validation chose in exercise 5.
+The panel is built as in lecture 13. The forecasts need 12 months of past returns, so the panel starts in January 1974. `ridge_lambda` is the penalty that cross-validation chose in exercise 6.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -876,7 +876,7 @@ pl.DataFrame(
 | Chen–Pelger–Zhu light, Python | 4.93 | 4.30 | 4.77 | 1.69 |
 | Lecture 14, same setting with 9 networks: feed-forward SDF | 3.77 | 3.25 | 3.62 | 1.05 |
 | Lecture 14, same setting with 9 networks: Chen–Pelger–Zhu light | 5.58 | 4.86 | 5.36 | 1.89 |
-| Ridge SDF, constant weights ([exercise 5](machine_learning.qmd)) | | | | 2.89 |
+| Ridge SDF, constant weights ([exercise 6](machine_learning.qmd)) | | | | 2.89 |
 
 The two languages agree. With the same seed, R and Python start from the same networks: the outputs of the starting SDF networks agree to all digits. The weights of the feed-forward SDFs differ by less than 0.00001 after training, so their Sharpe ratios agree to two decimals in all four samples. Chen–Pelger–Zhu light agrees to two decimals except in the test sample, 1.68 in R and 1.69 in Python: in the last round of the third seed, R stops after 313 steps and Python after 318, because tiny rounding differences between the two libraries add up over more than a thousand steps. The weights of the two ensembles still have a correlation of 0.99998. On another computer, with an ARM processor, Python also stops after 313 steps and gives 1.68, so the last digit depends on the computer as much as on the language. On a machine with 4 cores, the three seeds took 67 seconds in R (`torch` 0.17.0) and 48 seconds in Python (PyTorch 2.15.0).
 

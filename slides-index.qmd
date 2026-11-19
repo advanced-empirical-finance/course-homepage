@@ -6,30 +6,30 @@ Lectures are on Mondays 10–12 in odd weeks (CSS 35.3.12) and on Thursdays 13�
 
 | Week | Date | Lecture | Slides | Exercises | Preparation |
 |:-----|:-----|:--------|:-------|:----------|:------------|
-| 6 | Thu 11 Feb | Welcome, setup and financial data | [PDF](slides/aef-01-introduction.pdf) | [0](exercises/technical-prerequisites.qmd "Technical prerequisites"), [1](exercises/introduction.qmd "Introduction to Tidy Finance"), [2](exercises/mean_variance.qmd "Mean-variance optimization") | Complete the technical prerequisites |
-| 7 | Mon 15 Feb | Mean-variance optimization | [PDF](slides/aef-02-mean-variance-optimization.pdf) |  | Markowitz (1952) |
-|  | Thu 18 Feb | Estimation uncertainty | [PDF](slides/aef-03-estimation-uncertainty.pdf) |  | DeMiguel, Garlappi & Uppal (2009) |
+| 6 | Thu 11 Feb | Welcome, setup and financial data | [PDF](slides/aef-01-introduction.pdf) | [0](exercises/technical-prerequisites.qmd "Technical prerequisites"), [1](exercises/introduction.qmd "Introduction to Tidy Finance") | Complete the technical prerequisites |
+| 7 | Mon 15 Feb | Mean-variance optimization | [PDF](slides/aef-02-mean-variance-optimization.pdf) | [2](exercises/mean_variance.qmd "Mean-variance optimization") | Markowitz (1952) |
+|  | Thu 18 Feb | Estimation uncertainty | [PDF](slides/aef-03-estimation-uncertainty.pdf) | [3](exercises/backtesting.qmd "Backtesting portfolio strategies") | DeMiguel, Garlappi & Uppal (2009) |
 | 8 | Thu 25 Feb | Shrinkage for portfolio choice | [PDF](slides/aef-04-shrinkage-for-portfolio-choice.pdf) |  | Ledoit & Wolf (2004); Jorion (1986); Jagannathan & Ma (2003) |
 |  | Thu 25 Feb | [Assignment 1 released]{.plan-minor} |  |  |  |
 | 9 | Mon 1 Mar | Transaction costs and parametric portfolio policies | [PDF](slides/aef-05-transaction-costs-and-parametric-portfolio-policies.pdf) |  | Brandt, Santa-Clara & Valkanov (2009) |
 |  | Thu 4 Mar | The SDF, the efficient frontier and the CAPM | [PDF](slides/aef-06-sdf-efficient-frontier-and-capm.pdf) |  | Cochrane (2005), chapters 1 and 5–6 |
 |  | Thu 4 Mar | [Assignment 1 deadline]{.plan-minor} |  |  |  |
 |  | Fri 5 Mar | Portfolio sorts | [PDF](slides/aef-07-portfolio-sorts.pdf) |  |  |
-| 10 | Thu 11 Mar | Multifactor models (first hour: assignment 1 discussion) | [PDF](slides/aef-08-multifactor-models.pdf) | [3](exercises/portfolio_sorts.qmd "CAPM, betas and portfolio sorts"), [4](exercises/machine_learning_data.qmd "Data for machine learning") | Fama & French (1993) |
+| 10 | Thu 11 Mar | Multifactor models (first hour: assignment 1 discussion) | [PDF](slides/aef-08-multifactor-models.pdf) | [4](exercises/portfolio_sorts.qmd "CAPM, betas and portfolio sorts"), [5](exercises/machine_learning_data.qmd "Data for machine learning") | Fama & French (1993) |
 | 12 | 22–26 Mar | [Easter break]{.plan-minor} |  |  |  |
-| 13 | Wed 31 Mar | Reproducibility and non-standard errors | [PDF](slides/aef-09-reproducibility-and-non-standard-errors.pdf) | [5](exercises/machine_learning.qmd "Shrinking the SDF") | Menkveld et al. (2024) |
+| 13 | Wed 31 Mar | Reproducibility and non-standard errors | [PDF](slides/aef-09-reproducibility-and-non-standard-errors.pdf) | [6](exercises/machine_learning.qmd "Shrinking the SDF") | Menkveld et al. (2024) |
 |  | Thu 1 Apr | Machine learning foundations | [PDF](slides/aef-10-machine-learning-foundations.pdf) |  |  |
 | 14 | Thu 8 Apr | Shrinking the SDF | [PDF](slides/aef-11-shrinking-the-sdf.pdf) |  | Kozak, Nagel & Santosh (2020) |
 | 15 | Mon 12 Apr | Latent factors | [PDF](slides/aef-12-latent-factors.pdf) |  | Lettau & Pelger (2020) |
 |  | Mon 12 Apr | [Assignment 2 released]{.plan-minor} |  |  |  |
-| 16 | Mon 19 Apr | Return prediction with trees and forests | [PDF](slides/aef-13-trees-and-forests.pdf) | [6](exercises/machine_learning_nonlinear.qmd "Neural networks and implementable portfolios") | Gu, Kelly & Xiu (2020) |
+| 16 | Mon 19 Apr | Return prediction with trees and forests | [PDF](slides/aef-13-trees-and-forests.pdf) | [7](exercises/machine_learning_nonlinear.qmd "Neural networks and implementable portfolios") | Gu, Kelly & Xiu (2020) |
 |  | Mon 19 Apr | [Assignment 2 deadline]{.plan-minor} |  |  |  |
 |  | Thu 22 Apr | Neural networks and learning the SDF | [PDF](slides/aef-14-neural-networks-and-learning-the-sdf.pdf) |  | Chen, Pelger & Zhu (2024) |
 | 17 | Mon 26 Apr | From predictions to implementable portfolios (first hour: assignment 2 discussion) | [PDF](slides/aef-15-implementable-portfolios.pdf) |  | Jensen, Kelly, Malamud & Pedersen (2026) |
 |  | Thu 29 Apr | Market microstructure and high-frequency data | [PDF](slides/aef-16-market-microstructure-and-high-frequency-data.pdf) |  |  |
 | 18 | Thu 6 May | [Assignment 3 released]{.plan-minor} |  |  |  |
 | 19 | Mon 10 May | Realized volatility | [PDF](slides/aef-17-realized-volatility.pdf) |  | Andersen, Bollerslev, Diebold & Labys (2003) |
-|  | Thu 13 May | Realized covariances for portfolio choice | [PDF](slides/aef-18-realized-covariances-for-portfolio-choice.pdf) | [7](exercises/high_frequency_data.qmd "High-frequency data") | Hautsch, Kyj & Oomen (2012) |
+|  | Thu 13 May | Realized covariances for portfolio choice | [PDF](slides/aef-18-realized-covariances-for-portfolio-choice.pdf) | [8](exercises/high_frequency_data.qmd "High-frequency data") | Hautsch, Kyj & Oomen (2012) |
 |  | Thu 13 May | [Assignment 3 deadline]{.plan-minor} |  |  |  |
 | 20 | Thu 20 May | Conference session |  |  |  |
 

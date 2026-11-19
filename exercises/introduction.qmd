@@ -58,7 +58,7 @@ As a next step, we generalize the code from before such that all the computation
     └── volare_stocks_realized_measures_daily.parquet       Absalon
     ```
 
-    Later exercises add files you build yourself, such as `stock_characteristics_monthly.parquet` in exercise 4.
+    Later exercises add files you build yourself, such as `stock_characteristics_monthly.parquet` in exercise 5.
 
 3. Almost all exercises from now on start by reading data from these files. This is all it takes, from a fresh R or Python session:
 
