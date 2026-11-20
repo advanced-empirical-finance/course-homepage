@@ -250,7 +250,7 @@ There are 2,401,783 betas for 18,498 stocks, from December 1963 to December 2025
 1. Each month, sort the stocks into ten portfolios on their beta from the end of the previous month, with `compute_portfolio_returns()` and `breakpoint_options(n_portfolios = 10)`. Use the value-weighted excess returns. Why the previous month's beta and not this month's?
 1. Estimate the CAPM regression for each of the ten portfolios. Report the alpha (annualized) with its t-statistic, the beta, the average excess return, and the average excess return the CAPM predicts: the beta times the average market excess return. Plot the average excess returns against the betas, together with the CAPM's prediction.
 1. Compute the returns of the high-minus-low portfolio, portfolio 10 minus portfolio 1, with `compute_long_short_returns()`. What are its average excess return, its CAPM alpha and the t-statistic of the alpha?
-1. Optional: test all ten alphas at once with the GRS test of lecture 6.
+1. Test all ten alphas at once with the GRS test of lecture 6.
 
 **Solutions:**
 
