@@ -37,19 +37,21 @@ website:
             file: exercises/mean_variance.qmd
           - text: "3 backtesting portfolio strategies"
             file: exercises/backtesting.qmd
-          - text: "4 CAPM, betas and portfolio sorts"
+          - text: "4 shrinkage and transaction costs"
+            file: exercises/shrinkage_transaction_costs.qmd
+          - text: "5 CAPM, betas and portfolio sorts"
             file: exercises/portfolio_sorts.qmd
           - text: "---"
           - text: "machine learning and the SDF"
-          - text: "5 data for machine learning"
+          - text: "6 data for machine learning"
             file: exercises/machine_learning_data.qmd
-          - text: "6 shrinking the SDF"
+          - text: "7 shrinking the SDF"
             file: exercises/machine_learning.qmd
-          - text: "7 neural networks and implementable portfolios"
+          - text: "8 neural networks and implementable portfolios"
             file: exercises/machine_learning_nonlinear.qmd
           - text: "---"
           - text: "high-frequency data"
-          - text: "8 high-frequency data"
+          - text: "9 high-frequency data"
             file: exercises/high_frequency_data.qmd
       - text: trading game
         menu:
