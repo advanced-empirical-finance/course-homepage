@@ -393,13 +393,13 @@ The changes of the true price have a variance of $0.5^2 = 0.25$ cents² per trad
 
 **Exercises:**
 
-7. Read the VOLARE realized measures of the E-mini S&P 500 futures (ES) from `data/volare_futures_realized_measures_daily.parquet`. In which units are the variances? Compute every day's annualized volatility from `rv5`, plot it over time on a log scale, and compute the volatility of the median day and the median of each year. Which year was the calmest, and which day the most volatile?
-8. Noise and jumps: for the 30 Dow Jones stocks in `data/volare_stocks_realized_measures_daily.parquet` (column `dow30`), compute the means of `rv1`, `rk`, `bv5`, `rsp5` and `rsn5` relative to the mean of `rv5`, and do the same for ES. What do the ratios tell you about microstructure noise and jumps? Then compute the ratio of the means of `rv1` and `rv5` for each stock and plot it against the stock's median number of trades per day.
+7. Read the VOLARE realized measures of the E-mini S&P 500 futures (ES) from `data/volare_realized_measures_daily.parquet`, the rows with `asset_class` `"future"` and `symbol` `"ES"`. In which units are the variances? Compute every day's annualized volatility from `rv5`, plot it over time on a log scale, and compute the volatility of the median day and the median of each year. Which year was the calmest, and which day the most volatile?
+8. Noise and jumps: for the 30 Dow Jones stocks in the same file (`asset_class` `"stock"` and `dow30` true), compute the means of `rv1`, `rk`, `bv5`, `rsp5` and `rsn5` relative to the mean of `rv5`, and do the same for ES. What do the ratios tell you about microstructure noise and jumps? Then compute the ratio of the means of `rv1` and `rv5` for each stock and plot it against the stock's median number of trades per day.
 9. Compute the realized variance of SPY from five-minute midquote returns of the snapshots of the first part, as in lecture 17, and compare it with `rv5` of ES on the same days. How large are the two volatilities in each March, and how closely do they move together from day to day? Why is the volatility of ES higher? Compare `open_price` of ES with the previous day's `close_price`.
 
 **Solutions:**
 
-VOLARE (Cipollini et al., 2026) is not public: download the files from Absalon into your `data` folder. The files hold one row per asset and trading day. Variances are daily, in squared decimal returns, so $\sqrt{252 \cdot \text{rv5}}$ is the annualized volatility and $10^4 \cdot \text{rv5}$ the variance in squared percent.
+VOLARE (Cipollini et al., 2026) is not public: download the files from Absalon into your `data` folder. `volare_realized_measures_daily.parquet` holds one row per asset and trading day, and `asset_class` says whether the asset is a stock or a future. Variances are daily, in squared decimal returns, so $\sqrt{252 \cdot \text{rv5}}$ is the annualized volatility and $10^4 \cdot \text{rv5}$ the variance in squared percent.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -410,8 +410,8 @@ library(slider)
 
 days_per_year <- 252
 
-es <- read_parquet("data/volare_futures_realized_measures_daily.parquet") |>
-  filter(symbol == "ES") |>
+es <- read_parquet("data/volare_realized_measures_daily.parquet") |>
+  filter(asset_class == "future", symbol == "ES") |>
   arrange(date) |>
   mutate(volatility = sqrt(days_per_year * rv5))
 
@@ -448,8 +448,8 @@ from statsmodels.tsa.stattools import acf
 days_per_year = 252
 
 es = (
-    pl.read_parquet("data/volare_futures_realized_measures_daily.parquet")
-    .filter(pl.col("symbol") == "ES")
+    pl.read_parquet("data/volare_realized_measures_daily.parquet")
+    .filter(pl.col("asset_class") == "future", pl.col("symbol") == "ES")
     .sort("date")
     .with_columns(volatility=(days_per_year * pl.col("rv5")).sqrt())
 )
@@ -482,8 +482,8 @@ ES has 4,419 trading days, from 30 September 2009 to 30 October 2026. The median
 ## R
 ```{r}
 #| label: r-volare-measures
-dow <- read_parquet("data/volare_stocks_realized_measures_daily.parquet") |>
-  filter(dow30)
+dow <- read_parquet("data/volare_realized_measures_daily.parquet") |>
+  filter(asset_class == "stock", dow30)
 
 measures <- c("rv1", "rk", "bv5", "rsp5", "rsn5")
 relative_to_rv5 <- \(data) {
@@ -515,8 +515,8 @@ cor(noise_by_stock$rv1_to_rv5, log(noise_by_stock$trades))
 ## Python
 ```{python}
 #| label: py-volare-measures
-dow = pl.read_parquet("data/volare_stocks_realized_measures_daily.parquet").filter(
-    pl.col("dow30")
+dow = pl.read_parquet("data/volare_realized_measures_daily.parquet").filter(
+    pl.col("asset_class") == "stock", pl.col("dow30")
 )
 
 measures = ["rv1", "rk", "bv5", "rsp5", "rsn5"]
@@ -549,7 +549,7 @@ noise_by_stock.select(pl.corr("rv1_to_rv5", pl.col("trades").log())).item()
 ```
 :::
 
-The stock file covers 2,975 trading days from 2 January 2015. Relative to `rv5`, the means of the 30 Dow Jones stocks are:
+The stocks cover 2,975 trading days from 2 January 2015. Relative to `rv5`, the means of the 30 Dow Jones stocks are:
 
 | | `rv1` | `rk` | `bv5` | `rsp5` | `rsn5` |
 |:--|--:|--:|--:|--:|--:|
