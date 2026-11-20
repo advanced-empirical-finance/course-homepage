@@ -501,6 +501,10 @@
   const frozen = params.has("t") ? parseFloat(params.get("t")) : null;
 
   let audioCtx = null, musicGain = null, started = false;
+  // The music plays from a decoded buffer on the audio clock. Re-seeking an
+  // <audio> element to follow the voice made it stutter on iOS Safari, whose
+  // currentTime moves in coarse steps.
+  let musicBuffer = null, musicSource = null, musicStartedAt = 0, musicOffset = 0;
   // Music sits under the voice: lower while someone speaks, fades out at the end
   function musicLevel(t) {
     const speaking = T.segments.some((s) => t > s.start - 0.25 && t < s.end + 0.15);
@@ -511,11 +515,40 @@
     if (audioCtx) return;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const src = audioCtx.createMediaElementSource(music);
       musicGain = audioCtx.createGain();
       musicGain.gain.value = 0;
-      src.connect(musicGain).connect(audioCtx.destination);
-    } catch (e) { audioCtx = null; }
+      musicGain.connect(audioCtx.destination);
+      fetch(music.currentSrc || music.src)
+        .then((r) => r.arrayBuffer())
+        .then((data) => new Promise((ok, fail) => audioCtx.decodeAudioData(data, ok, fail)))
+        .then((buffer) => {
+          musicBuffer = buffer;
+          if (!vo.paused && !vo.ended) startMusic(vo.currentTime);
+        })
+        .catch(() => { audioCtx = null; musicGain = null; });
+    } catch (e) { audioCtx = null; musicGain = null; }
+  }
+  function stopMusic() {
+    if (musicSource) { try { musicSource.stop(); } catch (e) {} musicSource = null; }
+    if (!audioCtx) music.pause();
+  }
+  function startMusic(t) {
+    stopMusic();
+    if (audioCtx && musicBuffer) {
+      musicSource = audioCtx.createBufferSource();
+      musicSource.buffer = musicBuffer;
+      musicSource.connect(musicGain);
+      musicOffset = Math.min(t, musicBuffer.duration);
+      musicStartedAt = audioCtx.currentTime;
+      musicSource.start(0, musicOffset);
+    } else if (!audioCtx) {
+      music.currentTime = t;
+      music.play().catch(() => null);
+    }
+  }
+  function musicTime() {
+    if (musicSource) return musicOffset + audioCtx.currentTime - musicStartedAt;
+    return music.currentTime;
   }
   const REST = 3.6;                            // the resting frame: the title in full
   function now() { return frozen ?? (started ? vo.currentTime : REST); }
@@ -532,41 +565,43 @@
     const t = now();
     if (musicGain) musicGain.gain.setTargetAtTime(musicLevel(t), audioCtx.currentTime, 0.12);
     else music.volume = clamp(musicLevel(t));
-    if (Math.abs(music.currentTime - t) > 0.25 && !music.paused) music.currentTime = t;
+    // Resync only after a real drift, for example after the tab was in the background
+    if ((musicSource || !music.paused) && Math.abs(musicTime() - t) > 1) startMusic(t);
     draw();
     if (!vo.paused && !vo.ended) requestAnimationFrame(loop);
   }
   function play() {
     setupAudio();
     if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-    if (vo.ended || vo.currentTime >= T.total - 0.05) { vo.currentTime = 0; music.currentTime = 0; }
+    if (vo.ended || vo.currentTime >= T.total - 0.05) vo.currentTime = 0;
     started = true;
     document.body.classList.add("playing");
-    music.currentTime = vo.currentTime;
-    Promise.all([vo.play(), music.play().catch(() => null)]).then(loop).catch(() => {
+    vo.play().then(() => { startMusic(vo.currentTime); loop(); }).catch(() => {
       document.body.classList.remove("playing");
     });
   }
-  function pause() { vo.pause(); music.pause(); document.body.classList.remove("playing"); draw(); }
+  function pause() { vo.pause(); stopMusic(); document.body.classList.remove("playing"); draw(); }
+  function seek(t) {
+    started = true;
+    vo.currentTime = t;
+    if (!vo.paused) startMusic(t);
+    draw();
+  }
   playButton.addEventListener("click", () => (vo.paused ? play() : pause()));
   canvas.addEventListener("click", () => (vo.paused ? play() : pause()));
   document.addEventListener("keydown", (e) => {
     if (e.code === "Space") { e.preventDefault(); vo.paused ? play() : pause(); }
     if (e.code === "ArrowLeft" || e.code === "ArrowRight") {
       e.preventDefault();
-      const t = clamp(vo.currentTime + (e.code === "ArrowLeft" ? -5 : 5), 0, T.total);
-      started = true; vo.currentTime = t; music.currentTime = t; draw();
+      seek(clamp(vo.currentTime + (e.code === "ArrowLeft" ? -5 : 5), 0, T.total));
     }
   });
   bar.addEventListener("click", (e) => {
     const r = bar.getBoundingClientRect();
-    const t = clamp((e.clientX - r.left) / r.width) * T.total;
-    started = true;
-    vo.currentTime = t; music.currentTime = t;
-    draw();
+    seek(clamp((e.clientX - r.left) / r.width) * T.total);
   });
-  vo.addEventListener("ended", () => { music.pause(); document.body.classList.remove("playing"); draw(); });
-  vo.addEventListener("pause", () => document.body.classList.remove("playing"));
+  vo.addEventListener("ended", () => { stopMusic(); document.body.classList.remove("playing"); draw(); });
+  vo.addEventListener("pause", () => { stopMusic(); document.body.classList.remove("playing"); });
 
   // Draw once the fonts are there, so the first frame is not in a fallback face
   const fonts = ["200 40px Roboto", "300 40px Roboto", "400 40px Roboto", "400 40px 'Roboto Mono'"];
