@@ -21,7 +21,7 @@ These exercises start with the portfolio choice problem of a mean-variance inves
 
 ## Equivalence between certainty equivalent maximization and minimum variance optimization {#equivalence-between-certainty-equivalent-maximization-and-minimum-variance-optimization}
 
-In [lecture 2](../slides/aef-02-mean-variance-optimization.pdf) (slide "Mean-variance preferences"), I state that an investor with a quadratic utility function with a certainty equivalent $$\max_w CE(w) = \omega'\mu - \frac{\gamma}{2} \omega'\Sigma \omega \text{ s.t. } \iota'\omega = 1$$
+In [lecture 2](../slides/aef-02-mean-variance-optimization.pdf) (slide "Mean-variance preferences"), I state that an investor with a quadratic utility function and risk aversion coefficient $\gamma$, with a certainty equivalent $$\max_w CE(w) = \omega'\mu - \frac{\gamma}{2} \omega'\Sigma \omega \text{ s.t. } \iota'\omega = 1$$
 faces an equivalent optimization problem to a framework where portfolio weights are chosen to minimize volatility given a pre-specified level of expected returns
 $$
 \min_w \omega'\Sigma \omega \text{ s.t. } \omega'\mu = \bar\mu \text{ and } \iota'\omega = 1
@@ -37,14 +37,14 @@ Note the differences: In the first case, the investor has a (known) risk aversio
 
 [Lecture 3](../slides/aef-03-estimation-uncertainty.pdf) asks how much of the theory survives once $\mu$ and $\Sigma$ are estimated. Lecture 3 runs two experiments with the Dow Jones stocks from above: a simulation in which the true parameters are known, and a backtest with rolling windows. The following exercise reproduces the simulation; the backtest is a separate exercise, [Backtesting portfolio strategies](backtesting.qmd). Both use monthly *excess* returns: the returns minus the one-month T-bill rate, `risk_free` in `factors_ff3_monthly.parquet`.
 
-### Estimated portfolios, true outcomes {#estimated-portfolios-true-outcomes}
+### Simulation: estimated portfolios judged with the true parameters {#simulation-estimated-portfolios-true-parameters}
 
 **Exercises:**
 
 1. Compute the monthly excess returns of the Dow Jones stocks from January 2000 to December 2025. In this exercise, their sample mean $\mu_0$ and sample covariance matrix $\Sigma_0$ are the *true* parameters. Compute the annualized Sharpe ratio of the true tangency portfolio, $\sqrt{12\,\mu_0'\Sigma_0^{-1}\mu_0}$, and of the $1/N$ portfolio.
-2. Write a function that draws $T$ months of returns from the multivariate normal distribution $N(\mu_0, \Sigma_0)$ and estimates $\hat\mu$ and $\hat\Sigma$ from the draws. Compute the plug-in tangency portfolio $\hat\omega \propto \hat\Sigma^{-1}\hat\mu$ and evaluate it with the true parameters: which expected excess return, volatility and Sharpe ratio does an investor who holds $\hat\omega$ really get?
-3. Repeat this 1,000 times for $T = 60$ and 1,000 times for $T = 240$ months. Plot the true Sharpe ratios of the estimated tangency portfolios in a histogram, with the Sharpe ratios of the true tangency portfolio and of $1/N$ as vertical lines. Which share of the estimated tangency portfolios does worse than $1/N$?
-4. For the first 50 samples of each length, compute the estimated efficient frontier and evaluate it with the true parameters. Plot these frontiers together with the true efficient frontier in a diagram with the true volatility on the $x$ axis and the true expected excess return on the $y$ axis (both annualized). Why do all estimated frontiers lie inside the true one?
+2. Write a function that draws $T$ months of returns from the multivariate normal distribution $N(\mu_0, \Sigma_0)$ and estimates $\hat\mu$ and $\hat\Sigma$ from the draws. Compute the plug-in tangency portfolio $\hat\omega \propto \hat\Sigma^{-1}\hat\mu$ and evaluate the portfolio $\hat\omega$ with the true parameters $\mu_0$ and $\Sigma_0$: which expected excess return $\hat\omega'\mu_0$, volatility $\sqrt{\hat\omega'\Sigma_0\hat\omega}$ and Sharpe ratio does an investor who holds $\hat\omega$ really get?
+3. Repeat the simulation of task 2 (draw a sample, estimate $\hat\omega$, evaluate $\hat\omega$ with $\mu_0$ and $\Sigma_0$) 1,000 times for $T = 60$ and 1,000 times for $T = 240$ months. Plot the true Sharpe ratios of the estimated tangency portfolios in a histogram, with the Sharpe ratios of the true tangency portfolio and of $1/N$ as vertical lines. Which share of the estimated tangency portfolios does worse than $1/N$?
+4. For the first 50 samples of each length, compute the estimated efficient frontier and evaluate the portfolios on the estimated frontier with the true parameters $\mu_0$ and $\Sigma_0$. Plot these frontiers together with the true efficient frontier in a diagram with the true volatility on the $x$ axis and the true expected excess return on the $y$ axis (both annualized). Why do all estimated frontiers lie inside the true one?
 
 **Solutions:**
 
@@ -193,7 +193,7 @@ n_stocks = excess_matrix.shape[1]
 
 27 of today's 30 Dow Jones stocks have a return in every month from February 2000 to December 2025, which gives 311 months. Salesforce (CRM), Alphabet (GOOGL) and Visa (V) drop out because their returns start later.
 
-The full-sample moments are the true parameters. The function `evaluate()` computes the annualized expected excess return and volatility of any portfolio under these true parameters; every estimated portfolio below is judged with it. `solve(sigma, mu)` in R and `np.linalg.solve(sigma, mu)` in Python compute $\Sigma^{-1}\mu$ without inverting $\Sigma$.
+The full-sample moments are the true parameters. The function `evaluate()` computes the annualized expected excess return and volatility of a portfolio for given parameters `mu` and `sigma`; every estimated portfolio below is evaluated with the true parameters `mu_true` and `sigma_true`. `solve(sigma, mu)` in R and `np.linalg.solve(sigma, mu)` in Python solve the linear system $\Sigma x = \mu$ for $x$ (with an LU decomposition). The solution is $x = \Sigma^{-1}\mu$, without forming the inverse matrix $\Sigma^{-1}$.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -203,11 +203,11 @@ The full-sample moments are the true parameters. The function `evaluate()` compu
 mu_true <- colMeans(excess_matrix)
 sigma_true <- cov(excess_matrix)
 
-evaluate <- function(weights) {
+evaluate <- function(weights, mu, sigma) {
   tibble(
-    mu = sum(weights * mu_true) * months_per_year,
+    mu = sum(weights * mu) * months_per_year,
     sigma = sqrt(
-      as.numeric(t(weights) %*% sigma_true %*% weights) * months_per_year
+      as.numeric(t(weights) %*% sigma %*% weights) * months_per_year
     )
   )
 }
@@ -222,10 +222,13 @@ min_variance_weights <- function(sigma) {
   weights / sum(weights)
 }
 
-true_sharpe <- sqrt(
+sharpe_true <- sqrt(
   as.numeric(t(mu_true) %*% solve(sigma_true, mu_true)) * months_per_year
 )
-naive_sharpe <- with(evaluate(rep(1 / n_stocks, n_stocks)), mu / sigma)
+
+weights_naive <- rep(1 / n_stocks, n_stocks)
+performance_naive <- evaluate(weights_naive, mu_true, sigma_true)
+sharpe_naive <- performance_naive$mu / performance_naive$sigma
 ```
 
 ## Python
@@ -236,10 +239,10 @@ mu_true = excess_matrix.mean(axis=0)
 sigma_true = np.cov(excess_matrix, rowvar=False)
 
 
-def evaluate(weights):
+def evaluate(weights, mu, sigma):
     return {
-        "mu": weights @ mu_true * months_per_year,
-        "sigma": np.sqrt(weights @ sigma_true @ weights * months_per_year),
+        "mu": weights @ mu * months_per_year,
+        "sigma": np.sqrt(weights @ sigma @ weights * months_per_year),
     }
 
 
@@ -253,15 +256,17 @@ def min_variance_weights(sigma):
     return weights / weights.sum()
 
 
-true_sharpe = np.sqrt(mu_true @ np.linalg.solve(sigma_true, mu_true) * months_per_year)
-naive = evaluate(np.ones(n_stocks) / n_stocks)
-naive_sharpe = naive["mu"] / naive["sigma"]
+sharpe_true = np.sqrt(mu_true @ np.linalg.solve(sigma_true, mu_true) * months_per_year)
+
+weights_naive = np.ones(n_stocks) / n_stocks
+performance_naive = evaluate(weights_naive, mu_true, sigma_true)
+sharpe_naive = performance_naive["mu"] / performance_naive["sigma"]
 ```
 :::
 
-The true tangency portfolio has an annualized Sharpe ratio of 1.45, the $1/N$ portfolio one of 0.83. Both are in-sample numbers: they use the whole sample of today's Dow Jones stocks, which no investor knew in 2000. For the simulation, this does not matter, because we only need a truth to compare the estimates with.
+The true tangency portfolio has an annualized Sharpe ratio of 1.45, the $1/N$ portfolio one of 0.83. Both are in-sample numbers: they use the whole sample of today's Dow Jones stocks, which no investor knew in 2000. For the simulation, the look-ahead in these numbers does not matter, because we only need a truth to compare the estimates with.
 
-Each simulated sample draws $T$ months of returns from the multivariate normal distribution $N(\mu_0, \Sigma_0)$ in two steps. First, the matrix `noise` holds independent standard normal draws, one row per month and one column per stock. Multiplied by the Cholesky factor of $\Sigma_0$, the upper triangular matrix $U$ with $U'U = \Sigma_0$ from `chol()`, each row has covariance matrix $\Sigma_0$. Second, the matrix `means` repeats $\mu_0$ in every row; adding it gives each row the mean $\mu_0$. In Python, `rng.multivariate_normal()` with `method="cholesky"` does both steps at once. We keep only the estimates $\hat\mu$ and $\hat\Sigma$ of each sample.
+Each simulated sample draws $T$ months of returns from the multivariate normal distribution $N(\mu_0, \Sigma_0)$ in two steps. First, the matrix `noise` holds independent standard normal draws, one row per month and one column per stock. Multiplied by the Cholesky factor of $\Sigma_0$, the upper triangular matrix $U$ with $U'U = \Sigma_0$ from `chol()`, each row has covariance matrix $\Sigma_0$. Second, the matrix `means` repeats $\mu_0$ in every row; adding `means` gives each row the mean $\mu_0$. In Python, `rng.multivariate_normal()` with `method="cholesky"` does both steps at once. We keep only the estimates $\hat\mu$ and $\hat\Sigma$ of each sample.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -317,7 +322,9 @@ simulated_tangency <- simulated |>
     weights = map(estimates, \(estimate) {
       tangency_weights(estimate$mu, estimate$sigma)
     }),
-    performance = map(weights, evaluate)
+    performance = map(weights, \(weights) {
+      evaluate(weights, mu_true, sigma_true)
+    })
   ) |>
   unnest(performance) |>
   mutate(sharpe = mu / sigma)
@@ -325,15 +332,15 @@ simulated_tangency <- simulated |>
 simulated_tangency |>
   summarize(
     median_sharpe = median(sharpe),
-    share_below_naive = mean(sharpe < naive_sharpe),
+    share_below_naive = mean(sharpe < sharpe_naive),
     .by = sample_length
   )
 
 simulated_tangency |>
   ggplot(aes(x = sharpe)) +
   geom_histogram(binwidth = 0.05, boundary = 0) +
-  geom_vline(xintercept = true_sharpe) +
-  geom_vline(xintercept = naive_sharpe, linetype = "dashed") +
+  geom_vline(xintercept = sharpe_true) +
+  geom_vline(xintercept = sharpe_naive, linetype = "dashed") +
   facet_wrap(
     ~sample_length,
     labeller = as_labeller(\(x) paste(x, "months in each sample"))
@@ -355,7 +362,9 @@ simulated_tangency = pl.DataFrame(
         {
             "sample_length": sample["sample_length"],
             "sample": sample["sample"],
-            **evaluate(tangency_weights(sample["mu"], sample["sigma"])),
+            **evaluate(
+                tangency_weights(sample["mu"], sample["sigma"]), mu_true, sigma_true
+            ),
         }
         for sample in simulated
     ]
@@ -364,15 +373,15 @@ simulated_tangency = pl.DataFrame(
 print(
     simulated_tangency.group_by("sample_length", maintain_order=True).agg(
         median_sharpe=pl.col("sharpe").median(),
-        share_below_naive=(pl.col("sharpe") < naive_sharpe).mean(),
+        share_below_naive=(pl.col("sharpe") < sharpe_naive).mean(),
     )
 )
 
 (
     ggplot(simulated_tangency, aes(x="sharpe"))
     + geom_histogram(binwidth=0.05, boundary=0)
-    + geom_vline(xintercept=true_sharpe)
-    + geom_vline(xintercept=naive_sharpe, linetype="dashed")
+    + geom_vline(xintercept=sharpe_true)
+    + geom_vline(xintercept=sharpe_naive, linetype="dashed")
     + facet_wrap("sample_length", labeller=lambda x: f"{x} months in each sample")
     + coord_cartesian(xlim=(-0.5, 1.6))
     + labs(
@@ -386,25 +395,25 @@ print(
 
 ![True Sharpe ratios of 1,000 estimated tangency portfolios for each sample length, from the R code above.](figures/mean-variance-simulated-sharpe-ratios.png){fig-alt="Two histograms of the true annualized Sharpe ratios of estimated tangency portfolios, for samples of 60 and 240 months, with vertical lines at the Sharpe ratios of the true tangency portfolio and of 1/N."}
 
-With 60 months, the median true Sharpe ratio of the estimated tangency portfolios is 0.58, far below the 1.45 of the true tangency portfolio, and 89% of them do worse than $1/N$. With 240 months, the median rises to 1.07 and 3% do worse than $1/N$. These are the numbers of lecture 3. Python draws different random numbers than R, so its results differ slightly: with 60 months, a median of 0.56 and 88.5% below $1/N$; with 240 months, a median of 1.08 and 3.2%. The figures from the Python code look the same, up to these random differences.
+With 60 months, the median true Sharpe ratio of the estimated tangency portfolios is 0.58, far below the 1.45 of the true tangency portfolio, and 89% of them do worse than $1/N$. With 240 months, the median rises to 1.07 and 3% do worse than $1/N$. These are the numbers of lecture 3. Python draws different random numbers than R, so the Python results differ slightly: with 60 months, a median of 0.56 and 88.5% below $1/N$; with 240 months, a median of 1.08 and 3.2%. The figures from the Python code look the same, up to these random differences.
 
-By two-fund separation, every efficient portfolio combines the minimum-variance and the tangency portfolio. The estimated frontier of a sample uses the estimated versions of both; `evaluate()` then places its portfolios in the true mean-volatility diagram.
+By two-fund separation, every efficient portfolio combines the minimum-variance and the tangency portfolio. The estimated frontier of a sample combines the estimated versions of both. `evaluate()` with `mu_true` and `sigma_true` then places the portfolios of the estimated frontier in the true mean-volatility diagram. The red dots in the figure are the estimated tangency portfolios from above, evaluated in the same way.
 
 ::: {.panel-tabset group="language"}
 ## R
 
 ```{r}
 #| label: r-simulated-frontiers
-frontier <- function(mu, sigma, tangency_shares = seq(-0.5, 2.5, by = 0.05)) {
+frontier <- function(mu, sigma, tangency_shares = seq(-0.05, 2.5, by = 0.05)) {
   omega_mvp <- min_variance_weights(sigma)
   omega_tan <- tangency_weights(mu, sigma)
   map(tangency_shares, \(share) {
-    evaluate(share * omega_tan + (1 - share) * omega_mvp)
+    evaluate(share * omega_tan + (1 - share) * omega_mvp, mu_true, sigma_true)
   }) |>
     bind_rows()
 }
 
-true_frontier <- frontier(mu_true, sigma_true)
+frontier_true <- frontier(mu_true, sigma_true)
 
 simulated_frontiers <- simulated |>
   filter(sample <= samples_shown) |>
@@ -426,7 +435,7 @@ ggplot(mapping = aes(x = sigma, y = mu)) +
     color = "red",
     alpha = 0.6
   ) +
-  geom_path(data = true_frontier, linewidth = 1) +
+  geom_path(data = frontier_true, linewidth = 1) +
   facet_wrap(
     ~sample_length,
     labeller = as_labeller(\(x) paste(x, "months in each sample"))
@@ -435,7 +444,8 @@ ggplot(mapping = aes(x = sigma, y = mu)) +
   labs(
     x = "True volatility (annualized)",
     y = "True expected excess return (annualized)",
-    title = "Red: estimated frontiers and tangency portfolios. Black: true frontier"
+    title = "Red: estimated tangency portfolios (dots) and frontiers (lines)",
+    subtitle = "Black: true frontier. All portfolios evaluated with the true parameters"
   )
 ```
 
@@ -443,18 +453,18 @@ ggplot(mapping = aes(x = sigma, y = mu)) +
 
 ```{python}
 #| label: py-simulated-frontiers
-def frontier(mu, sigma, tangency_shares=np.arange(-0.5, 2.51, 0.05)):
+def frontier(mu, sigma, tangency_shares=np.arange(-0.05, 2.51, 0.05)):
     omega_mvp = min_variance_weights(sigma)
     omega_tan = tangency_weights(mu, sigma)
     return pl.DataFrame(
         [
-            evaluate(share * omega_tan + (1 - share) * omega_mvp)
+            evaluate(share * omega_tan + (1 - share) * omega_mvp, mu_true, sigma_true)
             for share in tangency_shares
         ]
     )
 
 
-true_frontier = frontier(mu_true, sigma_true)
+frontier_true = frontier(mu_true, sigma_true)
 
 simulated_frontiers = pl.concat(
     [
@@ -477,21 +487,26 @@ simulated_frontiers = pl.concat(
         color="red",
         alpha=0.6,
     )
-    + geom_path(data=true_frontier, size=1)
+    + geom_path(data=frontier_true, size=1)
     + facet_wrap("sample_length", labeller=lambda x: f"{x} months in each sample")
     + coord_cartesian(xlim=(0, 0.6), ylim=(-0.2, 0.5))
     + labs(
         x="True volatility (annualized)",
         y="True expected excess return (annualized)",
-        title="Red: estimated frontiers and tangency portfolios. Black: true frontier",
+        title="Red: estimated tangency portfolios (dots) and frontiers (lines)",
+        subtitle="Black: true frontier. All portfolios evaluated with the true parameters",
     )
 )
 ```
 :::
 
-![Estimated and true efficient frontiers of the first 50 samples of each length, evaluated with the true parameters, from the R code above.](figures/mean-variance-simulated-frontiers.png){fig-alt="Two panels, for samples of 60 and 240 months, with 50 red estimated efficient frontiers and tangency portfolios inside the black true efficient frontier, in a diagram of true volatility against true expected excess return."}
+![Estimated efficient frontiers (red lines) and estimated tangency portfolios (red dots) of the first 50 samples of each length, evaluated with the true parameters, and the true efficient frontier (black line), from the R code above.](figures/mean-variance-simulated-frontiers.png){fig-alt="Two panels, for samples of 60 and 240 months, with 50 red estimated efficient frontiers as lines and 50 estimated tangency portfolios as dots inside the black true efficient frontier, in a diagram of true volatility against true expected excess return."}
 
-For every true expected return, the true frontier holds the portfolio with the lowest true variance. Every other portfolio, including every estimated one, therefore lies on or inside the true frontier when we evaluate it with the true parameters, and estimation error pushes it inside. With 60 months, the estimated frontiers and tangency portfolios scatter widely. 8 of the 50 estimated tangency portfolios even have a negative true expected excess return; all but one of them lie outside the figure. With 240 months, they lie closer to the true frontier, but still clearly inside it.
+Each red dot shows the true volatility and the true expected excess return of one estimated tangency portfolio $\hat\omega$, and each dot lies on the red line of the same sample. For every true expected return, the true frontier holds the portfolio with the lowest true variance. Every other portfolio, including every estimated one, therefore lies on or inside the true frontier when evaluated with the true parameters, and estimation error pushes the estimated portfolios inside.
+
+With 60 months, the estimated frontiers and tangency portfolios scatter widely. 8 of the 50 estimated tangency portfolios even have a negative true expected excess return; all but one of them lie outside the figure. The one inside the figure, at a true volatility of 57% and a true expected excess return of −8%, lies far below the black line. In these 8 samples, the denominator $\iota'\hat\Sigma^{-1}\hat\mu$ of the tangency weights is negative. The estimated tangency portfolio then lies on the lower, inefficient branch of the estimated frontier, with a negative *estimated* expected excess return $\hat\mu'\hat\Sigma^{-1}\hat\mu / \iota'\hat\Sigma^{-1}\hat\mu$. In all 8 samples, the true expected excess return of the estimated tangency portfolio is negative as well. The red lines of these 8 samples run downwards from the minimum-variance portfolio. The black line shows only the upper branch of the true frontier, from the minimum-variance portfolio upwards; the lower branch of the true frontier, not drawn, runs below all of these portfolios.
+
+With 240 months, the estimated frontiers and tangency portfolios lie closer to the true frontier, but still clearly inside it.
 
 ## Your own tangency portfolio out of sample {#out-of-sample-question}
 
