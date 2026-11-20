@@ -18,7 +18,7 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
   - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
   - peer feedback for seven days after each deadline;
   - the discussion for the figures of exercise 1 (#70): ready, unpublished, in the sandbox (discussion 848551), to be copied;
-  - the data files for students (CRSP, VOLARE).
+  - the three data files for students: `crsp_monthly.parquet`, `volare_realized_measures_daily.parquet` and `volare_realized_covariances_daily.parquet`.
 
 ## Data
 

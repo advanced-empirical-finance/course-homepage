@@ -40,9 +40,8 @@ As a next step, we generalize the code from before such that all the computation
 2. Download the licensed data of the course from Absalon and save them in the `data` folder of your repository, under exactly these names:
 
     - `crsp_monthly.parquet`: monthly returns and market capitalizations of all US common stocks from CRSP (120 MB);
-    - `volare_stocks_realized_measures_daily.parquet`: daily realized variances of 40 US stocks from VOLARE (28 MB);
-    - `volare_stocks_realized_covariances_daily.parquet`: their daily realized covariances (117 MB);
-    - `volare_futures_realized_measures_daily.parquet`: daily realized variances of five futures, among them the E-mini S&P 500 (5 MB).
+    - `volare_realized_measures_daily.parquet`: daily realized variances from VOLARE of 40 US stocks and five futures, among them the E-mini S&P 500; the column `asset_class` says which is which, `"stock"` or `"future"` (33 MB);
+    - `volare_realized_covariances_daily.parquet`: the daily realized covariances of the 40 stocks (117 MB).
 
     The files are licensed: Git ignores them, so they never end up on GitHub. The `data` folder already holds the public data of the first chapter, so everyone in the course works with the same numbers. When you are done, it looks like this:
 
@@ -53,12 +52,9 @@ As a next step, we generalize the code from before such that all the computation
     ├── factors_ff3_monthly.parquet                         Fama-French three factors
     ├── industries_ff_monthly.parquet                       ten industry portfolios
     ├── macro_predictors.parquet                            Welch and Goyal predictors
-    ├── volare_futures_realized_measures_daily.parquet      Absalon
-    ├── volare_stocks_realized_covariances_daily.parquet    Absalon
-    └── volare_stocks_realized_measures_daily.parquet       Absalon
+    ├── volare_realized_covariances_daily.parquet           Absalon
+    └── volare_realized_measures_daily.parquet              Absalon
     ```
-
-    Later exercises add files you build yourself, such as `stock_characteristics_monthly.parquet` in exercise 5.
 
 3. Almost all exercises from now on start by reading data from these files. This is all it takes, from a fresh R or Python session:
 
