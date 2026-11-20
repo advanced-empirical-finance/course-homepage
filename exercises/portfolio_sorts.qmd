@@ -118,7 +118,7 @@ Betas change over time. Lecture 7 therefore estimates the beta of every stock in
 **Exercises:**
 
 1. For every stock and month, estimate the CAPM regression on the last 60 months, with at least 48 monthly returns in the window. Use `estimate_betas()` from tidyfinance.
-1. Store the betas as `data/beta_exercise.parquet`. The open question at the end of this page uses them.
+1. Store the betas as `data/beta_exercise.parquet`. [Your own test](#own-beta-test) at the end of this page uses them.
 1. Check one number: reproduce Apple's beta for December 2025 with a single regression, as in the first section, on the 60 months that end in December 2025. How does it compare with Apple's beta over its whole history?
 1. Describe the cross-section of betas: the number of betas and stocks, the first and last month, the mean, the standard deviation, the 5%, 25%, 50%, 75% and 95% quantiles, and the share of negative betas.
 
@@ -413,6 +413,8 @@ capm_annual |>
 
 :::
 
+![Average excess returns of the ten beta portfolios and the CAPM's predictions, against the betas of the portfolios, 1964 to 2025, from the R code above.](figures/portfolio-sorts-beta-portfolios.png){fig-alt="Scatter plot of the ten beta portfolios: the CAPM's predictions lie on a dashed line through the origin from 3.8% at a beta of 0.54 to 12.1% at a beta of 1.71, while the average excess returns only rise from 5.9% to 9.1%, above the line for the six low-beta portfolios and below it for the four high-beta portfolios."}
+
 From 1964 to 2025, the market excess return averaged 7.1% a year. All numbers in the table are annualized (monthly values times 12):
 
 | Portfolio | Beta | Average excess return | CAPM prediction | CAPM alpha | t-statistic of alpha |
@@ -552,7 +554,7 @@ Lecture 8 adds two factors to the market: SMB (small minus big) and HML (high mi
 1. Estimate the three-factor regression $R^e_{i,t} = \alpha_i + \beta_i R^e_{m,t} + s_i\, \text{SMB}_t + h_i\, \text{HML}_t + \varepsilon_{i,t}$ for each of the ten beta portfolios and for the high-minus-low portfolio. The factors are in `factors_ff3_monthly.parquet` (`mkt_excess`, `smb`, `hml`).
 1. Compare the three-factor alphas with the CAPM alphas, in a table and a figure. Does the three-factor model explain the beta pattern?
 1. Look at the SMB and HML loadings of the low-beta and the high-beta portfolios. What kinds of stocks end up in the high-beta portfolio?
-1. Optional: run the GRS test for the three-factor model.
+1. Run the GRS test for the three-factor model.
 
 **Solutions:**
 
@@ -672,6 +674,8 @@ alphas = pl.concat(
 
 :::
 
+![Annualized CAPM and three-factor alphas of the ten beta portfolios, from the R code above.](figures/portfolio-sorts-alphas.png){fig-alt="Bar chart with two bars per beta portfolio: the CAPM alphas are positive for portfolios 1 to 6, between 0.6% and 2.4% a year, and negative for portfolios 7 to 10, down to -3.0%; the three-factor alphas are smaller for portfolios 1 to 6, about zero for portfolios 4 to 6, and also negative for portfolios 7 to 10, down to -2.9%."}
+
 Alphas in % a year, with their t-statistics, and the loadings of the three-factor regression:
 
 | Portfolio | CAPM alpha | t | Three-factor alpha | t | Market | SMB | HML |
@@ -692,7 +696,7 @@ The three-factor model does not explain the beta pattern. Its alphas still fall 
 
 The loadings show which stocks have high betas. The high-beta portfolio loads strongly on SMB (0.82) and slightly negatively on HML (−0.11): high-beta stocks tend to be small growth stocks. The low-beta portfolios load negatively on SMB and positively on HML: they tilt towards large value stocks. The high-minus-low portfolio has an SMB loading of 0.94 (t-statistic 13.67) and an HML loading of −0.36 (t-statistic −5.30). Frazzini and Pedersen (2014), cited in lecture 8, turn this pattern into a factor of its own: betting against beta.
 
-## Open question {#open-question}
+## Your own test: high-beta minus low-beta {#own-beta-test}
 
 **Hypothesis:** high-beta stocks earn lower CAPM alphas than low-beta stocks.
 
