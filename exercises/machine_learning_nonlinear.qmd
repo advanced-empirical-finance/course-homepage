@@ -7,8 +7,6 @@ aliases:
 
 This exercise reproduces the two uses of neural networks in lecture 14 on the factor zoo: first a network that forecasts each anomaly's return, then Chen–Pelger–Zhu light, a network that learns the SDF itself. The last part asks what the resulting portfolios trade, as in lecture 15. The data for the forecasts are the panel of lecture 13: one row per anomaly and month, with the return, last month's return, the average return over the last 12 months (factor momentum) and five macro predictors. The estimation sample runs until 1999, the test sample from 2000 to 2023.
 
-The code on this page does not run when the website is built, because training the networks takes a few minutes. The results are stated in the text.
-
 ## Neural network forecasts {#neural-networks}
 
 **Exercises:**
@@ -995,6 +993,8 @@ monthly_turnover |>
 ```
 :::
 
+![Monthly turnover between anomalies of the ridge SDF and of the network's forecast portfolio, 2000 to 2023, from the R code above.](figures/machine-learning-nonlinear-turnover.png){fig-alt="Two lines of monthly turnover from 2000 to 2023: the ridge SDF stays below 15% in every month, the forecast portfolio of the neural network moves between about 20% and 80% with peaks of 101% in May 2009 and 143% in May 2020."}
+
 A portfolio with constant weights trades only because the anomalies earn different returns. After a month, the winners have a larger share of the portfolio than their target weight, so rebalancing sells part of the winners and buys the losers. The ridge SDF trades most after months in which the returns of the anomalies differ the most, at most 15% in February 2001.
 
 The forecast portfolio sets new weights every month. Last month's return and the average return over the last 12 months enter the forecasts, and both change every month; the mean-variance weights then react strongly to the changes in the expected returns. Its turnover never falls below 20% a month and peaks in May 2009 (101% in R, 103% in Python) and May 2020 (143% and 146%), during the financial crisis and the first months of the pandemic.
@@ -1003,7 +1003,7 @@ If every unit traded costs a fraction $c$, a portfolio with a gross position of 
 
 This turnover leaves out the trades inside each anomaly. Every long-short portfolio is itself rebalanced each month, and the returns from Open Source Asset Pricing are before these costs. Both kinds of portfolio pay them on top of the trades between anomalies. Lecture 15 discusses portfolios that take trading costs into account when they choose the weights.
 
-## Open question {#open-question}
+## Beat the scoreboard {#beat-the-scoreboard}
 
 Can you beat the best model on the scoreboard of the lectures? Use any method from the course on the factor zoo, tuned with the estimation sample only, and compute the annualized Sharpe ratio of your SDF portfolio in the test sample.
 
