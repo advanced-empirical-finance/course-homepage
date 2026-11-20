@@ -3,7 +3,7 @@ title: Backtesting portfolio strategies
 eval: false
 ---
 
-This exercise goes with [lecture 3](../slides/aef-03-estimation-uncertainty.pdf). You backtest four portfolio strategies with rolling windows on the monthly excess returns of today's Dow Jones stocks from [exercise 2](mean_variance.qmd#estimated-portfolios-true-outcomes), January 2000 to December 2025. Excess returns are the returns minus the one-month T-bill rate, `risk_free` in `factors_ff3_monthly.parquet`. The first three code chunks repeat the code of exercise 2 that you need, so this page works on its own.
+This exercise goes with [lecture 3](../slides/aef-03-estimation-uncertainty.pdf). You backtest four portfolio strategies with rolling windows on the monthly excess returns of today's Dow Jones stocks from [exercise 2](mean_variance.qmd#simulation-estimated-portfolios-true-parameters), January 2000 to December 2025. Excess returns are the returns minus the one-month T-bill rate, `risk_free` in `factors_ff3_monthly.parquet`. The first three code chunks repeat the code of exercise 2 that you need, so this page works on its own.
 
 ## Backtesting the Dow Jones {#backtesting-the-dow-jones}
 
@@ -12,7 +12,7 @@ This exercise goes with [lecture 3](../slides/aef-03-estimation-uncertainty.pdf)
 1. Backtest four strategies with rolling windows on the monthly excess returns of the Dow Jones stocks. In every month $t$ from the 61st month on, estimate $\hat\mu$ and $\hat\Sigma$ from the 60 months before $t$, compute the weights of each strategy, and record its excess return in month $t$. The strategies are the plug-in tangency portfolio ($\hat\omega \propto \hat\Sigma^{-1}\hat\mu$), the plug-in minimum-variance portfolio ($\hat\omega \propto \hat\Sigma^{-1}\iota$), the $1/N$ portfolio, and the minimum-variance portfolio without short sales. The last one has no closed form: solve it as a quadratic program, with `solve.QP()` from the `quadprog` package (R) or `minimize()` from `scipy` (Python).
 2. Compute the annualized mean, volatility and Sharpe ratio of the excess returns of each strategy. Which strategy has the highest Sharpe ratio?
 3. Plot the weights of the plug-in tangency portfolio over time, one line per stock. Why does this portfolio fail? Hint: look at the denominator $\iota'\hat\Sigma^{-1}\hat\mu$ of the weights.
-4. Lecture 3 lists traps of backtests. Which information does this backtest use that an investor did not have at the time?
+4. Lecture 3 lists traps of backtests. Which information does the backtest of task 1 use that an investor in 2005 did not have?
 
 **Solutions:**
 
@@ -297,7 +297,7 @@ backtest = pl.DataFrame(records)
 ```
 :::
 
-The backtest runs from February 2005 to December 2025, 251 months. Annualized, the excess returns of the four strategies are:
+The backtest runs from February 2005 to December 2025. Annualized, the excess returns of the four strategies are:
 
 | Strategy | Mean | Volatility | Sharpe ratio |
 |---|---:|---:|---:|

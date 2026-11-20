@@ -69,7 +69,7 @@ From then on, `git pull` and `git push` work with your team's repository, and `g
 
 ### Install R, Python and the course packages
 
-7. In the Terminal (not the Console) of Positron: because you opened the course repository in step 6, the Terminal starts in the repository's folder, the one that holds `uvr.toml` and `pyproject.toml`. Check with `pwd` (macOS and Linux) or `Get-Location` (Windows). Then run
+7. In the Terminal (not the Console) of Positron: because you opened the course repository in step 6, the Terminal starts in the repository's folder, the one that holds `uvr.toml` and `pyproject.toml`. Then run
 
     ```sh
     uvr r install 4.6.1
