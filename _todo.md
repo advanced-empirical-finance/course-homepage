@@ -43,16 +43,16 @@ Instead of video recordings: a transcript of each lecture, turned into notes and
 
 ## Exercises
 
-Eight pages since 15 November 2026 (plan in course-homepage#74), none while an assignment runs.
+Twelve pages, numbered 0 to 11, since 23 November 2026 (plan in course-homepage#74), none while an assignment runs.
 
-- [ ] **S:** review the eight exercise pages.
+- [ ] **S:** review the twelve exercise pages.
 - [ ] **C:** exercise 7 should use tidyfinance's download of the anomaly returns once it works in Python.
 
 ## Assignments
 
 - [ ] **S + C:** assignment 1 (portfolio choice), final version with a solution script. It can take what it needs from the retired exercise on shrinkage and transaction costs (Ledoit-Wolf, backtests with costs, parametric policies, Bayes-Stein).
 - [ ] **S + C:** assignment 2 (machine learning in asset pricing), draft. It starts from the `stock_characteristics_monthly.parquet` each student builds in exercise 6 (not distributed on Absalon).
-- [ ] **S + C:** assignment 3 (realized volatility from high-frequency data, SPY and VOLARE), draft. GARCH (the retired exercise 10) can serve as its daily benchmark.
+- [ ] **S + C:** assignment 3 (realized volatility from high-frequency data, SPY and VOLARE), draft. GARCH (from a retired exercise page) can serve as its daily benchmark.
 
 ## Trading game and conference
 

@@ -47,11 +47,15 @@ website:
             file: exercises/machine_learning_data.qmd
           - text: "7 shrinking the SDF"
             file: exercises/machine_learning.qmd
-          - text: "8 neural networks and implementable portfolios"
+          - text: "8 factor selection via machine learning"
+            file: exercises/factor_selection.qmd
+          - text: "9 neural network forecasts"
             file: exercises/machine_learning_nonlinear.qmd
+          - text: "10 learning the SDF and implementable portfolios"
+            file: exercises/learning_the_sdf.qmd
           - text: "---"
           - text: "high-frequency data"
-          - text: "9 high-frequency data"
+          - text: "11 high-frequency data"
             file: exercises/high_frequency_data.qmd
       - text: trading game
         menu:
@@ -96,7 +100,9 @@ website:
            contents:
              - exercises/machine_learning_data.qmd
              - exercises/machine_learning.qmd
+             - exercises/factor_selection.qmd
              - exercises/machine_learning_nonlinear.qmd
+             - exercises/learning_the_sdf.qmd
          - section: High-Frequency Data
            contents:
              - exercises/high_frequency_data.qmd

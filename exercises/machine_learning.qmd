@@ -560,4 +560,4 @@ Cross-validation picks $\lambda = 3.2 \times 10^{-4}$ in both languages, which k
 
 The solution above chooses the ridge penalty with one particular cross-validation. How much does the Sharpe ratio in the test sample depend on that choice? Choose your own validation scheme within the estimation sample: the number of folds, random or consecutive blocks of months, and the criterion, for instance the Sharpe ratio or the pricing error. Never touch the test sample.
 
-**Submit by Wednesday 7 April:** your scheme (number of folds, how you split the months, the criterion), the chosen penalty, and the Sharpe ratio in the test sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-validation-scheme).
+**Submit by Sunday 11 April:** your scheme (number of folds, how you split the months, the criterion), the chosen penalty, and the Sharpe ratio in the test sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-validation-scheme).
