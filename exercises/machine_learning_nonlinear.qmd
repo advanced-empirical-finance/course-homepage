@@ -240,7 +240,7 @@ pl.DataFrame(
 ```
 :::
 
-Both languages choose a decay of 300, as in lecture 14. In R, the root mean squared error of the scaled returns in the validation years falls from 1.24 with a decay of 1 to 1.12 for the decays from 30 to 1000, with the smallest error at 300. With little weight decay, the network fits noise of 1974–1994 that does not come back in 1995–1999. Python's errors differ a little (1.25 with a decay of 1, 1.12 with 300), because its networks start from other random weights, but they are also lowest at 300. The errors for decays from 30 to 1000 are almost the same, so the exact choice in this range matters little.
+Both languages choose a decay of 300. In R, the root mean squared error of the scaled returns in the validation years falls from 1.24 with a decay of 1 to 1.12 for the decays from 30 to 1000, with the smallest error at 300. With little weight decay, the network fits noise of 1974–1994 that does not come back in 1995–1999. Python's errors differ a little (1.25 with a decay of 1, 1.12 with 300), because its networks start from other random weights, but they are also lowest at 300. The errors for decays from 30 to 1000 are almost the same, so the exact choice in this range matters little.
 
 scikit-learn may warn that L-BFGS stopped after 500 iterations before it converged; in our run, this happens once while choosing the decay and does not change the choice.
 
@@ -298,7 +298,7 @@ def oos_r2(forecast):
 ```
 :::
 
-The ensemble of networks has an out-of-sample $R^2$ of 1.24% in R and 1.27% in Python, about twice the 0.65% of OLS. OLS has no random start, so its $R^2$ is the same in both languages; the networks differ somewhat, because R and Python draw different starting weights and use different optimizers. The numbers in R are those of lecture 14.
+The ensemble of networks has an out-of-sample $R^2$ of 1.24% in R and 1.27% in Python, about twice the 0.65% of OLS. OLS has no random start, so its $R^2$ is the same in both languages; the networks differ somewhat, because R and Python draw different starting weights and use different optimizers.
 
 For the portfolio, the forecasts go into a matrix with one row per month and one column per anomaly, in the order of the return matrix. Because $\hat\Sigma + \lambda I$ is symmetric, the weights of all months are the forecast matrix times its inverse.
 

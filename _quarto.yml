@@ -95,6 +95,8 @@ website:
          - section: From Portfolio Choice to Pricing
            contents:
              - exercises/mean_variance.qmd
+             - exercises/backtesting.qmd
+             - exercises/shrinkage_transaction_costs.qmd
              - exercises/portfolio_sorts.qmd
          - section: Machine Learning and the SDF
            contents:
