@@ -43,7 +43,7 @@ Instead of video recordings: a transcript of each lecture, turned into notes and
 
 ## Exercises
 
-Twelve pages, numbered 0 to 11, since 23 November 2026 (plan in course-homepage#74), none while an assignment runs.
+Twelve pages, numbered 0 to 11, since 23 November 2026 (plan in course-homepage#74).
 
 - [ ] **S:** review the twelve exercise pages.
 - [ ] **C:** exercise 7 should use tidyfinance's download of the anomaly returns once it works in Python.
