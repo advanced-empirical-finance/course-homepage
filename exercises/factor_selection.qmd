@@ -1,0 +1,88 @@
+---
+title: Factor selection via machine learning
+---
+
+This exercise goes with [lecture 10](../slides/aef-10-machine-learning-foundations.pdf). You work through the Tidy Finance chapter [Factor selection via machine learning](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html) on your own; the chapter shows the R and the Python code side by side. The chapter introduces ridge regression, the lasso and the elastic net, and the machine learning workflow of *tidymodels* (R) and *scikit-learn* (Python): split the sample, pre-process the data, specify and fit a model, and choose its penalty by cross-validation. Run the code of the chapter in your copy of the course repository as you read.
+
+The chapter and the lecture use the same tools on different data. Lecture 10 works on the factor zoo: it regresses a one on the long-short returns of the anomalies without an intercept, so that the fitted values are the returns of a portfolio, and judges a penalty by the Sharpe ratio of this portfolio; the estimation sample ends in 1999. The chapter forecasts the excess returns of ten industry portfolios with factor returns, macroeconomic predictors and their products, standardizes the predictors, keeps the last 20% of the months as the test sample and judges a penalty by the forecast error. Its numbers therefore differ from those of the lecture.
+
+## Penalized regression {#penalized-regression}
+
+**Exercises:**
+
+1. Read the section *Brief theoretical background*. Write down the objective functions of OLS, ridge regression, the lasso and the elastic net. Which values of the mixing parameter $\rho$ turn the elastic net into ridge regression and into the lasso? Which arguments set $\lambda$ and $\rho$ in `linear_reg()` (R) and in `ElasticNet()` (Python)?
+1. The mean squared error of a forecast splits into the variance of the forecast, its squared bias and the noise. Use this split to explain why a biased estimator such as ridge regression can forecast better than OLS. Which of the two penalties, ridge or lasso, sets coefficients to exactly zero, and what does that mean for the selection of factors?
+
+**Solutions:** The section [Brief theoretical background](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#brief-theoretical-background) and its parts on [ridge regression](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#ridge-regression), the [lasso](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#lasso) and the [elastic net](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#elastic-net) answer both tasks; the arguments appear in the section *Build a model* (`penalty` and `mixture` in R, `alpha` and `l1_ratio` in Python).
+
+## Data {#data}
+
+**Exercises:**
+
+3. Read the Fama-French three factors, the macroeconomic predictors of Welch and Goyal and the ten industry portfolios from the `data` folder of the course repository. The chapter also uses the q-factors of Hou, Xue, and Zhang (2015), which are not in the folder. Download them with `tidyfinance`; the columns have the names that the chapter uses:
+
+::: {.panel-tabset group="language"}
+## R
+
+```{r}
+#| label: r-download-q-factors
+#| eval: false
+library(tidyfinance)
+
+factors_q_monthly <- download_data(
+  domain = "Global Q",
+  dataset = "q5_factors_monthly_2024",
+  start_date = "1960-01-01",
+  end_date = "2024-12-31"
+)
+```
+
+## Python
+
+```{python}
+#| label: py-download-q-factors
+#| eval: false
+import tidyfinance as tf
+
+factors_q_monthly = tf.download_data(
+    domain="Global Q",
+    dataset="q5_factors_monthly_2024",
+    start_date="1960-01-01",
+    end_date="2024-12-31",
+)
+```
+
+:::
+
+4. Combine the four datasets into one data frame with one row per industry and month: the excess return of the industry, the factor returns and the macroeconomic predictors, with the prefixes `factor_ff_`, `factor_q_` and `macro_` of the chapter and without the predictor `rp_div`. Keep the months in which every variable is available. Plot the distribution of the monthly excess returns of each industry in box plots.
+
+**Solutions:** The section [Data preparation](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#data-preparation) solves both tasks in R and Python. With the data of the course repository, every industry has 683 months, from January 1967 to November 2023, as in the chapter.
+
+## The machine learning workflow {#workflow}
+
+**Exercises:**
+
+5. Keep the manufacturing industry and split its months into a training and a test sample: the last 20% of the months form the test sample, which plays no part in choosing the model. Why does the split keep the months in their order instead of drawing them at random?
+6. Pre-process the data: add the product of every factor with every macroeconomic predictor and standardize every regressor, with a recipe in R or a `ColumnTransformer()` in Python. How many regressors does the model have? Why must the means and standard deviations of the standardization come from the training sample only?
+7. Specify a lasso with a fixed penalty, fit it on the training sample, and plot the realized and the fitted excess returns of manufacturing over the whole sample, with the test months shaded.
+8. Compute the coefficients of the lasso and of ridge regression for a grid of penalties and plot how they change with the penalty. How do the two paths differ?
+
+**Solutions:** The section [The machine learning workflow](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#the-machine-learning-workflow) and its parts [Pre-process data](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#pre-process-data), [Build a model](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#build-a-model) and [Fit a model](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#fit-a-model) solve the four tasks.
+
+## Cross-validation {#cross-validation}
+
+**Exercises:**
+
+9. Choose the penalty $\lambda$ and the mixing parameter $\rho \in \{0, 0.5, 1\}$ by cross-validation within the training sample. Use rolling-origin folds: each fold estimates the model on 60 consecutive months and computes the root mean squared forecast error in the 48 months that follow. Plot the error against the penalty for the three values of $\rho$. Which combination has the smallest error?
+10. Why do the folds keep the validation months after the estimation months instead of drawing the validation months at random?
+
+**Solutions:** The section [Tune a model](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#tune-a-model) solves both tasks. The R and the Python code build the same folds from the row numbers of the months, but use different grids of penalties (20 in R, 100 in Python), so their choices differ.
+
+## Which factors matter {#which-factors-matter}
+
+**Exercises:**
+
+11. Repeat the selection for each of the ten industries: choose the penalty of the lasso by cross-validation, fit the lasso on the training sample and keep the regressors with a coefficient other than zero. Show in a heat map which regressors the lasso selects for which industry.
+12. Which regressors does the lasso select for most industries? Does a small set of factors explain the returns of all ten industries?
+
+**Solutions:** The section [Parallelized workflow](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#parallelized-workflow) solves both tasks, and the section [Key takeaways](https://www.tidy-finance.org/chapters/factor-selection-via-machine-learning.html#key-takeaways) sums up the answer. In R, the chapter takes the largest penalty whose error lies within one standard error of the smallest (`select_by_one_std_err()`), in Python the penalty with the smallest error, so the two heat maps differ.
