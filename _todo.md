@@ -2,14 +2,6 @@
 
 Updated 19 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
-## Calendar and rooms
-
-- [ ] **S:** book time and room for the three replacement lectures (Monday lectures in odd weeks since 17 November 2026; check with the study administration that they do not clash with the students' other courses):
-  - Fri 5 Mar, portfolio sorts (for Mon 15 Mar; S is away that week);
-  - Wed 31 Mar, reproducibility and non-standard errors (for Thu 18 Mar);
-  - Mon 19 Apr 10–12, trees and forests (for Thu 15 Apr).
-- [ ] **C:** then update the lecture plan, which currently says "time and room follow".
-
 ## Absalon
 
 Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbox course 57599). The 2027 course does not exist yet.
