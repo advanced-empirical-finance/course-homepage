@@ -2,7 +2,7 @@
 title: "Lecture plan"
 ---
 
-Lectures are on Mondays 10–12 in odd weeks (CSS 35.3.12) and on Thursdays 13–15 (CSS 18-01-11). Three lectures are at other times: Friday 5 March, Wednesday 31 March and Monday 19 April; time and room follow. Every lecture has its own slides as a PDF. The next lecture is highlighted.
+Lectures are on Mondays 10–12 in odd weeks (CSS 35.3.12) and on Thursdays 13–15 (CSS 18-01-11). Three lectures are at other times: Friday 5 March 10–12 (CSS 35.3.12), Wednesday 31 March 10–12 (CSS 18-01-11) and Monday 19 April 10–12 (CSS 18-01-11). Every lecture has its own slides as a PDF. The next lecture is highlighted.
 
 | Week | Date | Lecture | Slides | Exercises | Preparation |
 |:-----|:-----|:--------|:-------|:----------|:------------|
