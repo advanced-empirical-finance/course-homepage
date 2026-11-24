@@ -1,6 +1,6 @@
 # AEF 2027: open tasks
 
-Updated 19 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
+Updated 24 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
 ## Absalon
 
@@ -15,34 +15,30 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 ## Data
 
 - [ ] **S + C:** review the lobsteR package (github.com/voigtstefan/lobsteR) and its cleaning steps: which messages are dropped, auctions and halts, the aggregation to 5-second snapshots. The SPY data in tidyfinance are built with it.
-- [ ] **C:** a LOBSTER example for lecture 16: a few rows of a message file and an order book file. Use LOBSTER's public sample files or a day from KU's access, depending on the licence.
 
 ## Lectures
 
 - [ ] **C:** lecture 15: read the factor library and its trading costs with tidyfinance's Hugging Face download once they are released there (before the semester), instead of the private paper files, so that students can render the deck.
-- [ ] **C:** check lecture 1 against the final plan: course overview, assignment table (course-repository#57), dates.
-
-## Course quality
-
 
 ## Lecture notes from transcripts
 
-Instead of video recordings: a transcript of each lecture, turned into notes and published as a PDF with the slides and the whiteboard sheets.
+Instead of video recordings: a transcript of each lecture, curated into a post that reads like a blog, with the slides where they were shown and, later, photos of the whiteboard.
 
-- [ ] **C:** transcription on eumel with Whisper (the audio never leaves eumel); test the speed and quality on a sample recording before the semester.
-- [ ] **C:** the live decks report slide changes to eumel, so that the transcript splits by slide.
-- [ ] **C:** lecture notes PDF per lecture: each slide, what was said (cleaned up, in S's words, student questions without names), and the whiteboard sheets.
+Since 24 November 2026: Whisper (large-v3-turbo) runs on eumel, the live decks log every slide change (press "r" when the recording starts; course-repository#85), and Claude on eumel turns the transcript into a blog-style post with the slides (tested on a 2026 recording and a test session; details in `~/claude-home/aef-transcribe`).
+
+- [ ] **S:** decide where the notes are published (course homepage, Absalon or both).
+- [ ] **C:** a documented workflow (skill) to run after each lecture: copy the recording to eumel, transcribe overnight, write the post, publish, delete the audio.
 
 ## Exercises
 
 Twelve pages, numbered 0 to 11, since 23 November 2026 (plan in course-homepage#74).
 
-- [ ] **S:** review the twelve exercise pages.
+- [ ] **S:** review the new and split exercise pages 3, 4, 8, 9 and 10 (pages 0–7 reviewed on 20 November 2026).
 - [ ] **C:** exercise 7 should use tidyfinance's download of the anomaly returns once it works in Python.
 
 ## Assignments
 
-- [ ] **S + C:** assignment 1 (portfolio choice), final version with a solution script. It can take what it needs from the retired exercise on shrinkage and transaction costs (Ledoit-Wolf, backtests with costs, parametric policies, Bayes-Stein).
+- [ ] **S + C:** assignment 1 (portfolio choice), final version with a solution script. Exercise 4 now solves Ledoit-Wolf, backtests with costs and parametric portfolio policies openly, so assignment 1 needs another angle.
 - [ ] **S + C:** assignment 2 (machine learning in asset pricing), draft. It starts from the `stock_characteristics_monthly.parquet` each student builds in exercise 6 (not distributed on Absalon).
 - [ ] **S + C:** assignment 3 (realized volatility from high-frequency data, SPY and VOLARE), draft. GARCH (from a retired exercise page) can serve as its daily benchmark.
 
