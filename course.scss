@@ -411,3 +411,10 @@ body.quarto-dark .panel-tabset {
 .callout .callout-body-container {
   font-weight: 300;
 }
+
+// Slides inside the lecture notes
+img.slide {
+  border: 1px solid var(--rule, #ddd);
+  border-radius: 4px;
+  margin: 0.8rem 0 1.2rem;
+}

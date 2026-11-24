@@ -1,0 +1,16 @@
+---
+title: Lecture notes
+listing:
+  contents: "aef-*.qmd"
+  type: table
+  sort: "date desc"
+  fields: [date, title]
+  date-format: "D MMMM YYYY"
+  sort-ui: false
+  filter-ui: false
+  field-display-names:
+    date: Lecture
+    title: Topic
+---
+
+There are no recordings of the lectures. Instead, a few days after each lecture, a written version appears here: what was said in the lecture, shortened and edited, with the slides that were shown. The text is written from an audio transcript; questions from the room appear without names.

@@ -21,6 +21,8 @@ website:
         file: index.qmd
       - text: lecture plan
         file: slides-index.qmd
+      - text: lecture notes
+        file: lecture-notes/index.qmd
       - text: exercises
         menu:
           - text: "overview"
