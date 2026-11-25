@@ -43,8 +43,6 @@ spy <- map(years, \(year) {
     mutate(year = year)
 }) |>
   bind_rows()
-
-glimpse(spy)
 ```
 
 ## Python
@@ -70,8 +68,6 @@ spy = pl.concat(
     ).with_columns(year=pl.lit(year))
     for year in years
 )
-
-spy.glimpse()
 ```
 :::
 
@@ -144,6 +140,8 @@ intraday = (
 ```
 :::
 
+![Median spread in basis points, median depth at the best quotes in USD and median dollar volume per five seconds in USD of SPY in each ten-minute interval of continuous trading, March 2024, from the R code above.](figures/high-frequency-intraday-liquidity.png){fig-alt="Three panels against the hour of the day from 9:30 to 16:00: depth rises from about USD 220,000 at the open to about 300,000 in the afternoon and jumps to 430,000 in the last ten minutes; the spread falls from 0.23 basis points at the open to about 0.20 from noon on; dollar volume falls from 1.5 million at the open to about 0.4 million in the early afternoon and rises to 4.7 million in the last ten minutes."}
+
 The snapshot at 9:30:05 still holds the opening auction and the one at 16:00:00 the closing auction, so the filter keeps the continuous trading from 9:30:10 to 15:59:55, as in lectures 16 and 17. In March 2024, trading is heaviest at the open and at the close: the median dollar volume per five seconds falls from about USD 1.5 million in the first ten minutes to about USD 0.4 million in the early afternoon and rises to USD 4.7 million in the last ten minutes (the U-shape). The spread is widest right after the open (0.23 basis points), when uncertainty about the day's news is largest, and stays close to 0.20 basis points from noon on. Depth at the best quotes builds up during the day, from about USD 0.22 million in the first ten minutes to 0.30 million in the afternoon and 0.43 million in the last ten minutes.
 
 The figures show medians, as in lecture 16, because a mean follows the few days with news in an interval, such as the Fed's statement on 20 March 2024 (lecture 16). The means are higher: USD 2.0 million instead of 1.5 million in the first ten minutes, and USD 6.5 million instead of 4.7 million in the last ten.
@@ -191,6 +189,8 @@ yearly = (
 )
 ```
 :::
+
+![Average spread in basis points and average depth at the best quotes in USD of SPY in March of each year from 2008 to 2025, from the R code above.](figures/high-frequency-yearly-liquidity.png){fig-alt="Two panels against the year: the spread falls from 0.91 basis points in 2008 to 0.21 in 2024, with peaks of 1.49 in 2009 and 0.86 in 2020 and 0.50 in 2025; depth is between USD 0.6 million and 2.2 million until 2015 and below 0.6 million since 2016, with a low of 0.05 million in 2020."}
 
 The spread fell from 0.91 basis points in March 2008 to 0.21 in March 2024, and rose again to 0.50 in March 2025. SPY trades at the minimum tick of one cent, and with a rising price, one cent became an ever smaller share of the price. The crisis months stand out: 1.49 basis points in March 2009, after the Lehman collapse, and 0.86 in March 2020, during the COVID-19 crash. Depth at the best quotes fell as well, from about USD 1.1 million in 2008 to 0.3 million in 2024, with a low of USD 0.05 million in March 2020: orders are smaller and spread over more trading venues.
 
@@ -249,7 +249,31 @@ price_impact
 ```
 :::
 
-With one regressor, the slope is the covariance of returns and order flow divided by the variance of the order flow, and the $R^2$ is their squared correlation, so the Python code computes them directly.
+```{.default .code-output}
+#> # A tibble: 18 × 3
+#>     year lambda      r2
+#>    <int>  <dbl>   <dbl>
+#>  1  2008  0.338 0.118
+#>  2  2009  1.19  0.284
+#>  3  2010  0.328 0.395
+#>  4  2011  0.465 0.185
+#>  5  2012  0.340 0.265
+#>  6  2013  0.450 0.200
+#>  7  2014  0.425 0.116
+#>  8  2015  0.176 0.0750
+#>  9  2016  0.652 0.135
+#> 10  2017  0.386 0.132
+#> 11  2018  0.826 0.138
+#> 12  2019  0.503 0.117
+#> 13  2020  1.84  0.0476
+#> 14  2021  0.426 0.0370
+#> 15  2022  0.266 0.00971
+#> 16  2023  0.455 0.0251
+#> 17  2024  0.240 0.0397
+#> 18  2025  0.577 0.0773
+```
+
+With one regressor, the slope is the covariance of returns and order flow divided by the variance of the order flow, and the $R^2$ is their squared correlation, so the Python code computes them directly. The output blocks on this page come from the R code. The Python code prints the same numbers in a different layout, except in the simulation of Roll's model below.
 
 USD 1 million of net buying in a minute moved SPY by 0.34 basis points in March 2008, by 0.24 in March 2024 and by 0.58 in March 2025. In the other years it lay between 0.18 and 0.83 basis points, except in the crisis months: 1.19 basis points in March 2009 and 1.84 in March 2020. The $R^2$ fell from between 12% and 40% until 2012 to between 1% and 8% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, net buying of USD 1 million costs a fraction of a basis point in calm months, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
 
@@ -285,6 +309,8 @@ roll <- tibble(
     change = 100 * (trade_price - lag(trade_price)),
     previous_change = lag(change)
   )
+autocovariance <- cov(roll$change, roll$previous_change, use = "complete.obs")
+roll_spread <- 2 * sqrt(-autocovariance)
 
 roll |>
   filter(trade <= n_shown) |>
@@ -292,9 +318,6 @@ roll |>
   geom_line(aes(y = true_price)) +
   geom_point(aes(y = trade_price), color = "#901A1E") +
   labs(x = "Trade", y = "Price (USD)")
-
-autocovariance <- cov(roll$change, roll$previous_change, use = "complete.obs")
-c(autocovariance = autocovariance, roll_spread = 2 * sqrt(-autocovariance))
 ```
 
 ## Python
@@ -320,6 +343,8 @@ roll = (
     .with_columns(change=100 * pl.col("trade_price").diff())
     .with_columns(previous_change=pl.col("change").shift(1))
 )
+autocovariance = roll.drop_nulls().select(pl.cov("change", "previous_change")).item()
+roll_spread = 2 * np.sqrt(-autocovariance)
 
 (
     ggplot(roll.filter(pl.col("trade") <= n_shown), aes(x="trade"))
@@ -328,13 +353,9 @@ roll = (
     + labs(x="Trade", y="Price (USD)")
 )
 ```
-
-```{python}
-#| label: py-roll-spread
-autocovariance = roll.drop_nulls().select(pl.cov("change", "previous_change")).item()
-{"autocovariance": autocovariance, "roll_spread": 2 * np.sqrt(-autocovariance)}
-```
 :::
+
+![The first 40 trade prices (red dots) and the true price (black line) of the simulated trades, from the R code above.](figures/high-frequency-roll-prices.png){fig-alt="A black line of the true price rising from USD 100.00 to about 100.03 over 40 trades, with red dots of the trade prices about one cent above or below the line, switching sides from trade to trade."}
 
 In R, the autocovariance of the trade price changes is −0.97 cents² (theory: $-s^2/4 = -1$ cent²), so Roll's formula gives a spread of 1.97 cents, close to the true 2 cents; these are the numbers of lecture 16. Python draws other random numbers from the same seed, so its numbers differ a little: −1.03 cents² and 2.03 cents. In the figure, the trade price jumps between the bid and the ask around the true price: after a trade at the ask, the next trade price tends to fall, after a trade at the bid it tends to rise.
 
@@ -416,12 +437,6 @@ es <- read_parquet("data/volare_realized_measures_daily.parquet") |>
   mutate(volatility = sqrt(days_per_year * rv5))
 
 es |>
-  ggplot(aes(x = date, y = volatility)) +
-  geom_line(linewidth = 0.2) +
-  scale_y_log10(labels = percent) +
-  labs(x = NULL, y = "Annualized volatility (log scale)")
-
-es |>
   summarize(
     first_day = min(date),
     last_day = max(date),
@@ -434,6 +449,12 @@ es |>
 es |>
   mutate(year = year(date)) |>
   summarize(median_volatility = median(volatility), .by = year)
+
+es |>
+  ggplot(aes(x = date, y = volatility)) +
+  geom_line(linewidth = 0.2) +
+  scale_y_log10(labels = percent) +
+  labs(x = NULL, y = "Annualized volatility (log scale)")
 ```
 
 ## Python
@@ -454,27 +475,59 @@ es = (
     .with_columns(volatility=(days_per_year * pl.col("rv5")).sqrt())
 )
 
+print(
+    es.select(
+        first_day=pl.col("date").min(),
+        last_day=pl.col("date").max(),
+        days=pl.len(),
+        median_volatility=pl.col("volatility").median(),
+        most_volatile_day=pl.col("date").get(pl.col("volatility").arg_max()),
+        highest_volatility=pl.col("volatility").max(),
+    )
+)
+
+print(
+    es.group_by(year=pl.col("date").dt.year())
+    .agg(median_volatility=pl.col("volatility").median())
+    .sort("year")
+)
+
 (
     ggplot(es, aes(x="date", y="volatility"))
     + geom_line(size=0.2)
     + scale_y_log10(labels=percent_format())
     + labs(x="", y="Annualized volatility (log scale)")
 )
-
-es.select(
-    first_day=pl.col("date").min(),
-    last_day=pl.col("date").max(),
-    days=pl.len(),
-    median_volatility=pl.col("volatility").median(),
-    most_volatile_day=pl.col("date").get(pl.col("volatility").arg_max()),
-    highest_volatility=pl.col("volatility").max(),
-)
-
-es.group_by(year=pl.col("date").dt.year()).agg(
-    median_volatility=pl.col("volatility").median()
-).sort("year")
 ```
 :::
+
+```{.default .code-output}
+#>    first_day   last_day days median_volatility most_volatile_day
+#> 1 2009-09-30 2026-10-30 4419         0.1145932        2020-03-16
+#>   highest_volatility
+#> 1           1.267907
+#>    year median_volatility
+#> 1  2009        0.14571705
+#> 2  2010        0.14976977
+#> 3  2011        0.16312659
+#> 4  2012        0.11948909
+#> 5  2013        0.09225564
+#> 6  2014        0.09236320
+#> 7  2015        0.11773878
+#> 8  2016        0.09944697
+#> 9  2017        0.06191185
+#> 10 2018        0.11563958
+#> 11 2019        0.09750699
+#> 12 2020        0.17269543
+#> 13 2021        0.10232331
+#> 14 2022        0.20424204
+#> 15 2023        0.11301285
+#> 16 2024        0.09924800
+#> 17 2025        0.11849328
+#> 18 2026        0.10608006
+```
+
+![Annualized volatility of ES from five-minute returns (`rv5`) on every trading day, September 2009 to October 2026, on a log scale, from the R code above.](figures/high-frequency-es-volatility.png){fig-alt="A daily series on a log scale between 1.5% and 127%: mostly between 5% and 30%, lowest in 2017, with spikes in May 2010, August 2011, August 2015, February 2018, March 2020 (the highest, 127%) and April 2025 (113%)."}
 
 ES has 4,419 trading days, from 30 September 2009 to 30 October 2026. The median day has an annualized volatility of 11.5%. Volatility changes a lot over time, with calm years such as 2017 (median 6.2%) and turbulent ones such as 2022 (20.4%) and 2020 (17.3%). The most volatile day is 16 March 2020, during the COVID-19 crash, with 126.8%, eleven times the median day.
 
@@ -503,13 +556,13 @@ noise_by_stock <- dow |>
     .by = symbol
   )
 
+cor(noise_by_stock$rv1_to_rv5, log(noise_by_stock$trades))
+
 noise_by_stock |>
   ggplot(aes(x = trades, y = rv1_to_rv5, label = symbol)) +
   geom_text(size = 3) +
   scale_x_log10(labels = comma) +
   labs(x = "Median trades per day (log scale)", y = "Mean rv1 / mean rv5")
-
-cor(noise_by_stock$rv1_to_rv5, log(noise_by_stock$trades))
 ```
 
 ## Python
@@ -526,11 +579,13 @@ def relative_to_rv5(data):
     return data.select(pl.col(measures).mean() / pl.col("rv5").mean())
 
 
-pl.concat(
-    [
-        relative_to_rv5(dow).with_columns(asset=pl.lit("Dow Jones stocks")),
-        relative_to_rv5(es).with_columns(asset=pl.lit("ES")),
-    ]
+print(
+    pl.concat(
+        [
+            relative_to_rv5(dow).with_columns(asset=pl.lit("Dow Jones stocks")),
+            relative_to_rv5(es).with_columns(asset=pl.lit("ES")),
+        ]
+    )
 )
 
 noise_by_stock = dow.group_by("symbol").agg(
@@ -538,23 +593,31 @@ noise_by_stock = dow.group_by("symbol").agg(
     trades=pl.col("trades").median(),
 )
 
+print(noise_by_stock.select(pl.corr("rv1_to_rv5", pl.col("trades").log())).item())
+
 (
     ggplot(noise_by_stock, aes(x="trades", y="rv1_to_rv5", label="symbol"))
     + geom_text(size=8)
     + scale_x_log10()
     + labs(x="Median trades per day (log scale)", y="Mean rv1 / mean rv5")
 )
-
-noise_by_stock.select(pl.corr("rv1_to_rv5", pl.col("trades").log())).item()
 ```
 :::
 
-The stocks cover 2,975 trading days from 2 January 2015. Relative to `rv5`, the means of the 30 Dow Jones stocks are:
+The stocks cover 2,975 trading days from 2 January 2015. The code prints the means relative to `rv5` of the 30 Dow Jones stocks and of ES:
 
 | | `rv1` | `rk` | `bv5` | `rsp5` | `rsn5` |
 |:--|--:|--:|--:|--:|--:|
 | Dow Jones stocks | 1.09 | 0.97 | 0.89 | 0.50 | 0.50 |
 | ES | 1.02 | 0.99 | 0.93 | 0.50 | 0.50 |
+
+Then the code prints the correlation of the ratio of `rv1` to `rv5` with the log number of trades of each stock:
+
+```{.default .code-output}
+#> [1] -0.5741732
+```
+
+![Ratio of the mean `rv1` to the mean `rv5` of each Dow Jones stock against its median number of trades per day, on a log scale, from the R code above.](figures/high-frequency-noise-by-stock.png){fig-alt="Scatter plot of ticker symbols: the ratio falls from 1.33 for SHW, the stock with the fewest trades, to between 1.02 and 1.03 for AMZN, MSFT, NVDA and AAPL, the stocks with the most trades; most stocks lie between 1.03 and 1.19 with 40,000 to 100,000 trades a day."}
 
 - **Noise:** with one-minute returns, the variance is 9% higher than with five-minute returns. This is the bias $2n\omega^2$ of lecture 17, which grows with the number of returns $n$. The realized kernel `rk` removes the noise from one-minute returns and lies close to `rv5`. ES trades far more often than any stock, and its `rv1` is only 2% above `rv5`.
 - **Jumps:** bipower variation `bv5` is robust to jumps, `rv5` is not. Their difference suggests that jumps make up about 11% of the variance of the stocks and 7% of ES.
@@ -583,24 +646,9 @@ spy_rv <- spy |>
     .by = c(year, day)
   )
 
-spy_rv |> filter(rv == 0)
-
 spy_es <- spy_rv |>
   filter(rv > 0) |>
   inner_join(es |> select(day = date, rv5), join_by(day))
-
-spy_es |>
-  summarize(
-    SPY = sqrt(days_per_year * mean(rv)),
-    ES = sqrt(days_per_year * mean(rv5)),
-    .by = year
-  ) |>
-  pivot_longer(-year) |>
-  ggplot(aes(x = year, y = value, color = name)) +
-  geom_line() +
-  geom_point() +
-  scale_y_log10(labels = percent) +
-  labs(x = NULL, y = "Annualized volatility (log scale)", color = NULL)
 
 spy_es |>
   summarize(
@@ -620,6 +668,19 @@ es |>
     .by = weekday
   ) |>
   arrange(weekday)
+
+spy_es |>
+  summarize(
+    SPY = sqrt(days_per_year * mean(rv)),
+    ES = sqrt(days_per_year * mean(rv5)),
+    .by = year
+  ) |>
+  pivot_longer(-year) |>
+  ggplot(aes(x = year, y = value, color = name)) +
+  geom_line() +
+  geom_point() +
+  scale_y_log10(labels = percent) +
+  labs(x = NULL, y = "Annualized volatility (log scale)", color = NULL)
 ```
 
 ## Python
@@ -642,10 +703,28 @@ spy_rv = (
     .agg(rv=(pl.col("ret") ** 2).sum(), n_returns=pl.col("ret").count())
 )
 
-spy_rv.filter(pl.col("rv") == 0)
-
 spy_es = spy_rv.filter(pl.col("rv") > 0).join(
     es.select(pl.col("date").alias("day"), "rv5"), on="day"
+)
+
+print(
+    spy_es.select(
+        days=pl.len(),
+        marches=pl.col("year").n_unique(),
+        es_to_spy=pl.col("rv5").mean() / pl.col("rv").mean(),
+        correlation=pl.corr(pl.col("rv").log(), pl.col("rv5").log()),
+    )
+)
+
+print(
+    es.with_columns(
+        weekday=pl.col("date").dt.weekday(),
+        overnight_change=100
+        * (pl.col("open_price") / pl.col("close_price").shift(1)).log().abs(),
+    )
+    .group_by("weekday")
+    .agg(median_overnight_change=pl.col("overnight_change").median())
+    .sort("weekday")
 )
 
 spy_es_by_year = spy_es.group_by("year").agg(
@@ -662,26 +741,23 @@ spy_es_by_year = spy_es.group_by("year").agg(
     + scale_y_log10(labels=percent_format())
     + labs(x="", y="Annualized volatility (log scale)", color="")
 )
-
-spy_es.select(
-    days=pl.len(),
-    marches=pl.col("year").n_unique(),
-    es_to_spy=pl.col("rv5").mean() / pl.col("rv").mean(),
-    correlation=pl.corr(pl.col("rv").log(), pl.col("rv5").log()),
-)
-
-(
-    es.with_columns(
-        weekday=pl.col("date").dt.weekday(),
-        overnight_change=100
-        * (pl.col("open_price") / pl.col("close_price").shift(1)).log().abs(),
-    )
-    .group_by("weekday")
-    .agg(median_overnight_change=pl.col("overnight_change").median())
-    .sort("weekday")
-)
 ```
 :::
+
+```{.default .code-output}
+#> # A tibble: 1 × 4
+#>    days marches es_to_spy correlation
+#>   <int>   <int>     <dbl>       <dbl>
+#> 1   345      16      1.85       0.979
+#>   weekday median_overnight_change
+#> 1     Mon               0.2321326
+#> 2     Tue               0.0000000
+#> 3     Wed               0.0000000
+#> 4     Thu               0.0000000
+#> 5     Fri               0.0000000
+```
+
+![Annualized volatility of SPY from five-minute midquote returns and of ES from `rv5` in March of each year from 2010 to 2025, on the days with both, on a log scale, from the R code above.](figures/high-frequency-spy-es-volatility.png){fig-alt="Two lines against the year on a log scale: ES lies above SPY in every March, both lowest in 2017 (7.8% and 6.3%) and highest in 2020 (83.5% and 59.7%)."}
 
 SPY has 388 days with 77 five-minute returns each. One day, 31 March 2022, has a realized variance of zero: in the snapshots of that day, the midquote stops moving a few minutes after the open, a gap in the data. The code leaves this day out. ES starts in September 2009, so the two overlap on 345 days in the 16 Marches from 2010 to 2025.
 
@@ -711,14 +787,14 @@ memory <- tibble(
   ar1 = autocorrelation[1]^lag
 )
 
+memory |> filter(lag %in% c(1, 5, 22, 66, 125, 252))
+
 memory |>
   ggplot(aes(x = lag)) +
   geom_hline(yintercept = 0, linewidth = 0.3) +
   geom_line(aes(y = autocorrelation)) +
   geom_line(aes(y = ar1), linetype = "dashed") +
   labs(x = "Lag (trading days)", y = "Autocorrelation of log RV")
-
-memory |> filter(lag %in% c(1, 5, 22, 66, 125, 252))
 ```
 
 ## Python
@@ -731,6 +807,8 @@ memory = pl.DataFrame(
     {"lag": np.arange(1, max_lag + 1), "autocorrelation": autocorrelation}
 ).with_columns(ar1=autocorrelation[0] ** pl.col("lag"))
 
+print(memory.filter(pl.col("lag").is_in([1, 5, 22, 66, 125, 252])))
+
 (
     ggplot(memory, aes(x="lag"))
     + geom_hline(yintercept=0, size=0.3)
@@ -738,10 +816,22 @@ memory = pl.DataFrame(
     + geom_line(aes(y="ar1"), linetype="dashed")
     + labs(x="Lag (trading days)", y="Autocorrelation of log RV")
 )
-
-memory.filter(pl.col("lag").is_in([1, 5, 22, 66, 125, 252]))
 ```
 :::
+
+```{.default .code-output}
+#> # A tibble: 6 × 3
+#>     lag autocorrelation      ar1
+#>   <int>           <dbl>    <dbl>
+#> 1     1         0.809   8.09e- 1
+#> 2     5         0.627   3.47e- 1
+#> 3    22         0.386   9.49e- 3
+#> 4    66         0.187   8.53e- 7
+#> 5   125         0.106   3.21e-12
+#> 6   252        -0.00803 6.73e-24
+```
+
+![Autocorrelations of log `rv5` of ES (solid line) and of an AR(1) with the same first autocorrelation (dashed line) up to 252 trading days, from the R code above.](figures/high-frequency-long-memory.png){fig-alt="The autocorrelation of log RV starts at 0.81 and falls slowly, to about 0.4 after 22 days, 0.2 after 66 days and 0.1 after 125 days, reaching zero after about 240 days; the dashed AR(1) line falls to almost zero within 25 days."}
 
 The autocorrelation of log RV is 0.81 at lag 1, 0.63 after a week, 0.39 after a month, 0.19 after a quarter (66 days) and 0.11 after half a year (125 days); it reaches zero only after about a year. An AR(1) with the same first autocorrelation is at 0.35 after a week and at 0.01 after a month. Shocks to volatility die out far more slowly than geometrically: volatility has long memory, the pattern the HAR model approximates.
 
@@ -815,6 +905,14 @@ har_forecasts = har_data.with_columns(
 )
 ```
 :::
+
+```{.default .code-output}
+#> (Intercept)          rv     rv_week    rv_month
+#>  0.15015705  0.53188198  0.39575348 -0.06097717
+#>   (Intercept)       log(rv)  log(rv_week) log(rv_month)
+#>   -0.09035672    0.54943091    0.27558208    0.10478886
+#> [1] 0.2975053
+```
 
 The estimation sample has 2,888 days. The slopes $b_d, b_w, b_m$ are 0.53, 0.40 and −0.06 for HAR ($b_0 = 0.15$, $R^2$ of 70%) and 0.55, 0.28 and 0.10 for the log-HAR, as in lecture 17. Both put most weight on today's RV, but the weekly and monthly averages matter as well: the forecast reacts to today's RV and returns slowly to the average of the past weeks. The HAR slope $b_m$ is negative because the COVID-19 crash in March 2020 dominates the regression in levels; lecture 17 shows that the HAR slopes change a lot if the sample ends in 2019, the log-HAR slopes hardly.
 
