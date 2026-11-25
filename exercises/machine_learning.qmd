@@ -24,6 +24,8 @@ We read the long-short returns directly from the October 2026 data release of Op
 
 `sharpe_ratio_vec()` (R) and `sharpe_ratio()` (Python) return the annualized Sharpe ratio of a vector of portfolio returns. Cross-validation below uses them as a metric, and a metric of the workflow always takes two arguments: the observed outcome (`truth` in R, `y` in Python) and the prediction (`estimate`, `y_pred`). The predictions of our regressions are the portfolio returns, so the Sharpe ratio needs only the second argument and ignores the first.
 
+The output blocks after the R code show what R prints. The Python code prints the same numbers in its own format; only the tiny differences between our functions and the workflow differ between the languages, and the text gives them for both.
+
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
@@ -72,6 +74,12 @@ portfolio_sharpe <- function(weights) {
 }
 
 portfolio_sharpe(rep(1, length(anomaly_names)))
+```
+
+```{.default .code-output}
+#> [1] 158
+#> estimation       test 
+#>   2.792511   1.434807
 ```
 
 ## Python
@@ -154,6 +162,11 @@ $\hat\Sigma^{-1}\hat\mu$ are the weights of the tangency portfolio, and $q$, the
 #| label: r-britten-jones
 b_ols <- solve(crossprod(x_estimation), crossprod(x_estimation, y))
 portfolio_sharpe(b_ols)
+```
+
+```{.default .code-output}
+#> estimation       test 
+#>  15.721492   2.511463
 ```
 
 ## Python
@@ -284,6 +297,10 @@ b_ridge <- ridge(y, x_estimation, check_lambda)
 max(abs(b_workflow - b_ridge)) / max(abs(b_ridge))
 ```
 
+```{.default .code-output}
+#> [1] 9.449511e-05
+```
+
 ## Python
 ```{python}
 #| label: py-ridge-workflow
@@ -339,10 +356,23 @@ sharpe_in <- function(fit, months) {
 ridge_fit <- ridge_workflow |>
   finalize_workflow(select_best(ridge_tuning, metric = "sharpe_ratio")) |>
   fit(estimation_months)
-c(
+tibble(
   estimation = sharpe_in(ridge_fit, estimation_months),
   test = sharpe_in(ridge_fit, test_months)
 )
+```
+
+```{.default .code-output}
+#> # A tibble: 3 × 7
+#>     penalty .metric      .estimator  mean     n std_err .config         
+#>       <dbl> <chr>        <chr>      <dbl> <int>   <dbl> <chr>           
+#> 1 0.0001    sharpe_ratio standard    8.48     5   0.429 pre0_mod13_post0
+#> 2 0.000178  sharpe_ratio standard    8.40     5   0.451 pre0_mod14_post0
+#> 3 0.0000562 sharpe_ratio standard    8.39     5   0.417 pre0_mod12_post0
+#> # A tibble: 1 × 2
+#>   estimation  test
+#>        <dbl> <dbl>
+#> 1       12.9  2.89
 ```
 
 ## Python
@@ -417,10 +447,17 @@ b_workflow <- lasso_workflow |>
   filter(term != "(Intercept)") |>
   pull(estimate)
 b_lasso <- lasso(y, x_estimation, check_lambda)
-c(
+tibble(
   selected = sum(b_lasso != 0),
   max_relative_difference = max(abs(b_lasso - b_workflow)) / max(abs(b_lasso))
 )
+```
+
+```{.default .code-output}
+#> # A tibble: 1 × 2
+#>   selected max_relative_difference
+#>      <int>                   <dbl>
+#> 1       31               0.0000140
 ```
 
 ## Python
@@ -505,6 +542,13 @@ best_lasso <- select_best(lasso_tuning, metric = "sharpe_ratio")
 lasso_path |>
   filter(lambda == best_lasso$penalty) |>
   select(lambda, selected, estimation, test)
+```
+
+```{.default .code-output}
+#> # A tibble: 1 × 4
+#>     lambda selected estimation  test
+#>      <dbl>    <int>      <dbl> <dbl>
+#> 1 0.000316       74       11.5  2.96
 ```
 
 ## Python

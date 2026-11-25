@@ -7,7 +7,7 @@ aliases:
 
 This exercise goes with lectures 6 to 8. You estimate the market beta of one stock, then the betas of all stocks in CRSP, sort the stocks into ten portfolios on their betas, and check whether the CAPM and the Fama-French three-factor model explain the returns of these portfolios. The solutions use the same tidyfinance functions and choices as lecture 7, so your numbers should match the slides.
 
-The website has no CRSP data, so the code below does not run here. The results in the text come from running it, in R and in Python, on the course data, which end in December 2025. R and Python give the same numbers.
+The website has no CRSP data, so the code below does not run here. The results in the text come from running it, in R and in Python, on the course data, which end in December 2025. R and Python give the same numbers. The output blocks after the R code show what R prints; the Python code prints the same numbers in its own format.
 
 ## The CAPM beta of one stock {#capm-beta}
 
@@ -88,9 +88,25 @@ apple <- crsp_monthly |>
   inner_join(factors_ff3_monthly, join_by(date))
 
 apple_capm <- estimate_model(
-  apple, "ret_excess ~ mkt_excess", output = c("coefficients", "tstats")
+  apple,
+  "ret_excess ~ mkt_excess",
+  output = c("coefficients", "tstats")
 )
 apple_capm
+```
+
+```{.default .code-output}
+#> $coefficients
+#> # A tibble: 1 × 2
+#>   intercept mkt_excess
+#>       <dbl>      <dbl>
+#> 1   0.00999       1.35
+#>
+#> $tstats
+#> # A tibble: 1 × 2
+#>   intercept mkt_excess
+#>       <dbl>      <dbl>
+#> 1      2.08       12.7
 ```
 
 ## Python
@@ -131,7 +147,11 @@ Betas change over time. Lecture 7 therefore estimates the beta of every stock in
 #| label: r-estimate-betas
 betas <- crsp_monthly |>
   inner_join(factors_ff3_monthly, join_by(date)) |>
-  estimate_betas("ret_excess ~ mkt_excess", months(window_length), min_obs = min_months)
+  estimate_betas(
+    "ret_excess ~ mkt_excess",
+    months(window_length),
+    min_obs = min_months
+  )
 
 betas |>
   select(permno, date, beta_mkt_excess) |>
@@ -171,6 +191,17 @@ estimate_model(apple_window, "ret_excess ~ mkt_excess")
 
 betas |>
   filter(permno == apple_permno, date == check_month)
+```
+
+```{.default .code-output}
+#> # A tibble: 1 × 2
+#>   intercept mkt_excess
+#>       <dbl>      <dbl>
+#> 1   0.00309       1.05
+#> # A tibble: 1 × 3
+#>   permno date       beta_mkt_excess
+#>    <int> <date>               <dbl>
+#> 1  14593 2025-12-01            1.05
 ```
 
 ## Python
@@ -213,6 +244,14 @@ betas |>
     q95 = quantile(beta_mkt_excess, 0.95),
     share_negative = mean(beta_mkt_excess < 0)
   )
+```
+
+```{.default .code-output}
+#> # A tibble: 1 × 12
+#>   n_betas n_stocks first_month last_month  mean    sd   q05   q25 median   q75
+#>     <int>    <int> <date>      <date>     <dbl> <dbl> <dbl> <dbl>  <dbl> <dbl>
+#> 1 2401783    18498 1963-12-01  2025-12-01  1.11 0.716 0.131 0.644   1.04  1.48
+#> # ℹ 2 more variables: q95 <dbl>, share_negative <dbl>
 ```
 
 ## Python
@@ -274,7 +313,8 @@ beta_lag <- betas |>
 beta_portfolios <- crsp_monthly |>
   inner_join(beta_lag, join_by(permno, date)) |>
   compute_portfolio_returns(
-    "beta_lag", "univariate",
+    "beta_lag",
+    "univariate",
     breakpoint_options_main = breakpoint_options(n_portfolios = n_portfolios)
   ) |>
   left_join(factors_ff3_monthly, join_by(date))
@@ -312,7 +352,11 @@ capm <- beta_portfolios |>
   nest(data = -portfolio) |>
   mutate(
     fit = map(data, \(d) {
-      estimate_model(d, "ret_excess_vw ~ mkt_excess", output = c("coefficients", "tstats"))
+      estimate_model(
+        d,
+        "ret_excess_vw ~ mkt_excess",
+        output = c("coefficients", "tstats")
+      )
     }),
     alpha = map_dbl(fit, \(f) f$coefficients$intercept),
     t_alpha = map_dbl(fit, \(f) f$tstats$intercept),
@@ -333,7 +377,6 @@ capm_annual <- capm |>
     mean = mean * months_per_year,
     capm_mean = beta * market_premium * months_per_year
   )
-capm_annual
 ```
 
 ## Python
@@ -363,7 +406,6 @@ capm_annual = capm.with_columns(
     mean=pl.col("mean") * months_per_year,
     capm_mean=pl.col("beta") * market_premium * months_per_year,
 )
-capm_annual
 ```
 
 :::
@@ -375,14 +417,19 @@ capm_annual
 #| label: r-plot-capm
 capm_annual |>
   ggplot(aes(x = beta)) +
-  geom_abline(intercept = 0, slope = market_premium * months_per_year, linetype = "dashed") +
+  geom_abline(
+    intercept = 0,
+    slope = market_premium * months_per_year,
+    linetype = "dashed"
+  ) +
   geom_point(aes(y = capm_mean), shape = 21, fill = "white") +
   geom_point(aes(y = mean)) +
   geom_text(aes(y = mean, label = portfolio), nudge_y = 0.004) +
   expand_limits(x = 0, y = 0) +
   scale_y_continuous(labels = scales::percent) +
   labs(
-    x = "Beta of the portfolio", y = "Excess return (annualized)",
+    x = "Beta of the portfolio",
+    y = "Excess return (annualized)",
     title = "Ten portfolios sorted on beta",
     subtitle = "Dots: average excess return. Circles on the dashed line: the CAPM's prediction"
   )
@@ -445,9 +492,26 @@ high_minus_low <- beta_portfolios |>
 mean(high_minus_low$ret_excess_vw) * months_per_year
 
 high_minus_low_capm <- estimate_model(
-  high_minus_low, "ret_excess_vw ~ mkt_excess", output = c("coefficients", "tstats")
+  high_minus_low,
+  "ret_excess_vw ~ mkt_excess",
+  output = c("coefficients", "tstats")
 )
 high_minus_low_capm
+```
+
+```{.default .code-output}
+#> [1] 0.03177648
+#> $coefficients
+#> # A tibble: 1 × 2
+#>   intercept mkt_excess
+#>       <dbl>      <dbl>
+#> 1  -0.00427       1.17
+#>
+#> $tstats
+#> # A tibble: 1 × 2
+#>   intercept mkt_excess
+#>       <dbl>      <dbl>
+#> 1     -1.87       23.2
 ```
 
 ## Python
@@ -488,7 +552,8 @@ compute_grs <- function(returns, factors) {
   mu_factors <- colMeans(factors)
   sigma_factors <- crossprod(sweep(factors, 2, mu_factors)) / n_months
 
-  grs <- (n_months - n_assets - n_factors) / n_assets *
+  grs <- (n_months - n_assets - n_factors) /
+    n_assets *
     as.numeric(t(alpha) %*% solve(sigma_resid, alpha)) /
     (1 + as.numeric(t(mu_factors) %*% solve(sigma_factors, mu_factors)))
   p_value <- 1 - pf(grs, n_assets, n_months - n_assets - n_factors)
@@ -503,7 +568,17 @@ portfolio_returns <- portfolios_wide |>
   select(-date, -mkt_excess, -smb, -hml) |>
   as.matrix()
 
-compute_grs(portfolio_returns, portfolios_wide |> select(mkt_excess) |> as.matrix())
+compute_grs(
+  portfolio_returns,
+  portfolios_wide |> select(mkt_excess) |> as.matrix()
+)
+```
+
+```{.default .code-output}
+#> # A tibble: 1 × 2
+#>     grs p_value
+#>   <dbl>   <dbl>
+#> 1  1.29   0.231
 ```
 
 ## Python
@@ -568,7 +643,9 @@ three_factor <- beta_portfolios |>
   mutate(
     fit = map(data, \(d) {
       estimate_model(
-        d, "ret_excess_vw ~ mkt_excess + smb + hml", output = c("coefficients", "tstats")
+        d,
+        "ret_excess_vw ~ mkt_excess + smb + hml",
+        output = c("coefficients", "tstats")
       )
     }),
     alpha = map_dbl(fit, \(f) f$coefficients$intercept),
@@ -579,16 +656,35 @@ three_factor <- beta_portfolios |>
   ) |>
   select(portfolio, alpha, t_alpha, beta_market, beta_smb, beta_hml) |>
   arrange(portfolio)
-three_factor |>
-  mutate(alpha = alpha * months_per_year)
 
 estimate_model(
-  high_minus_low, "ret_excess_vw ~ mkt_excess + smb + hml", output = c("coefficients", "tstats")
+  high_minus_low,
+  "ret_excess_vw ~ mkt_excess + smb + hml",
+  output = c("coefficients", "tstats")
 )
 
 compute_grs(
-  portfolio_returns, portfolios_wide |> select(mkt_excess, smb, hml) |> as.matrix()
+  portfolio_returns,
+  portfolios_wide |> select(mkt_excess, smb, hml) |> as.matrix()
 )
+```
+
+```{.default .code-output}
+#> $coefficients
+#> # A tibble: 1 × 4
+#>   intercept mkt_excess   smb    hml
+#>       <dbl>      <dbl> <dbl>  <dbl>
+#> 1  -0.00328      0.936 0.937 -0.361
+#>
+#> $tstats
+#> # A tibble: 1 × 4
+#>   intercept mkt_excess   smb   hml
+#>       <dbl>      <dbl> <dbl> <dbl>
+#> 1     -1.63       19.9  13.7 -5.30
+#> # A tibble: 1 × 2
+#>     grs p_value
+#>   <dbl>   <dbl>
+#> 1  1.55   0.117
 ```
 
 ## Python
@@ -598,7 +694,9 @@ compute_grs(
 rows = []
 for (portfolio,), data in beta_portfolios.group_by("portfolio"):
     fit = tf.estimate_model(
-        data, "ret_excess_vw ~ mkt_excess + smb + hml", output=["coefficients", "tstats"]
+        data,
+        "ret_excess_vw ~ mkt_excess + smb + hml",
+        output=["coefficients", "tstats"],
     )
     rows.append(
         {
@@ -611,7 +709,6 @@ for (portfolio,), data in beta_portfolios.group_by("portfolio"):
         }
     )
 three_factor = pl.DataFrame(rows).sort("portfolio")
-print(three_factor.with_columns(pl.col("alpha") * months_per_year))
 
 print(
     tf.estimate_model(
@@ -637,11 +734,17 @@ bind_rows(
   capm |> transmute(portfolio, model = "CAPM", alpha),
   three_factor |> transmute(portfolio, model = "Three-factor model", alpha)
 ) |>
-  ggplot(aes(x = factor(portfolio), y = alpha * months_per_year, fill = model)) +
+  ggplot(aes(
+    x = factor(portfolio),
+    y = alpha * months_per_year,
+    fill = model
+  )) +
   geom_col(position = "dodge") +
   scale_y_continuous(labels = scales::percent) +
   labs(
-    x = "Beta portfolio (1 = lowest beta)", y = "Alpha (annualized)", fill = NULL,
+    x = "Beta portfolio (1 = lowest beta)",
+    y = "Alpha (annualized)",
+    fill = NULL,
     title = "Alphas of the ten beta portfolios"
   )
 ```
