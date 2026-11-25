@@ -52,7 +52,6 @@ anomalies <- read_parquet("data/osap_long_short_returns.parquet") |>
 returns <- as.matrix(select(anomalies, -date)) / 100
 
 sharpe_ratio <- function(x) mean(x) / sd(x) * sqrt(months_per_year)
-dim(returns)
 ```
 
 ## Python
@@ -82,9 +81,6 @@ returns = anomalies.select(complete).to_numpy() / 100
 
 def sharpe_ratio(x):
     return np.mean(x) / np.std(x, ddof=1) * np.sqrt(months_per_year)
-
-
-returns.shape
 ```
 :::
 
@@ -153,7 +149,6 @@ training_returns <- returns_tensor[which(training_months), ]
 training_inputs <- inputs_tensor[which(training_months), , ]
 validation_returns <- returns_tensor[which(validation_months), ]
 validation_inputs <- inputs_tensor[which(validation_months), , ]
-dim(inputs)
 ```
 
 ## Python
@@ -210,7 +205,6 @@ training_returns = returns_tensor[training_months]
 training_inputs = inputs_tensor[training_months]
 validation_returns = returns_tensor[validation_months]
 validation_inputs = inputs_tensor[validation_months]
-inputs.shape
 ```
 :::
 
@@ -517,6 +511,25 @@ pl.DataFrame(
 ```
 :::
 
+The R code prints the number of steps of each seed's four fits (the feed-forward SDF and the three rounds) and the Sharpe ratios:
+
+```{.default .code-output}
+#> [[1]]
+#> [1] 121 102 102 102
+#>
+#> [[2]]
+#> [1] 181 102 102 102
+#>
+#> [[3]]
+#> [1] 151 102 102 313
+#>
+#>                  training validation estimation     test
+#> feed_forward_sdf 3.496114   3.107825   3.404506 1.092948
+#> cpz_light        4.928697   4.296338   4.765241 1.683095
+```
+
+The Python code prints the same steps, except 318 instead of 313 in the last round of seed 3. The table compares the Sharpe ratios of both languages with the lecture:
+
 | SDF | Sharpe ratio 1974–1994 (training) | 1995–1999 (validation) | 1974–1999 (estimation) | 2000–2023 (test) |
 |:----|----:|----:|----:|----:|
 | Feed-forward SDF, R | 3.50 | 3.11 | 3.40 | 1.09 |
@@ -818,6 +831,8 @@ monthly_turnover = (
 monthly_turnover.drop("date").mean()
 ```
 :::
+
+The code prints the average turnover of each portfolio:
 
 | Portfolio | Turnover between anomalies per month, 2000–2023 |
 |:----------|----:|

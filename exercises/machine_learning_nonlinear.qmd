@@ -73,7 +73,6 @@ panel <- anomalies |>
 
 train <- filter(panel, date < test_start)
 test_rows <- panel$date >= test_start
-c(train = nrow(train), test = sum(test_rows))
 ```
 
 ## Python
@@ -141,7 +140,6 @@ panel = (
 
 train = panel.filter(pl.col("date") < test_start)
 test_rows = (panel["date"] >= test_start).to_numpy()
-{"train": train.height, "test": int(test_rows.sum())}
 ```
 :::
 
@@ -240,7 +238,20 @@ pl.DataFrame(
 ```
 :::
 
-Both languages choose a decay of 300. In R, the root mean squared error of the scaled returns in the validation years falls from 1.24 with a decay of 1 to 1.12 for the decays from 30 to 1000, with the smallest error at 300. With little weight decay, the network fits noise of 1974–1994 that does not come back in 1995–1999. Python's errors differ a little (1.25 with a decay of 1, 1.12 with 300), because its networks start from other random weights, but they are also lowest at 300. The errors for decays from 30 to 1000 are almost the same, so the exact choice in this range matters little.
+```{.default .code-output}
+#> # A tibble: 7 × 2
+#>   penalty  rmse
+#>     <dbl> <dbl>
+#> 1       1  1.24
+#> 2       3  1.13
+#> 3      10  1.15
+#> 4      30  1.12
+#> 5     100  1.12
+#> 6     300  1.12
+#> 7    1000  1.12
+```
+
+Both languages choose a decay of 300. In R, as the output above shows, the root mean squared error of the scaled returns in the validation years falls from 1.24 with a decay of 1 to 1.12 for the decays from 30 to 1000; `select_best()` compares the unrounded errors, which are smallest at 300. With little weight decay, the network fits noise of 1974–1994 that does not come back in 1995–1999. Python's errors differ a little (1.25 with a decay of 1, 1.12 with 300), because its networks start from other random weights, but they are also lowest at 300. The errors for decays from 30 to 1000 are almost the same, so the exact choice in this range matters little.
 
 scikit-learn may warn that L-BFGS stopped after 500 iterations before it converged; in our run, this happens once while choosing the decay and does not change the choice.
 
@@ -297,6 +308,11 @@ def oos_r2(forecast):
 {"ols": oos_r2(ols_forecast), "network": oos_r2(network_forecast)}
 ```
 :::
+
+```{.default .code-output}
+#>         ols     network 
+#> 0.006457806 0.012358983 
+```
 
 The ensemble of networks has an out-of-sample $R^2$ of 1.24% in R and 1.27% in Python, about twice the 0.65% of OLS. OLS has no random start, so its $R^2$ is the same in both languages; the networks differ somewhat, because R and Python draw different starting weights and use different optimizers.
 
@@ -402,6 +418,8 @@ ridge_weights = np.linalg.solve(
 }
 ```
 :::
+
+The table collects the Sharpe ratios that the code prints and the out-of-sample $R^2$ of the ensemble chunk:
 
 | Portfolio | Out-of-sample $R^2$ | Sharpe ratio 1974–1999 | Sharpe ratio 2000–2023 |
 |:----------|----:|----:|----:|
