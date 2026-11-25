@@ -25,10 +25,10 @@ The game gives us shared material to discuss in class. Every submission carries 
 
 ## Teams and timeline
 
-- Work alone or in a team of up to three. **Choose your team during the dry run.**
-- Each team gets one **token**: a key, like a password, that identifies your team to the trading game. The client packages and the dashboard use it to authenticate you. Keep it within your team.
+- A team has 1 to 3 students. **Sign up as a group on Absalon during the dry run**, in the group set *Trading game teams*, also if you work alone. Teams cannot change after the dry run.
+- Each team gets one **token**: a key, like a password, that identifies your team to the trading game. The client packages and the dashboard use it to authenticate you. Every member of your team receives the token by email from Absalon within a day of signing up. Keep it within your team.
 - Each team starts with **$1,000,000** in cash.
-- **Dry run:** from 25 January until 12 February 2027, the day after the first lecture, to try the tools and form your team; results are reset afterwards.
+- **Dry run:** from 25 January until 12 February 2027, the day after the first lecture, to try the tools and form your team. Afterwards all trades and results are deleted: every team starts again with $1,000,000 on 16 February, with the same token, and submissions from the dry run do not carry over.
 - **Trading:** 16 February to 14 May 2027, every NYSE trading day (15 February is a US holiday).
 
 The rules tighten during the semester. Every response from the trading game tells you which rules apply to the next trade, so a change never catches you by surprise.
