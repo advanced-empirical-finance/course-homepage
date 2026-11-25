@@ -393,6 +393,16 @@ print(
 ```
 :::
 
+The summary from the R code:
+
+```{.default .code-output}
+#> # A tibble: 2 × 3
+#>   sample_length median_sharpe share_below_naive
+#>           <dbl>         <dbl>             <dbl>
+#> 1            60         0.579             0.891
+#> 2           240         1.07              0.03
+```
+
 ![True Sharpe ratios of 1,000 estimated tangency portfolios for each sample length, from the R code above.](figures/mean-variance-simulated-sharpe-ratios.png){fig-alt="Two histograms of the true annualized Sharpe ratios of estimated tangency portfolios, for samples of 60 and 240 months, with vertical lines at the Sharpe ratios of the true tangency portfolio and of 1/N."}
 
 With 60 months, the median true Sharpe ratio of the estimated tangency portfolios is 0.58, far below the 1.45 of the true tangency portfolio, and 89% of them do worse than $1/N$. With 240 months, the median rises to 1.07 and 3% do worse than $1/N$. These are the numbers of lecture 3. Python draws different random numbers than R, so the Python results differ slightly: with 60 months, a median of 0.56 and 88.5% below $1/N$; with 240 months, a median of 1.08 and 3.2%. The figures from the Python code look the same, up to these random differences.
