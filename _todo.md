@@ -1,6 +1,6 @@
 # AEF 2027: open tasks
 
-Updated 24 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
+Updated 25 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
 ## Absalon
 
@@ -10,11 +10,18 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
   - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
   - peer feedback for seven days after each deadline;
   - the discussion for the figures of exercise 1 (#70): ready, unpublished, in the sandbox (discussion 848551), to be copied;
-  - the three data files for students: `crsp_monthly.parquet`, `volare_realized_measures_daily.parquet` and `volare_realized_covariances_daily.parquet`.
+  - the three data files for students: `crsp_monthly.parquet`, `volare_realized_measures_daily.parquet` and `volare_realized_covariances_daily.parquet`;
+  - the group set *Trading game teams*: self sign-up, at most 3 members per group (also used by FeedbackFruits); the trading game reads its teams from it (voigtstefan/aef-sim#32).
 
 ## Data
 
-- [ ] **S + C:** review the lobsteR package (github.com/voigtstefan/lobsteR) and its cleaning steps: which messages are dropped, auctions and halts, the aggregation to 5-second snapshots. The SPY data in tidyfinance are built with it.
+The review of the LOBSTER cleaning (25 November 2026) found that the published SPY data set signed volume to 0 in many intervals with trading (37% in March 2024, 60% in March 2020), because hidden trades at the midquote got no sign, and that six March days freeze before the close. General cleaning code with all fixes, in R and polars: voigtstefan/lobsteR#5.
+
+- [ ] **S:** merge lobsteR#5.
+- [ ] **C:** rebuild the SPY (and TLT) snapshots on UCloud (project "Market responses to a vix impulse"); test month running, full run after S's OK.
+- [ ] **S + C:** new version of the SPY dataset on Hugging Face, with a README on the changes (publish only after S's OK).
+- [ ] **C:** the blog post "lobsteR package and high-frequency data" (tidy-finance/blog) with the fixed code in R and polars side by side; wording fixes in the second post.
+- [ ] **C:** with the new data, rerun lecture 16 (price impact), lecture 17 (signature plot) and exercise 11.
 
 ## Lectures
 
@@ -26,8 +33,7 @@ Instead of video recordings: a transcript of each lecture, curated into a post t
 
 Since 24 November 2026: Whisper (large-v3-turbo) runs on eumel, the live decks log every slide change (press "r" when the recording starts; course-repository#85), and Claude on eumel turns the transcript into a blog-style post with the slides (tested on a 2026 recording and a test session; details in `~/claude-home/aef-transcribe`).
 
-- [ ] **S:** decide where the notes are published (course homepage, Absalon or both).
-- [ ] **C:** a documented workflow (skill) to run after each lecture: copy the recording to eumel, transcribe overnight, write the post, publish, delete the audio.
+Ready since 25 November 2026: the skill `lecture-notes` runs the whole workflow after a lecture (transcribe overnight, write the post, delete the audio), and `publish_notes.sh` opens a homepage pull request with the post and the link in the lecture plan's Notes column. Nothing to do before the semester.
 
 ## Exercises
 
@@ -44,7 +50,8 @@ Twelve pages, numbered 0 to 11, since 23 November 2026 (plan in course-homepage#
 
 ## Trading game and conference
 
-- [ ] **C:** dry run 25 Jan – 12 Feb, and the runbook for the reset before 16 Feb.
+- [ ] **C:** run the dry run by the runbook `docs/runbook-dry-run.md` in voigtstefan/aef-sim: end the shadow semester on 22 January, start the dry run on 25 January (teams from the Absalon group set, tokens by Absalon message, twice a day), reset on 13–15 February.
+- [ ] **S:** switch on the public address of the live dashboard (Funnel command in the runbook, step 3.5).
 
 ## Live polls and live slides
 
