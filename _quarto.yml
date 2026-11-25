@@ -55,7 +55,7 @@ website:
             file: exercises/learning_the_sdf.qmd
           - text: "---"
           - text: "high-frequency data"
-          - text: "11 high-frequency data"
+          - text: "11 order books and realized volatility"
             file: exercises/high_frequency_data.qmd
       - text: trading game
         menu:

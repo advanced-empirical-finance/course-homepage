@@ -2,7 +2,7 @@
 title: Exercises
 ---
 
-There are twelve exercise pages, numbered 0 to 11. The [lecture plan](../slides-index.qmd) shows which week each one belongs to.
+The [lecture plan](../slides-index.qmd) shows which week each exercise belongs to.
 
 Try the tasks on your own before you read the solutions. If you have questions, discuss them with your peers or your TA: the exercise classes are open office hours. You can also post on Absalon.
 
