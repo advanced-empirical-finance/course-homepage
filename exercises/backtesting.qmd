@@ -297,7 +297,7 @@ backtest = pl.DataFrame(records)
 ```
 :::
 
-The backtest runs from February 2005 to December 2025. Annualized, the excess returns of the four strategies are:
+The backtest runs from February 2005 to December 2025. Annualized, the excess returns of the four strategies are, from the R code (the Python code prints the same numbers):
 
 | Strategy | Mean | Volatility | Sharpe ratio |
 |---|---:|---:|---:|
@@ -357,6 +357,8 @@ tangency_over_time = (
 )
 ```
 :::
+
+![Weights of the plug-in tangency portfolio in the backtest, one line per stock, February 2005 to December 2025, cut off at ±300%, from the R code above.](figures/backtesting-tangency-weights.png){fig-alt="Weights of the 27 Dow Jones stocks in the plug-in tangency portfolio over time. Most weights stay between −200% and 200%, but around 2009 and 2010 many weights run far beyond ±300%, and in 2023 and 2024 some weights fall below −300%."}
 
 In 31 of the 251 months, at least one weight lies beyond ±300%. The weights are $\hat\Sigma^{-1}\hat\mu$ divided by their sum, $\iota'\hat\Sigma^{-1}\hat\mu$. In 17 months between February 2009 and August 2010, whose estimation windows contain the financial crisis, this sum is negative. Where it is close to zero, the weights explode: in February 2009, the sum is −0.01, and the portfolio earns an excess return below −40,000% in this single month. Where the sum is negative, the portfolio has a negative *estimated* expected excess return, $\hat\mu'\hat\Sigma^{-1}\hat\mu / \iota'\hat\Sigma^{-1}\hat\mu < 0$: it lies on the inefficient lower half of the estimated frontier. The minimum-variance portfolio divides by $\iota'\hat\Sigma^{-1}\iota$ instead, which is always positive, and it does not use $\hat\mu$ at all.
 

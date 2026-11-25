@@ -3,7 +3,7 @@ title: Shrinkage and transaction costs
 eval: false
 ---
 
-This exercise goes with [lecture 4](../slides/aef-04-shrinkage-for-portfolio-choice.pdf) and [lecture 5](../slides/aef-05-transaction-costs-and-parametric-portfolio-policies.pdf). You study in simulations how Ledoit-Wolf shrinkage changes the estimated covariance matrix and the minimum-variance portfolio, backtest portfolios that take quadratic transaction costs into account, and estimate parametric portfolio policies. The first two sections use the monthly excess returns of today's Dow Jones stocks from [exercise 2](mean_variance.qmd#estimated-portfolios-true-outcomes), January 2000 to December 2025; the code repeats the data preparation of exercise 2, so this page works on its own. The last section uses `crsp_monthly.parquet` from Absalon, as lecture 5 does.
+This exercise goes with [lecture 4](../slides/aef-04-shrinkage-for-portfolio-choice.pdf) and [lecture 5](../slides/aef-05-transaction-costs-and-parametric-portfolio-policies.pdf). You study in simulations how Ledoit-Wolf shrinkage changes the estimated covariance matrix and the minimum-variance portfolio, backtest portfolios that take quadratic transaction costs into account, and estimate parametric portfolio policies. The first two sections use the monthly excess returns of today's Dow Jones stocks from [exercise 2](mean_variance.qmd#simulation-estimated-portfolios-true-parameters), January 2000 to December 2025; the code repeats the data preparation of exercise 2, so this page works on its own. The last section uses `crsp_monthly.parquet` from Absalon, as lecture 5 does.
 
 ## Shrinking covariance matrices in simulations {#ledoit-wolf-simulations}
 
@@ -17,6 +17,8 @@ Lecture 4 shrinks the sample covariance matrix $\hat\Sigma$ toward the target $F
 4. For the same samples, compute the true annualized volatility $\sqrt{12\,\hat\omega'\Sigma_0\hat\omega}$ of the minimum-variance portfolios from $\hat\Sigma$ and from $\hat\Sigma_\text{LW}$, and compare them with the true minimum-variance portfolio and with $1/N$. For which sample length does shrinkage help most?
 
 **Solutions:**
+
+The output blocks after the code show what the R code prints. The Python code prints the same numbers in a different format, except where the text says otherwise: in the simulations, Python draws different random numbers.
 
 The solutions on this page use the following packages. The constants of this section are the sample period, the length of the estimation window of lecture 4, and the sizes of the two simulations.
 
@@ -268,9 +270,25 @@ pl.DataFrame(
     ]
 )
 ```
+
+The two `print()` calls compare the function with scikit-learn: the first line shows both $\hat\delta$, the second the largest difference between the two matrices.
+
+```{.default .code-output}
+#> 0.14581664137805142 0.14581664137805142
+#> 0.0
+```
 :::
 
-In the last 60 months, $\hat\delta$ = 0.15, as in lecture 4: Ledoit-Wolf moves 15% of the way from $\hat\Sigma$ to the target. The Python function and `LedoitWolf()` give the same $\hat\delta$ and the same matrix, up to rounding errors of order $10^{-18}$.
+```{.default .code-output}
+#> [1] 0.1458166
+#> # A tibble: 2 × 4
+#>   matrix      smallest largest ratio
+#>   <chr>          <dbl>   <dbl> <dbl>
+#> 1 Sample      0.000221  0.0587 265.
+#> 2 Ledoit-Wolf 0.00105   0.0510  48.3
+```
+
+In the last 60 months, $\hat\delta$ = 0.15, as in lecture 4: Ledoit-Wolf moves 15% of the way from $\hat\Sigma$ to the target. The Python function and `LedoitWolf()` give the same $\hat\delta$ and the same matrix; depending on the computer, the matrices differ by rounding errors of order $10^{-18}$ at most.
 
 Shrinkage toward $mI$ keeps the eigenvectors of $\hat\Sigma$ and moves every eigenvalue toward $m$: an eigenvalue $\hat\lambda$ of $\hat\Sigma$ becomes $\hat\delta m + (1 - \hat\delta)\hat\lambda$, because every vector is an eigenvector of $mI$. Here $m$ is 0.0059, a monthly variance. The smallest eigenvalue rises from 0.00022 to 0.00105, almost five times as much, and the largest falls from 0.059 to 0.051. The ratio of the largest to the smallest eigenvalue falls from 265 to 48. The minimum-variance portfolio puts the most weight on the directions with the smallest eigenvalues (lecture 4), so shrinkage changes the portfolio most where the sample covariance matrix is least reliable.
 
@@ -545,6 +563,18 @@ print(
 ```
 :::
 
+The smallest eigenvalues, averaged over the samples of each length:
+
+```{.default .code-output}
+#> # A tibble: 4 × 5
+#>   sample_length  rank     true    sample ledoit_wolf
+#>           <dbl> <int>    <dbl>     <dbl>       <dbl>
+#> 1            30    27 0.000863 0.0000129    0.00167
+#> 2            60    27 0.000863 0.000283     0.00120
+#> 3           120    27 0.000863 0.000539     0.00101
+#> 4           240    27 0.000863 0.000694     0.000934
+```
+
 ![Eigenvalues of the true covariance matrix of the Dow Jones stocks and average eigenvalues of the sample and Ledoit-Wolf estimates over 1,000 simulated samples for each length, from the R code above.](figures/shrinkage-costs-eigenvalues.png){fig-alt="Four panels, for samples of 30, 60, 120 and 240 months, with the eigenvalues of the true covariance matrix, and the average eigenvalues of the sample covariance matrix and of the Ledoit-Wolf estimate, on a log scale against their rank."}
 
 The sample eigenvalues are too spread out, as in lecture 4: the largest are too large and the smallest too small. The smallest true eigenvalue is 0.00086. With 30 months, the smallest sample eigenvalue is 0.000013 on average, about 70 times too small; with 60 months 0.00028, with 120 months 0.00054 and with 240 months 0.00069. Ledoit-Wolf pulls all eigenvalues toward their average: its smallest eigenvalue is 0.0017 with 30 months, about twice the true one, and 0.0012, 0.0010 and 0.00093 for the longer samples. Ledoit-Wolf thus errs on the other side, but by a factor of 2 instead of 70, and the more months, the smaller $\hat\delta$ and the closer both estimates come to the truth. Python draws different random numbers, so its averages differ slightly, for example 0.000012 and 0.0017 for 30 months.
@@ -558,7 +588,6 @@ For task 4, the true volatilities of the two estimated minimum-variance portfoli
 #| label: r-plot-volatility
 true_mvp_volatility <- true_volatility(min_variance_weights(sigma_true))
 naive_volatility <- true_volatility(rep(1 / n_stocks, n_stocks))
-c(true_mvp_volatility, naive_volatility)
 
 simulated |>
   summarize(
@@ -601,7 +630,6 @@ simulated |>
 #| label: py-plot-volatility
 true_mvp_volatility = true_volatility(min_variance_weights(sigma_true))
 naive_volatility = true_volatility(np.ones(n_stocks) / n_stocks)
-print(true_mvp_volatility, naive_volatility)
 
 print(
     simulated.group_by("sample_length", maintain_order=True).agg(
@@ -777,6 +805,18 @@ pl.DataFrame(
 ```
 :::
 
+The largest difference between the closed form and `solve.QP()`, and the turnover for the three values of $\beta$:
+
+```{.default .code-output}
+#> [1] 5.828671e-16
+#> # A tibble: 3 × 2
+#>     beta turnover
+#>    <dbl>    <dbl>
+#> 1   0    28.5
+#> 2   0.01  8.13
+#> 3 100     0.00202
+```
+
 The closed form and the quadratic program agree: the largest difference between the weights is of order $10^{-16}$ with `solve.QP()` and $4 \cdot 10^{-7}$, the tolerance of the optimizer, with `minimize()`. Without costs, the investor moves from $1/N$ to the mean-variance portfolio of $\hat\mu$ and $\hat\Sigma$ in one trade with a turnover of 2,854% of wealth, because the estimated expected returns of 60 months call for large long and short positions (lecture 3). With $\beta$ = 100 bps, the turnover falls to 813%; with $\beta$ = 1,000,000 bps, to 0.2%, and the investor keeps almost exactly $1/N$.
 
 For task 2: with $\mu = 0$, the cost-aware weights are the minimum-variance portfolio of $\Sigma^*$ plus $\frac{\beta}{\gamma}A\,\omega_{t^+}$. For $\omega_{t^+} = 1/N$, the second term is zero, because $A\iota = \Sigma^{*-1}\iota - \Sigma^{*-1}\iota\,\frac{\iota'\Sigma^{*-1}\iota}{\iota'\Sigma^{*-1}\iota} = 0$. What remains is the minimum-variance portfolio of $\hat\Sigma + \frac{\beta}{\gamma}I$. The minimum-variance portfolio does not change if we multiply the covariance matrix by a positive number, and
@@ -848,6 +888,15 @@ for t in backtest_months:
 pl.Series([e["beta_lw"] * 1e4 for e in estimates]).describe()
 ```
 :::
+
+The $\beta$ for the last 60 months, the largest difference between the two portfolios, and the distribution of $\beta$ in bps over the 251 windows:
+
+```{.default .code-output}
+#> [1] 0.004053773
+#> [1] 3.747003e-16
+#>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+#>   25.29   33.54   41.05   44.96   53.16   95.22
+```
 
 For the last 60 months, the cost-aware portfolio equals the Ledoit-Wolf minimum-variance portfolio at $\beta$ = 41 bps: the weights differ by less than $10^{-15}$. In the 251 windows of the backtest, from February 2005 to December 2025, this $\beta$ lies between 25 and 95 bps, with a median of 41 bps. The equivalence only holds for a trade that starts from $1/N$. In the backtest, $\omega_{t^+}$ is last month's portfolio after the drift, and the term $\frac{\beta}{\gamma}A\,\omega_{t^+}$ also pulls the new weights toward the current portfolio, which Ledoit-Wolf does not do. With $\mu = 0$, $\beta$ and $\gamma$ only enter the weights through $\beta/\gamma$: an investor with twice the risk aversion trades as if the costs were half as large.
 
@@ -1260,6 +1309,11 @@ policy_data.group_by("date").len().select(
 ```
 :::
 
+```{.default .code-output}
+#>   months min_stocks max_stocks
+#> 1    552       3338       6737
+```
+
 The data have 552 months, from January 1980 to December 2025, with between 3,338 and 6,737 stocks per month.
 
 The functions `policy_returns()` and `mean_variance_utility()` are those of lecture 5. `optim()` and `minimize()` start at $\theta = 0$, the value-weighted market.
@@ -1368,6 +1422,12 @@ pl.DataFrame(
 )
 ```
 :::
+
+The estimated coefficients, for momentum and size:
+
+```{.default .code-output}
+#> [1]  0.6748458 -1.6278592
+```
 
 $\hat\theta_\text{momentum}$ = 0.67 and $\hat\theta_\text{size}$ = −1.63, as in lecture 5: the policy tilts toward past winners and toward small stocks. Annualized excess returns, in R and Python alike:
 
@@ -1560,6 +1620,14 @@ print(
 ```
 :::
 
+The averages over the months of each period:
+
+```{.default .code-output}
+#>      period share_short short_weight
+#> 1 1980-2009   0.3608217    0.2000526
+#> 2 2010-2025   0.3984100    0.2176921
+```
+
 ![Short positions of the parametric portfolio policy with $\gamma = 5$, estimated from 1980 to 2009: the share of stocks with a negative weight and the sum of the negative weights in every month, January 1980 to December 2025, from the R code above.](figures/shrinkage-costs-short-positions.png){fig-alt="Two time series from 1980 to 2025: the share of stocks with a negative weight in the parametric portfolio policy and the sum of its negative weights."}
 
 From 1980 to 2009, 36% of the stocks have a negative weight in an average month, and the negative weights sum to 20% of wealth: the policy is 120% long and 20% short. From 2010 to 2025, the averages are 40% and 22%, and at the end of 2025 the short positions reach almost 30% of wealth. The weight of a stock is negative if its tilt $\theta'\hat x_{i,t}/N_t$ is more negative than its benchmark weight is positive. Most stocks are small and have tiny benchmark weights, so a modest negative tilt is enough. Every short position needs a lender of the stock and costs a fee, which the backtest ignores.
@@ -1650,6 +1718,12 @@ pl.DataFrame(
 )
 ```
 :::
+
+The estimated coefficients without short sales, for momentum and size:
+
+```{.default .code-output}
+#> [1]  0.1722166 -1.6060188
+```
 
 Without short sales, $\hat\theta_\text{momentum}$ = 0.17 and $\hat\theta_\text{size}$ = −1.61: the size tilt stays, the momentum tilt shrinks to a quarter. Annualized excess returns, in R and Python alike:
 
