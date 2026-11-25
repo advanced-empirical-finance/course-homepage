@@ -5,7 +5,7 @@ aliases:
   - implementable_portfolios.html
 ---
 
-This exercise goes with [lecture 14](../slides/aef-14-neural-networks-and-learning-the-sdf.pdf) and, for the part on what the portfolios trade, with [lecture 15](../slides/aef-15-implementable-portfolios.pdf). The first part builds Chen–Pelger–Zhu light, a network that learns the SDF of the factor zoo itself, step by step. The second part compares the monthly turnover of portfolios with constant weights, such as the ridge SDF of [exercise 7](machine_learning.qmd), with the turnover of the forecast portfolios of [exercise 9](machine_learning_nonlinear.qmd). The last part asks you to beat the scoreboard of the lectures. The data are the long-short returns of the anomalies with complete returns from January 1973 to December 2023; the estimation sample runs until 1999, the test sample from 2000 to 2023.
+This exercise goes with [lecture 14](../slides/aef-14-neural-networks-and-learning-the-sdf.pdf) and, for the part on what the portfolios trade, with [lecture 15](../slides/aef-15-implementable-portfolios.pdf). The first part builds Chen–Pelger–Zhu light, a network that learns the SDF of the factor zoo itself, step by step. The second part compares the monthly turnover of portfolios with constant weights, such as the ridge SDF of [exercise 7](machine_learning.qmd), with the turnover of the forecast portfolios of [exercise 9](machine_learning_nonlinear.qmd). The last part asks you to beat the best model in the out-of-sample comparison of the lectures. The data are the long-short returns of the anomalies with complete returns from January 1973 to December 2023; the estimation sample runs until 1999, the test sample from 2000 to 2023.
 
 ## Learning the SDF: Chen–Pelger–Zhu light {#cpz-light}
 
@@ -26,7 +26,7 @@ Lecture 14 describes Chen–Pelger–Zhu light in words: two networks play a gam
     With $g = 1$, the moments are the unconditional ones of lecture 11, $E[M_{t+1} F_{i,t+1}] = 0$.
 4.  **Training with early stopping.** Train the SDF network with the Adam optimizer (learning rate $10^{-3}$, weight decay $10^{-5}$) on the pricing errors of the training months, with all training months in every step (no mini-batches). After each step, compute the pricing errors of the validation months, keep the network with the smallest, and stop after 100 steps without a new smallest error, or after at most 2,000 steps. Train first with $g = 1$; the result is the feed-forward SDF of lecture 14.
 5.  **The adversary.** Build a second network with the same inputs and 8 outputs; $g = \tanh(\cdot)$ of its outputs gives 8 instruments between $-1$ and $1$ per anomaly and month. In each of three rounds, train the adversary for 200 steps to *maximize* the pricing errors of the current SDF in the training months, then train the SDF network as in task 4, for at most 1,000 steps, on the unconditional moments and the 8 adversarial ones.
-6.  **The scoreboard.** Train three pairs of networks, with the seeds 1, 2 and 3, and average their weights. Compute the annualized Sharpe ratios of the portfolio $\sum_i \omega_{i,t} F_{i,t+1}$ in the training, validation, estimation (both) and test months, for the feed-forward SDF (after the first step) and for Chen–Pelger–Zhu light (after the three rounds). How do they compare with the scoreboard of lecture 14, and with the ridge SDF?
+6.  **The out-of-sample comparison.** Train three pairs of networks, with the seeds 1, 2 and 3, and average their weights. Compute the annualized Sharpe ratios of the portfolio $\sum_i \omega_{i,t} F_{i,t+1}$ in the training, validation, estimation (both) and test months, for the feed-forward SDF (after the first step) and for Chen–Pelger–Zhu light (after the three rounds). How do they compare with the Sharpe ratios in the out-of-sample comparison of lecture 14, and with the ridge SDF?
 
 **Solutions:**
 
@@ -455,7 +455,7 @@ The ensemble averages the weights of the three seeds, as `cpz_light.py` does wit
 ::: {.panel-tabset group="language"}
 ## R
 ```{r}
-#| label: r-cpz-scoreboard
+#| label: r-cpz-comparison
 n_sdf_networks <- 3
 
 sdf_fits <- map(seq_len(n_sdf_networks), train_sdf)
@@ -481,7 +481,7 @@ rbind(
 
 ## Python
 ```{python}
-#| label: py-cpz-scoreboard
+#| label: py-cpz-comparison
 n_sdf_networks = 3
 
 sdf_fits = [train_sdf(seed) for seed in range(1, n_sdf_networks + 1)]
@@ -886,8 +886,8 @@ If every unit traded costs a fraction $c$, a portfolio with a gross position of 
 
 This turnover leaves out the trades inside each anomaly. Every long-short portfolio is itself rebalanced each month, and the returns from Open Source Asset Pricing are before these costs. Both kinds of portfolio pay them on top of the trades between anomalies. Lecture 15 discusses portfolios that take trading costs into account when they choose the weights.
 
-## Beat the scoreboard {#beat-the-scoreboard}
+## Beat the best model {#beat-the-best-model}
 
-Can you beat the best model on the scoreboard of the lectures? Use any method from the course on the factor zoo, tuned with the estimation sample only, and compute the annualized Sharpe ratio of your SDF portfolio in the test sample.
+Can you beat the best model in the out-of-sample comparison of the lectures? Use any method from the course on the factor zoo, tuned with the estimation sample only, and compute the annualized Sharpe ratio of your SDF portfolio in the test sample.
 
-**Submit by Sunday 25 April:** the kind of method you used and the Sharpe ratios of your SDF portfolio in the test and the estimation sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex08-scoreboard). The next lecture shows the scoreboard of the whole class.
+**Submit by Sunday 25 April:** the kind of method you used and the Sharpe ratios of your SDF portfolio in the test and the estimation sample: [submission form](https://eumel.tail81c88a.ts.net:10000/survey?id=aef27-ex08-scoreboard). The next lecture adds the results of the whole class to the out-of-sample comparison.
