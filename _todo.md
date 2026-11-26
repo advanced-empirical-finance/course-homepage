@@ -1,6 +1,6 @@
 # AEF 2027: open tasks
 
-Updated 25 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
+Updated 26 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
 ## Absalon
 
@@ -15,13 +15,11 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 
 ## Data
 
-The review of the LOBSTER cleaning (25 November 2026) found that the published SPY data set signed volume to 0 in many intervals with trading (37% in March 2024, 60% in March 2020), because hidden trades at the midquote got no sign, and that six March days freeze before the close. General cleaning code with all fixes, in R and polars: voigtstefan/lobsteR#5.
+The SPY dataset on Hugging Face (voigtstefan/sp500) has a new version since 26 November 2026: rebuilt with lobsteR (fixed signed volume, midpoint volume, halts, early closes) and extended to 23 November 2026; lectures 16 and 17 and exercise 11 use it (course-repository#87, course-homepage#142).
 
-- [ ] **S:** merge lobsteR#5.
-- [ ] **C:** rebuild the SPY (and TLT) snapshots on UCloud (project "Market responses to a vix impulse"); test month running, full run after S's OK.
-- [ ] **S + C:** new version of the SPY dataset on Hugging Face, with a README on the changes (publish only after S's OK).
 - [ ] **C:** the blog post "lobsteR package and high-frequency data" (tidy-finance/blog) with the fixed code in R and polars side by side; wording fixes in the second post.
-- [ ] **C:** with the new data, rerun lecture 16 (price impact), lecture 17 (signature plot) and exercise 11.
+- [ ] **S:** LOBSTER (Ruihong) asked on 26 November 2026 about the days that stop early or are empty (78 SPY days from 2019 on, list in `~/data/lobster/lobster_problem_days.csv` on eumel). **C:** once complete files arrive, rebuild those days and publish a new version.
+- [ ] **S:** exercise 11, SPY against ES: keep the days whose data end early (correlation 0.96, as now) or drop all ten such March days (0.97)? ES has 60.5% on 23 March 2026 while SPY looks normal that day; worth a look in VOLARE.
 
 ## Lectures
 
