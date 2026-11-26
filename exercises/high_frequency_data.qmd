@@ -12,14 +12,14 @@ These exercises reproduce lectures 16 and 17. The first two parts use the order 
 
 **Exercises:**
 
-1. Download the SPY order book snapshots for March of every year from 2008 to 2025 with `download_data(domain = "Tidy Finance", dataset = "high_frequency_sp500")` from `tidyfinance`. What does one row contain, and in which units are the spread, the depth and the volume?
+1. Download the SPY order book snapshots for March of every year from 2008 to 2026 with `download_data(domain = "Tidy Finance", dataset = "high_frequency_sp500")` from `tidyfinance`. What does one row contain, and in which units are the spread, the depth and the volume?
 2. Liquidity through the day: for March 2024, compute the median spread, the median depth at the best quotes in USD, and the median dollar volume per five seconds in each ten-minute interval of continuous trading, and plot them against the time of day. Leave out the snapshots of the opening and closing auctions. What pattern do you see, and why? Why do the lecture's figures show medians instead of means?
 3. Liquidity over the years: compute the average spread and depth for each March. How did they change since 2008, and which years stand out?
 4. Price impact (Kyle, 1985): aggregate the snapshots to one-minute midquote returns in basis points and one-minute net buying in USD million (`signed_volume`, which is in shares, times the midquote), and regress the returns on the net buying, year by year. How does the slope $\lambda$, the price impact of USD 1 million of net buying, change over time, and how does the $R^2$? What do your results mean for the trading costs of a portfolio of large stocks, as in lecture 5?
 
 **Solutions:**
 
-The snapshots are taken every five seconds during regular trading hours of NASDAQ, built from LOBSTER data. One month of SPY has about 100,000 rows, so the 18 months take a moment to download.
+The snapshots are taken every five seconds during regular trading hours of NASDAQ, built from LOBSTER data. One month of SPY has about 100,000 rows, so the 19 months take a moment to download.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -29,7 +29,7 @@ library(tidyverse)
 library(tidyfinance)
 library(scales)
 
-years <- 2008:2025
+years <- 2008:2026
 sample_month <- 3
 
 spy <- map(years, \(year) {
@@ -56,7 +56,7 @@ import polars as pl
 import tidyfinance as tf
 from plotnine import *
 
-years = range(2008, 2026)
+years = range(2008, 2027)
 sample_month = 3
 
 spy = pl.concat(
@@ -71,7 +71,9 @@ spy = pl.concat(
 ```
 :::
 
-The 18 months have 1,815,840 snapshots. Each row is one snapshot `ts` of the order book: the `midquote` in USD, the `spread` in basis points of the midquote, the depth at the best ask and bid (`depth0_ask`, `depth0_bid`) and within 5 basis points of the midquote (`depth5_ask`, `depth5_bid`) in shares, the dollar volume traded in the five seconds before (`trading_volume`), and the signed order flow (`signed_volume`), buyer- minus seller-initiated shares. Shares times the midquote give USD.
+The 19 months have 1,937,520 snapshots. Each row is one snapshot `ts` of the order book: the `midquote` in USD, the `spread` in basis points of the midquote, the depth at the best ask and bid (`depth0_ask`, `depth0_bid`) and within 5 basis points of the midquote (`depth5_ask`, `depth5_bid`) in shares, the dollar volume traded in the five seconds before (`trading_volume`), and the signed order flow (`signed_volume`), buyer- minus seller-initiated shares. Shares times the midquote give USD. Hidden trades exactly at the midquote have no side: they count in `trading_volume` and in `midpoint_volume`, the dollar volume of these trades, but not in `signed_volume`. Four more columns count the order book messages and the trades in the five seconds (`n_messages`, `n_trades`) and flag trading halts (`halted`) and depth within 5 basis points that the 50 levels of the data may cut short (`depth5_truncated`).
+
+Some values are missing: `signed_volume` in the 199,265 snapshots without trades, and the spread and the depth in the 717 snapshots during the four 15-minute market-wide trading halts on 9, 12, 16 and 18 March 2020. The sums, means and medians below skip them: `na.rm = TRUE` in R, and polars skips missing values by default.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -89,8 +91,9 @@ intraday <- spy |>
     clock = hour(time) + minute(time) / 60
   ) |>
   summarize(
-    spread = median(spread),
-    depth = median((depth0_ask + depth0_bid) / 2 * midquote),
+    # spread and depth are missing in halted intervals
+    spread = median(spread, na.rm = TRUE),
+    depth = median((depth0_ask + depth0_bid) / 2 * midquote, na.rm = TRUE),
     volume = median(trading_volume),
     .by = clock
   )
@@ -122,6 +125,7 @@ intraday = (
     )
     .group_by(clock=time.dt.hour() + time.dt.minute() / 60)
     .agg(
+        # spread and depth are missing in halted intervals; median() skips them
         spread=pl.col("spread").median(),
         depth=(
             (pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")
@@ -140,9 +144,9 @@ intraday = (
 ```
 :::
 
-![Median spread in basis points, median depth at the best quotes in USD and median dollar volume per five seconds in USD of SPY in each ten-minute interval of continuous trading, March 2024, from the R code above.](figures/high-frequency-intraday-liquidity.png){fig-alt="Three panels against the hour of the day from 9:30 to 16:00: depth rises from about USD 220,000 at the open to about 300,000 in the afternoon and jumps to 430,000 in the last ten minutes; the spread falls from 0.23 basis points at the open to about 0.20 from noon on; dollar volume falls from 1.5 million at the open to about 0.4 million in the early afternoon and rises to 4.7 million in the last ten minutes."}
+![Median spread in basis points, median depth at the best quotes in USD and median dollar volume per five seconds in USD of SPY in each ten-minute interval of continuous trading, March 2024, from the R code above.](figures/high-frequency-intraday-liquidity.png){fig-alt="Three panels against the hour of the day from 9:30 to 16:00: depth rises from about USD 220,000 at the open to about 300,000 in the afternoon and jumps to 450,000 in the last ten minutes; the spread falls from 0.23 basis points at the open to about 0.20 from noon on; dollar volume falls from 1.5 million at the open to about 0.4 million in the early afternoon and rises to 4.7 million in the last ten minutes."}
 
-The snapshot at 9:30:05 still holds the opening auction and the one at 16:00:00 the closing auction, so the filter keeps the continuous trading from 9:30:10 to 15:59:55, as in lectures 16 and 17. In March 2024, trading is heaviest at the open and at the close: the median dollar volume per five seconds falls from about USD 1.5 million in the first ten minutes to about USD 0.4 million in the early afternoon and rises to USD 4.7 million in the last ten minutes (the U-shape). The spread is widest right after the open (0.23 basis points), when uncertainty about the day's news is largest, and stays close to 0.20 basis points from noon on. Depth at the best quotes builds up during the day, from about USD 0.22 million in the first ten minutes to 0.30 million in the afternoon and 0.43 million in the last ten minutes.
+The snapshot at 9:30:05 still holds the opening auction and the one at 16:00:00 the closing auction, so the filter keeps the continuous trading from 9:30:10 to 15:59:55, as in lectures 16 and 17. In March 2024, trading is heaviest at the open and at the close: the median dollar volume per five seconds falls from about USD 1.5 million in the first ten minutes to about USD 0.4 million in the early afternoon and rises to USD 4.7 million in the last ten minutes (the U-shape). The spread is widest right after the open (0.23 basis points), when uncertainty about the day's news is largest, and stays close to 0.20 basis points from noon on. Depth at the best quotes builds up during the day, from about USD 0.22 million in the first ten minutes to 0.30 million in the afternoon and 0.45 million in the last ten minutes.
 
 The figures show medians, as in lecture 16, because a mean follows the few days with news in an interval, such as the Fed's statement on 20 March 2024 (lecture 16). The means are higher: USD 2.0 million instead of 1.5 million in the first ten minutes, and USD 6.5 million instead of 4.7 million in the last ten.
 
@@ -152,8 +156,9 @@ The figures show medians, as in lecture 16, because a mean follows the few days 
 #| label: r-yearly
 yearly <- spy |>
   summarize(
-    spread = mean(spread),
-    depth = mean((depth0_ask + depth0_bid) / 2 * midquote),
+    # spread and depth are missing in halted intervals
+    spread = mean(spread, na.rm = TRUE),
+    depth = mean((depth0_ask + depth0_bid) / 2 * midquote, na.rm = TRUE),
     .by = year
   )
 
@@ -172,6 +177,7 @@ yearly |>
 yearly = (
     spy.group_by("year")
     .agg(
+        # spread and depth are missing in halted intervals; mean() skips them
         spread=pl.col("spread").mean(),
         depth=(
             (pl.col("depth0_ask") + pl.col("depth0_bid")) / 2 * pl.col("midquote")
@@ -190,11 +196,11 @@ yearly = (
 ```
 :::
 
-![Average spread in basis points and average depth at the best quotes in USD of SPY in March of each year from 2008 to 2025, from the R code above.](figures/high-frequency-yearly-liquidity.png){fig-alt="Two panels against the year: the spread falls from 0.91 basis points in 2008 to 0.21 in 2024, with peaks of 1.49 in 2009 and 0.86 in 2020 and 0.50 in 2025; depth is between USD 0.6 million and 2.2 million until 2015 and below 0.6 million since 2016, with a low of 0.05 million in 2020."}
+![Average spread in basis points and average depth at the best quotes in USD of SPY in March of each year from 2008 to 2026, from the R code above.](figures/high-frequency-yearly-liquidity.png){fig-alt="Two panels against the year: the spread falls from 0.91 basis points in 2008 to 0.21 in 2024, with peaks of 1.49 in 2009, 0.85 in 2020 and 0.51 in 2025, and is 0.27 in 2026; depth is between USD 0.6 million and 2.2 million until 2015 and below 0.6 million since 2016, with a low of 0.05 million in 2020."}
 
-The spread fell from 0.91 basis points in March 2008 to 0.21 in March 2024, and rose again to 0.50 in March 2025. SPY trades at the minimum tick of one cent, and with a rising price, one cent became an ever smaller share of the price. The crisis months stand out: 1.49 basis points in March 2009, after the Lehman collapse, and 0.86 in March 2020, during the COVID-19 crash. Depth at the best quotes fell as well, from about USD 1.1 million in 2008 to 0.3 million in 2024, with a low of USD 0.05 million in March 2020: orders are smaller and spread over more trading venues.
+The spread fell from 0.91 basis points in March 2008 to 0.21 in March 2024, rose again to 0.51 in March 2025 and fell to 0.27 in March 2026. SPY trades at the minimum tick of one cent, and with a rising price, one cent became an ever smaller share of the price. The crisis months stand out: 1.49 basis points in March 2009, after the Lehman collapse, and 0.85 in March 2020, during the COVID-19 crash. Depth at the best quotes fell as well, from about USD 1.1 million in 2008 to 0.3 million in 2024 and 0.2 million in 2026, with a low of USD 0.05 million in March 2020: orders are smaller and spread over more trading venues.
 
-For the price impact, the last midquote of each minute gives the minute's return. The signed volume is in shares; times the midquote of its snapshot and summed over the minute, it gives the minute's net buying in USD million. Returns are computed within a day, so the overnight change does not count as a one-minute return.
+For the price impact, the last midquote of each minute gives the minute's return. The signed volume is in shares; times the midquote of its snapshot and summed over the minute, it gives the minute's net buying in USD million. The sum skips the snapshots without trades, so a minute without trades has a net buying of zero. Returns are computed within a day, so the overnight change does not count as a one-minute return.
 
 ::: {.panel-tabset group="language"}
 ## R
@@ -205,7 +211,8 @@ interval_length <- "1 minute"
 price_impact <- spy |>
   mutate(day = as_date(ts), minute = floor_date(ts, interval_length)) |>
   summarize(
-    flow = sum(signed_volume * midquote) / 1e6,
+    # signed_volume is missing in snapshots without trades
+    flow = sum(signed_volume * midquote, na.rm = TRUE) / 1e6,
     midquote = last(midquote),
     .by = c(year, day, minute)
   ) |>
@@ -233,6 +240,7 @@ price_impact = (
     )
     .group_by("year", "day", "minute", maintain_order=True)
     .agg(
+        # signed_volume is missing in snapshots without trades; sum() skips them
         flow=(pl.col("signed_volume") * pl.col("midquote")).sum() / 1e6,
         midquote=pl.col("midquote").last(),
     )
@@ -250,32 +258,33 @@ price_impact
 :::
 
 ```{.default .code-output}
-#> # A tibble: 18 × 3
-#>     year lambda      r2
-#>    <int>  <dbl>   <dbl>
-#>  1  2008  0.338 0.118
-#>  2  2009  1.19  0.284
-#>  3  2010  0.328 0.395
-#>  4  2011  0.465 0.185
-#>  5  2012  0.340 0.265
-#>  6  2013  0.450 0.200
-#>  7  2014  0.425 0.116
-#>  8  2015  0.176 0.0750
-#>  9  2016  0.652 0.135
-#> 10  2017  0.386 0.132
-#> 11  2018  0.826 0.138
-#> 12  2019  0.503 0.117
-#> 13  2020  1.84  0.0476
-#> 14  2021  0.426 0.0370
-#> 15  2022  0.266 0.00971
-#> 16  2023  0.455 0.0251
-#> 17  2024  0.240 0.0397
-#> 18  2025  0.577 0.0773
+#> # A tibble: 19 × 3
+#>     year lambda     r2
+#>    <int>  <dbl>  <dbl>
+#>  1  2008  0.368 0.284
+#>  2  2009  1.23  0.395
+#>  3  2010  0.332 0.496
+#>  4  2011  0.453 0.406
+#>  5  2012  0.345 0.396
+#>  6  2013  0.414 0.290
+#>  7  2014  0.479 0.246
+#>  8  2015  0.182 0.126
+#>  9  2016  0.615 0.226
+#> 10  2017  0.304 0.158
+#> 11  2018  0.620 0.165
+#> 12  2019  0.367 0.190
+#> 13  2020  1.09  0.124
+#> 14  2021  0.299 0.0859
+#> 15  2022  0.206 0.0272
+#> 16  2023  0.251 0.0386
+#> 17  2024  0.121 0.0515
+#> 18  2025  0.388 0.102
+#> 19  2026  0.202 0.0643
 ```
 
 With one regressor, the slope is the covariance of returns and order flow divided by the variance of the order flow, and the $R^2$ is their squared correlation, so the Python code computes them directly. The output blocks on this page come from the R code. The Python code prints the same numbers in a different layout, except in the simulation of Roll's model below.
 
-USD 1 million of net buying in a minute moved SPY by 0.34 basis points in March 2008, by 0.24 in March 2024 and by 0.58 in March 2025. In the other years it lay between 0.18 and 0.83 basis points, except in the crisis months: 1.19 basis points in March 2009 and 1.84 in March 2020. The $R^2$ fell from between 12% and 40% until 2012 to between 1% and 8% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, net buying of USD 1 million costs a fraction of a basis point in calm months, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
+USD 1 million of net buying in a minute moved SPY by 0.37 basis points in March 2008, by 0.12 in March 2024, the lowest of all years, and by 0.20 in March 2026. In the other years it lay between 0.18 and 0.62 basis points, except in the crisis months: 1.23 basis points in March 2009 and 1.09 in March 2020. The $R^2$ fell from between 28% and 50% until 2012 to between 3% and 12% since 2020: more and more of the price moves without trading in SPY, as quotes react to news and to trading on other venues. For a portfolio of large stocks, net buying of USD 1 million costs a fraction of a basis point in calm months, so the quadratic costs of lecture 5 matter mostly for large trades and in crises.
 
 ## The bid-ask bounce
 
@@ -748,7 +757,7 @@ spy_es_by_year = spy_es.group_by("year").agg(
 #> # A tibble: 1 × 4
 #>    days marches es_to_spy correlation
 #>   <int>   <int>     <dbl>       <dbl>
-#> 1   345      16      1.85       0.979
+#> 1   371      17      1.89       0.957
 #>   weekday median_overnight_change
 #> 1     Mon               0.2321326
 #> 2     Tue               0.0000000
@@ -757,11 +766,11 @@ spy_es_by_year = spy_es.group_by("year").agg(
 #> 5     Fri               0.0000000
 ```
 
-![Annualized volatility of SPY from five-minute midquote returns and of ES from `rv5` in March of each year from 2010 to 2025, on the days with both, on a log scale, from the R code above.](figures/high-frequency-spy-es-volatility.png){fig-alt="Two lines against the year on a log scale: ES lies above SPY in every March, both lowest in 2017 (7.8% and 6.3%) and highest in 2020 (83.5% and 59.7%)."}
+![Annualized volatility of SPY from five-minute midquote returns and of ES from `rv5` in March of each year from 2010 to 2026, on the days with both, on a log scale, from the R code above.](figures/high-frequency-spy-es-volatility.png){fig-alt="Two lines against the year on a log scale: ES lies above SPY in every March, both lowest in 2017 (7.8% and 6.3%) and highest in 2020 (83.5% and 59.7%); the gap is widest in 2026 (22.1% and 13.1%)."}
 
-SPY has 388 days with 77 five-minute returns each. One day, 31 March 2022, has a realized variance of zero: in the snapshots of that day, the midquote stops moving a few minutes after the open, a gap in the data. The code leaves this day out. ES starts in September 2009, so the two overlap on 345 days in the 16 Marches from 2010 to 2025.
+SPY has 414 days with 77 five-minute returns each. One day, 31 March 2022, has a realized variance of zero: in the snapshots of that day, the midquote stops moving a few minutes after the open, a gap in the data. The code leaves this day out. On five more days, the data end before noon (5, 11 and 26 March 2021, 1 March 2024 and 3 March 2025), so their RV misses the rest of the day. ES starts in September 2009, so the two overlap on 371 days in the 17 Marches from 2010 to 2026.
 
-The two volatilities move together closely: the daily log RVs have a correlation of 0.98, and both are highest in March 2020, with 59.7% for SPY and 83.5% for ES. On the log scale, the two lines run almost parallel: ES is more volatile in every March by a similar factor, for example 9.7% against 7.9% in March 2024. On average, `rv5` of ES is 1.85 times the RV of SPY, between 1.40 (2025) and 2.21 (2011). Both follow the S&P 500, so the difference lies in the hours. From Tuesday to Friday, ES opens at the previous day's close (the median change is zero); only on Mondays, after the weekend, it opens with a gap (median 0.23%). So a day of ES in VOLARE covers the trading of the futures from the evening before, almost 24 hours. The RV of SPY covers only the 6.5 hours of continuous trading, from 9:35 to 16:00. The hours outside, mostly the night, carry about 46% of the variance of ES ($1 - 1/1.85$).
+The two volatilities move together closely: the daily log RVs have a correlation of 0.96, and both are highest in March 2020, with 59.7% for SPY and 83.5% for ES. On the log scale, the two lines run almost parallel until 2025: ES is more volatile in every March by a similar factor, for example 9.7% against 7.9% in March 2024. In March 2026, the gap is wider (22.1% against 13.1%), mostly because of one day: on Monday, 23 March 2026, ES has an annualized volatility of 60.5% and SPY of 15.0%. On average, `rv5` of ES is 1.89 times the RV of SPY, between 1.45 (2019) and 2.86 (2026). Both follow the S&P 500, so the difference lies in the hours. From Tuesday to Friday, ES opens at the previous day's close (the median change is zero); only on Mondays, after the weekend, it opens with a gap (median 0.23%). So a day of ES in VOLARE covers the trading of the futures from the evening before, almost 24 hours. The RV of SPY covers only the 6.5 hours of continuous trading, from 9:35 to 16:00. The hours outside, mostly the night, carry about 47% of the variance of ES ($1 - 1/1.89$).
 
 ## Forecasting volatility
 
