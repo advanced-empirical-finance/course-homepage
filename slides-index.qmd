@@ -30,8 +30,8 @@ Lectures are on Mondays 10â€“12 in odd weeks (CSS 35.3.12) and on Thursdays 13â€
 | 18 | Thu 6 May | [Assignment 3 released]{.plan-minor} |  |  |  |  |
 | 19 | Mon 10 May | Realized volatility | [PDF](slides/aef-17-realized-volatility.pdf) |  |  | Andersen, Bollerslev, Diebold & Labys (2003) |
 |  | Thu 13 May | Realized covariances for portfolio choice | [PDF](slides/aef-18-realized-covariances-for-portfolio-choice.pdf) |  | [11](exercises/high_frequency_data.qmd "Order books and realized volatility") | Hautsch, Kyj & Oomen (2012) |
-|  | Thu 13 May | [Assignment 3 deadline]{.plan-minor} |  |  |  |  |
-| 20 | Thu 20 May | Conference session |  |  |  |  |
+| 20 | Tue 18 May | [Assignment 3 deadline]{.plan-minor} |  |  |  |  |
+|  | Thu 20 May | Conference session |  |  |  |  |
 
 : {.hover}
 
