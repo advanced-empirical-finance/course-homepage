@@ -7,7 +7,7 @@ Updated 27 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbox course 57599). The 2027 course does not exist yet.
 
 - [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
-  - the three assignments with their deadlines (25 Feb – 4 Mar, 8–22 Apr, 6–18 May);
+  - the three assignments with their deadlines (25 Feb – 4 Mar, 8–22 Apr, 6–18 May, at 16:00), each with its text as PDF from `mandatory-assignments/texts/`, published at release;
   - peer feedback for seven days after each deadline;
   - the discussion for the figures of exercise 1 (#70): ready, unpublished, in the sandbox (discussion 848551), to be copied;
   - the three data files for students: `crsp_monthly.parquet`, `volare_realized_measures_daily.parquet` and `volare_realized_covariances_daily.parquet`;
@@ -17,7 +17,7 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 
 The SPY dataset on Hugging Face (voigtstefan/sp500) has a new version since 26 November 2026: rebuilt with lobsteR (fixed signed volume, midpoint volume, halts, early closes) and extended to 23 November 2026; lectures 16 and 17 and exercise 11 use it (course-repository#87, course-homepage#142).
 
-- [ ] **S:** LOBSTER (Ruihong) asked on 26 November 2026 about the days that stop early or are empty (78 SPY days from 2019 on, list in `~/data/lobster/lobster_problem_days.csv` on eumel). **C:** once complete files arrive, rebuild those days and publish a new version.
+- [ ] **C:** once LOBSTER delivers complete files for the days that stop early or are empty (see *Waiting for others*), rebuild those days and publish a new version.
 - [ ] **S:** exercise 11, SPY against ES: keep the days whose data end early (correlation 0.96, as now) or drop all ten such March days (0.97)? ES has 60.5% on 23 March 2026 while SPY looks normal that day; worth a look in VOLARE.
 
 ## Lectures
@@ -37,7 +37,7 @@ Ready since 25 November 2026: the skill `lecture-notes` runs the whole workflow 
 Twelve pages, numbered 0 to 11, since 23 November 2026 (plan in course-homepage#74).
 
 - [ ] **S:** review the new and split exercise pages 3, 4, 8, 9 and 10 (pages 0–7 reviewed on 20 November 2026).
-- [ ] **C:** exercise 7 should use tidyfinance's download of the anomaly returns once it works in Python.
+- [ ] **C:** exercise 7 and lecture 10 read the anomaly returns with tidyfinance's `download_data()` once it returns the October 2026 release of Open Source Asset Pricing (see *Waiting for others*). tidyfinance 1.0.1 fixed the Python download, but its data are another vintage (returns in decimals, snake_case names, 1/N Sharpe ratio 2.03 instead of 2.05 in 1973–2023), so the course environment stays on 1.0.0 until then (S, 27 November 2026).
 
 ## Assignments
 
@@ -60,3 +60,5 @@ The three assignment texts are drafted (27 November 2026): `mandatory-assignment
 ## Waiting for others
 
 - KU administration: kurser.ku.dk still shows the old exam (48-hour home assignment).
+- LOBSTER (Ruihong): answer to S's email of 26 November 2026 about the days that stop early or are empty (78 SPY days from 2019 on, 7 empty days, 4 days with a crossed book in 2026; list in `~/data/lobster/lobster_problem_days.csv` on eumel).
+- tidyfinance: r-tidyfinance#353 and py-tidyfinance#90, the Open Source Asset Pricing releases from Hugging Face.
