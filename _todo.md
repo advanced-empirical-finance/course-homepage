@@ -1,6 +1,6 @@
 # AEF 2027: open tasks
 
-Updated 26 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
+Updated 27 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file (leading underscore), so it never appears on the course homepage. Finished tasks are deleted; the decisions behind them stay in the linked issues and PRs.
 
 ## Absalon
 
@@ -17,7 +17,6 @@ Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbo
 
 The SPY dataset on Hugging Face (voigtstefan/sp500) has a new version since 26 November 2026: rebuilt with lobsteR (fixed signed volume, midpoint volume, halts, early closes) and extended to 23 November 2026; lectures 16 and 17 and exercise 11 use it (course-repository#87, course-homepage#142).
 
-- [ ] **C:** the blog post "lobsteR package and high-frequency data" (tidy-finance/blog) with the fixed code in R and polars side by side; wording fixes in the second post.
 - [ ] **S:** LOBSTER (Ruihong) asked on 26 November 2026 about the days that stop early or are empty (78 SPY days from 2019 on, list in `~/data/lobster/lobster_problem_days.csv` on eumel). **C:** once complete files arrive, rebuild those days and publish a new version.
 - [ ] **S:** exercise 11, SPY against ES: keep the days whose data end early (correlation 0.96, as now) or drop all ten such March days (0.97)? ES has 60.5% on 23 March 2026 while SPY looks normal that day; worth a look in VOLARE.
 
