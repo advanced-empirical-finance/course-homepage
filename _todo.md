@@ -7,7 +7,7 @@ Updated 27 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbox course 57599). The 2027 course does not exist yet.
 
 - [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
-  - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
+  - the three assignments with their deadlines (25 Feb – 4 Mar, 8–22 Apr, 6–13 May);
   - peer feedback for seven days after each deadline;
   - the discussion for the figures of exercise 1 (#70): ready, unpublished, in the sandbox (discussion 848551), to be copied;
   - the three data files for students: `crsp_monthly.parquet`, `volare_realized_measures_daily.parquet` and `volare_realized_covariances_daily.parquet`;
