@@ -7,7 +7,7 @@ Updated 27 November 2026. **S** = Stefan, **C** = Claude. Quarto skips this file
 Access works since 16 November 2026 (token on eumel, renewed 19 November; sandbox course 57599). The 2027 course does not exist yet.
 
 - [ ] **C:** once KU has created the 2027 course, create in Absalon (after showing S the list):
-  - the three assignments with their deadlines (25 Feb – 4 Mar, 12–19 Apr, 6–13 May);
+  - the three assignments with their deadlines (25 Feb – 4 Mar, 8–22 Apr, 6–18 May);
   - peer feedback for seven days after each deadline;
   - the discussion for the figures of exercise 1 (#70): ready, unpublished, in the sandbox (discussion 848551), to be copied;
   - the three data files for students: `crsp_monthly.parquet`, `volare_realized_measures_daily.parquet` and `volare_realized_covariances_daily.parquet`;
@@ -41,9 +41,11 @@ Twelve pages, numbered 0 to 11, since 23 November 2026 (plan in course-homepage#
 
 ## Assignments
 
-- [ ] **S + C:** assignment 1 (portfolio choice), final version with a solution script. Exercise 4 now solves Ledoit-Wolf, backtests with costs and parametric portfolio policies openly, so assignment 1 needs another angle.
-- [ ] **S + C:** assignment 2 (machine learning in asset pricing), draft. It starts from the `stock_characteristics_monthly.parquet` each student builds in exercise 6 (not distributed on Absalon).
-- [ ] **S + C:** assignment 3 (realized volatility from high-frequency data, SPY and VOLARE), draft. GARCH (from a retired exercise page) can serve as its daily benchmark.
+The three assignment texts are drafted (27 November 2026): `mandatory-assignments/texts/assignment-{1,2,3}.qmd` in the course repository, rendered to PDF there and shared on Absalon at release; the folder is not on GitHub (course-repository#88). Dates: 25 Feb – 4 Mar, 8–22 Apr, 6–18 May, deadlines at 16:00.
+
+- [ ] **S:** final read of the three texts.
+- [ ] **C:** the survey for each assignment's headline numbers in live-poll, ready before its release.
+- [ ] **C:** after each deadline, extract the teams' decisions from the reports with an LLM and sort them into categories, for the discussion.
 
 ## Trading game and conference
 

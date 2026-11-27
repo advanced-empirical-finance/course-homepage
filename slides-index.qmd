@@ -20,18 +20,18 @@ Lectures are on Mondays 10â€“12 in odd weeks (CSS 35.3.12) and on Thursdays 13â€
 | 13 | Wed 31 Mar | Reproducibility and non-standard errors | [PDF](slides/aef-09-reproducibility-and-non-standard-errors.pdf) |  |  | Menkveld et al. (2024) |
 |  | Thu 1 Apr | Machine learning foundations | [PDF](slides/aef-10-machine-learning-foundations.pdf) |  | [8](exercises/factor_selection.qmd "Factor selection via machine learning") |  |
 | 14 | Thu 8 Apr | Shrinking the SDF | [PDF](slides/aef-11-shrinking-the-sdf.pdf) |  | [7](exercises/machine_learning.qmd "Shrinking the SDF") | Kozak, Nagel & Santosh (2020) |
+|  | Thu 8 Apr | [Assignment 2 released]{.plan-minor} |  |  |  |  |
 | 15 | Mon 12 Apr | Latent factors | [PDF](slides/aef-12-latent-factors.pdf) |  |  | Lettau & Pelger (2020) |
-|  | Mon 12 Apr | [Assignment 2 released]{.plan-minor} |  |  |  |  |
 | 16 | Mon 19 Apr | Return prediction with trees and forests | [PDF](slides/aef-13-trees-and-forests.pdf) |  | [9](exercises/machine_learning_nonlinear.qmd "Neural network forecasts") | Gu, Kelly & Xiu (2020) |
-|  | Mon 19 Apr | [Assignment 2 deadline]{.plan-minor} |  |  |  |  |
 |  | Thu 22 Apr | Neural networks and learning the SDF | [PDF](slides/aef-14-neural-networks-and-learning-the-sdf.pdf) |  | [10](exercises/learning_the_sdf.qmd "Learning the SDF and implementable portfolios") | Chen, Pelger & Zhu (2024) |
+|  | Thu 22 Apr | [Assignment 2 deadline]{.plan-minor} |  |  |  |  |
 | 17 | Mon 26 Apr | From predictions to implementable portfolios (first hour: assignment 2 discussion) | [PDF](slides/aef-15-implementable-portfolios.pdf) |  |  | Jensen, Kelly, Malamud & Pedersen (2026) |
 |  | Thu 29 Apr | Market microstructure and high-frequency data | [PDF](slides/aef-16-market-microstructure-and-high-frequency-data.pdf) |  |  |  |
 | 18 | Thu 6 May | [Assignment 3 released]{.plan-minor} |  |  |  |  |
 | 19 | Mon 10 May | Realized volatility | [PDF](slides/aef-17-realized-volatility.pdf) |  |  | Andersen, Bollerslev, Diebold & Labys (2003) |
 |  | Thu 13 May | Realized covariances for portfolio choice | [PDF](slides/aef-18-realized-covariances-for-portfolio-choice.pdf) |  | [11](exercises/high_frequency_data.qmd "Order books and realized volatility") | Hautsch, Kyj & Oomen (2012) |
-|  | Thu 13 May | [Assignment 3 deadline]{.plan-minor} |  |  |  |  |
-| 20 | Thu 20 May | Conference session |  |  |  |  |
+| 20 | Tue 18 May | [Assignment 3 deadline]{.plan-minor} |  |  |  |  |
+|  | Thu 20 May | Conference session |  |  |  |  |
 
 : {.hover}
 
